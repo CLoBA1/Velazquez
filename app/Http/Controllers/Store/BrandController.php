@@ -24,7 +24,7 @@ class BrandController extends Controller
     {
         // Using ID for now, can support slug later if needed
         $brand = Brand::with('products')->findOrFail($id);
-        $products = $brand->products()->where('stock', '>', 0)->paginate(12);
+        $products = $brand->products()->paginate(12);
 
         return view('store.brands.show', compact('brand', 'products'));
     }
