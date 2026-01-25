@@ -7,17 +7,45 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
-<body class="bg-gray-50 text-gray-900">
-    <div class="min-h-screen bg-gray-100">
+<body class="bg-gray-50 text-gray-900" x-data="{ sidebarOpen: false }">
+    <div class="min-h-screen bg-gray-100 flex flex-col md:flex-row">
+        
+        <!-- Mobile Header -->
+        <div class="md:hidden bg-slate-900 text-white p-4 flex items-center justify-between sticky top-0 z-40 shadow-md">
+            <span class="font-bold tracking-wider">FERRETERÍA VELÁZQUEZ</span>
+            <button @click="sidebarOpen = !sidebarOpen" class="p-2 rounded-lg hover:bg-slate-800 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Sidebar Backdrop (Mobile) -->
+        <div x-show="sidebarOpen" 
+             @click="sidebarOpen = false"
+             x-transition:enter="transition-opacity ease-linear duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition-opacity ease-linear duration-300"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="fixed inset-0 bg-slate-900/80 z-40 md:hidden backdrop-blur-sm"
+             style="display: none;"></div>
+
         <!-- Sidebar -->
-        <aside class="fixed inset-y-0 left-0 w-64 bg-slate-900 text-white flex flex-col shadow-2xl transition-all duration-300 z-50">
-            <div class="h-16 flex items-center justify-center border-b border-slate-800 bg-slate-950">
+        <aside class="fixed inset-y-0 left-0 w-64 bg-slate-900 text-white flex flex-col shadow-2xl transition-transform duration-300 z-50 transform md:translate-x-0"
+               :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
+            <div class="h-16 flex items-center justify-center border-b border-slate-800 bg-slate-950 relative">
                 <div class="flex flex-col items-center">
                     <span class="text-sm font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400 text-center leading-tight">
                         FERRETERÍA VELÁZQUEZ
                     </span>
                     <span class="text-[8px] text-slate-500 uppercase tracking-widest mt-0.5">Materiales</span>
                 </div>
+                <!-- Close Button (Mobile) -->
+                <button @click="sidebarOpen = false" class="md:hidden absolute right-3 text-slate-400 hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
             </div>
 
             <nav class="flex-1 overflow-y-auto py-6 px-3 space-y-1">
@@ -107,7 +135,7 @@
             </div>
         </aside>
 
-        <main class="ml-64 p-6 min-h-screen">
+        <main class="flex-1 md:ml-64 p-4 md:p-6 min-h-screen transition-all duration-300">
             @if(isset($slot))
                 {{ $slot }}
             @else
