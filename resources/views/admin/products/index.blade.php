@@ -154,111 +154,95 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
         @forelse($products as $p)
             <div
-                class="group bg-white rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/50 hover:shadow-2xl hover:shadow-orange-500/10 hover:border-orange-100 transition-all duration-300 flex flex-col overflow-hidden relative hover:-translate-y-1">
+                class="group relative bg-white rounded-3xl p-[1px] shadow-xl shadow-slate-200/50 hover:shadow-2xl hover:shadow-orange-500/20 hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+                
+                <!-- Gradient Border via Background -->
+                <div class="absolute inset-0 bg-gradient-to-br from-slate-100 via-white to-orange-50 group-hover:from-orange-400 group-hover:to-orange-600 transition-colors duration-500 rounded-3xl"></div>
 
-                <!-- Image & Overlay -->
-                <div
-                    class="relative aspect-[4/3] bg-slate-50 overflow-hidden border-b border-slate-100 group-hover:bg-white transition-colors">
-                    @if($p->main_image_path)
-                        <img src="{{ \Illuminate\Support\Facades\Storage::url($p->main_image_path) }}"
-                            class="w-full h-full object-contain p-8 transition-transform duration-700 group-hover:scale-110 mix-blend-multiply"
-                            loading="lazy" alt="{{ $p->name }}">
-                    @else
-                        <div class="flex items-center justify-center h-full text-slate-200">
-                            <svg class="w-20 h-20 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                </path>
-                            </svg>
-                        </div>
-                    @endif
-
-                    <!-- Stock Badge (Absolute) -->
-                    <div class="absolute top-4 right-4 z-10">
-                        @if($p->stock <= 0)
-                            <span
-                                class="inline-flex items-center px-3 py-1.5 rounded-full bg-slate-900 text-white text-[10px] font-bold uppercase tracking-wide shadow-lg">
-                                Agotado
+                <!-- Card Content -->
+                <div class="relative h-full bg-white rounded-[23px] overflow-hidden flex flex-col">
+                    
+                    <!-- Image Area -->
+                    <div class="relative aspect-[4/3] bg-gradient-to-b from-slate-50 to-white p-6 overflow-hidden">
+                        
+                        <!-- Badges (Absolute) -->
+                        <div class="absolute top-3 left-3 z-20 flex gap-2">
+                            <span class="px-2 py-1 rounded-lg bg-white/80 backdrop-blur border border-slate-200 text-[10px] font-mono text-slate-500 font-bold shadow-sm">
+                                {{ $p->internal_code }}
                             </span>
-                        @elseif($p->stock <= $p->min_stock)
-                            <span
-                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-red-50 text-red-600 border border-red-100 text-[10px] font-bold uppercase tracking-wide shadow-sm">
-                                <span class="relative flex h-2 w-2">
-                                    <span
-                                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                        </div>
+
+                        <div class="absolute top-3 right-3 z-20">
+                            @if($p->stock <= 0)
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-slate-900 text-white text-[10px] font-bold uppercase tracking-wide shadow-md">
+                                    Agotado
                                 </span>
-                                {{ $p->stock }} {{ $p->unit->symbol ?? 'Pz' }}
-                            </span>
+                            @elseif($p->stock <= $p->min_stock)
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-50 text-red-600 border border-red-100 text-[10px] font-bold uppercase tracking-wide shadow-sm animate-pulse">
+                                    {{ $p->stock }} {{ $p->unit->symbol ?? 'Pz' }}
+                                </span>
+                            @else
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100 text-[10px] font-bold uppercase tracking-wide shadow-sm">
+                                    {{ $p->stock }} {{ $p->unit->symbol ?? 'Pz' }}
+                                </span>
+                            @endif
+                        </div>
+
+                        <!-- Main Image -->
+                        @if($p->main_image_path)
+                            <img src="{{ \Illuminate\Support\Facades\Storage::url($p->main_image_path) }}"
+                                class="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-500 ease-out"
+                                loading="lazy" alt="{{ $p->name }}">
                         @else
-                            <span
-                                class="inline-flex items-center px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100 text-[10px] font-bold uppercase tracking-wide shadow-sm">
-                                {{ $p->stock }} {{ $p->unit->symbol ?? 'Pz' }}
-                            </span>
-                        @endif
-                    </div>
-
-                    <!-- Code -->
-                    <div class="absolute top-4 left-4 z-10">
-                        <span
-                            class="px-2.5 py-1 rounded-lg bg-white/90 backdrop-blur border border-slate-200 text-[10px] font-mono text-slate-500 font-bold shadow-sm">
-                            {{ $p->internal_code }}
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Info -->
-                <div class="p-6 flex-1 flex flex-col">
-                    <div class="mb-4">
-                        <div class="flex items-center justify-between mb-3">
-                            <span
-                                class="text-[10px] font-bold text-orange-600 bg-orange-50 px-2.5 py-1 rounded-full border border-orange-100 truncate max-w-[60%]">
-                                {{ $p->category->name ?? 'General' }}
-                            </span>
-                            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider truncate max-w-[35%]">
-                                {{ $p->brand->name ?? 'N/A' }}
-                            </span>
-                        </div>
-                        <h3 class="font-bold text-slate-900 text-base leading-snug line-clamp-2 min-h-[3rem] group-hover:text-orange-600 transition-colors"
-                            title="{{ $p->name }}">
-                            {{ $p->name }}
-                        </h3>
-                    </div>
-
-                    <div class="mt-auto pt-5 border-t border-slate-50 flex items-center justify-between">
-                        <div class="flex flex-col">
-                            <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-0.5">Público</span>
-                            <div class="flex items-baseline gap-1">
-                                <span class="text-xs font-medium text-slate-400">$</span>
-                                <span
-                                    class="text-2xl font-black text-slate-900 tracking-tight">{{ number_format($p->public_price, 2) }}</span>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center gap-2">
-                            <a href="{{ route('admin.products.edit', $p) }}"
-                                class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 text-slate-400 hover:text-white hover:bg-orange-500 transition-all group/edit"
-                                title="Editar">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z">
-                                    </path>
+                            <div class="flex items-center justify-center h-full text-slate-200 group-hover:text-orange-200 transition-colors">
+                                <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                 </svg>
-                            </a>
+                            </div>
+                        @endif
 
-                            <form method="POST" action="{{ route('admin.products.destroy', $p) }}" class="inline-block">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" onclick="return confirm('¿Eliminar producto?')"
-                                    class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 text-slate-400 hover:text-white hover:bg-red-500 transition-all"
-                                    title="Eliminar">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                                        </path>
-                                    </svg>
+                        <!-- Floating Quick Actions (Hover) -->
+                        <div class="absolute bottom-3 left-1/2 -translate-x-1/2 translate-y-12 group-hover:translate-y-0 transition-transform duration-300 z-20 flex items-center gap-2 bg-white/90 backdrop-blur-md p-1.5 rounded-xl shadow-lg border border-orange-100">
+                             <a href="{{ route('admin.products.edit', $p) }}" class="p-2 rounded-lg text-slate-400 hover:text-orange-500 hover:bg-orange-50 transition-colors" title="Editar">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                            </a>
+                            <div class="w-px h-4 bg-slate-200"></div>
+                            <form method="POST" action="{{ route('admin.products.destroy', $p) }}">
+                                @csrf @method('DELETE')
+                                <button type="submit" onclick="return confirm('¿Eliminar?')" class="p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors" title="Eliminar">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                 </button>
                             </form>
+                        </div>
+                    </div>
+
+                    <!-- Info -->
+                    <div class="p-5 flex-1 flex flex-col pt-4">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-[9px] font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded-md border border-orange-100 uppercase tracking-wider truncate">
+                                {{ $p->category->name ?? 'Gral' }}
+                            </span>
+                             <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider truncate">
+                                {{ $p->brand->name ?? '' }}
+                            </span>
+                        </div>
+                        
+                        <h3 class="font-bold text-slate-800 text-sm leading-snug line-clamp-2 min-h-[2.5rem] mb-1 group-hover:text-orange-600 transition-colors">
+                            {{ $p->name }}
+                        </h3>
+
+                        <div class="mt-auto pt-4 border-t border-slate-50 flex items-end justify-between">
+                            <div class="flex flex-col">
+                                <span class="text-[9px] text-slate-400 font-bold uppercase">Precio</span>
+                                <span class="text-xl font-black text-slate-900 tracking-tight leading-none">${{ number_format($p->public_price, 2) }}</span>
+                            </div>
+
+                            <!-- Big Quick Adjust Button -->
+                            <button onclick="Livewire.dispatch('openQuickAdjustment', { productId: {{ $p->id }} })" 
+                                class="w-10 h-10 rounded-xl bg-slate-900 text-white shadow-lg shadow-slate-900/30 flex items-center justify-center hover:bg-emerald-500 hover:scale-110 hover:shadow-emerald-500/40 transition-all duration-300"
+                                title="Ajuste Rápido (+/-)">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -284,4 +268,6 @@
     <div class="mt-8">
         {{ $products->links() }}
     </div>
+
+    <livewire:admin.inventory.quick-adjustment />
 @endsection
