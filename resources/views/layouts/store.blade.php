@@ -209,6 +209,61 @@
                     class="block text-base font-medium text-slate-700 hover:text-orange-600 transition-colors">
                     Ofertas
                 </a>
+
+                <!-- Mobile Auth Section -->
+                <div class="border-t border-gray-100 pt-6 mt-2 space-y-4">
+                    @auth
+                        <div class="px-3 py-3 bg-orange-50/50 rounded-xl border border-orange-100">
+                            <span class="block text-sm font-bold text-slate-800">Hola, {{ auth()->user()->name }}</span>
+                            <span class="text-xs text-slate-500">{{ auth()->user()->email }}</span>
+                        </div>
+
+                        @if(auth()->user()->isAdmin() || auth()->user()->isStaff())
+                            <a href="{{ route('admin.dashboard') }}"
+                                class="flex items-center gap-2 text-base font-medium text-slate-700 hover:text-orange-600 transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z">
+                                    </path>
+                                </svg>
+                                Panel Administrativo
+                            </a>
+                        @endif
+
+                        <a href="#"
+                            class="flex items-center gap-2 text-base font-medium text-slate-700 hover:text-orange-600 transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                            </svg>
+                            Mis Compras
+                        </a>
+
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit"
+                                class="flex items-center gap-2 w-full text-left text-base font-medium text-red-600 hover:bg-red-50 p-2 -ml-2 rounded-lg transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                                    </path>
+                                </svg>
+                                Cerrar Sesión
+                            </button>
+                        </form>
+                    @else
+                        <div class="grid grid-cols-2 gap-3">
+                            <a href="{{ route('login') }}"
+                                class="flex items-center justify-center py-3 rounded-xl bg-white border border-gray-200 text-slate-700 font-bold hover:bg-gray-50 transition-colors shadow-sm">
+                                Entrar
+                            </a>
+                            <a href="{{ route('register') }}"
+                                class="flex items-center justify-center py-3 rounded-xl bg-orange-600 text-white font-bold hover:bg-orange-700 shadow-lg shadow-orange-600/20 transition-colors">
+                                Registrarse
+                            </a>
+                        </div>
+                    @endauth
+                </div>
             </div>
         </div>
 
