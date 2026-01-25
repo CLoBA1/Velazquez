@@ -1,0 +1,22 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Brand extends Model
+{
+    protected $fillable = ['name', 'slug', 'logo_path'];
+
+    public function getLogoUrlAttribute()
+    {
+        return $this->logo_path
+            ? asset('storage/' . $this->logo_path)
+            : null;
+    }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
+}
