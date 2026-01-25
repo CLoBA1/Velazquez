@@ -26,6 +26,27 @@ class StoreController extends Controller
             $query->where('category_id', $request->input('category'));
         }
 
+        // Sorting
+        if ($request->has('sort')) {
+            switch ($request->input('sort')) {
+                case 'price_asc':
+                    $query->orderBy('public_price', 'asc');
+                    break;
+                case 'price_desc':
+                    $query->orderBy('public_price', 'desc');
+                    break;
+                case 'newest':
+                    $query->latest();
+                    break;
+                default:
+                    // Recommended logic (can be random or default)
+                    break;
+            }
+        } else {
+            // Default sort (e.g. latest)
+            $query->latest();
+        }
+
         $products = $query->paginate(100);
         $categories = Category::all();
 

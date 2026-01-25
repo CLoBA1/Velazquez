@@ -162,16 +162,50 @@
 <div id="catalogo" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
     
     <!-- 1. Categories Top Bar (Horizontal Scroll Pills) -->
-    <div class="mb-12 animate-fade-in delay-100">
+    <div class="mb-12 animate-fade-in delay-100" x-data="{
+        scrollContainer: null,
+        init() {
+            this.scrollContainer = this.$refs.container;
+        },
+        scrollLeft() {
+            this.scrollContainer.scrollBy({ left: -200, behavior: 'smooth' });
+        },
+        scrollRight() {
+            this.scrollContainer.scrollBy({ left: 200, behavior: 'smooth' });
+        }
+    }">
         <div class="flex items-center justify-between mb-4">
             <h3 class="font-bold text-slate-900 text-lg flex items-center gap-2">
                 <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
                 Departamentos
             </h3>
-            <!-- Optional: Controls for scrolling if needed, or just let native scroll handle it -->
+            <!-- Scroll Controls -->
+            <div class="hidden md:flex gap-2">
+                <button @click="scrollLeft()" class="p-2 rounded-full bg-white border border-gray-200 text-slate-500 hover:text-orange-500 hover:border-orange-200 transition-colors shadow-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                <button @click="scrollRight()" class="p-2 rounded-full bg-white border border-gray-200 text-slate-500 hover:text-orange-500 hover:border-orange-200 transition-colors shadow-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+            </div>
         </div>
 
-        <div class="flex overflow-x-auto pb-4 gap-3 hide-scrollbar snap-x snap-mandatory">
+        <div x-ref="container" 
+             class="flex overflow-x-auto pb-4 gap-3 hide-scrollbar snap-x snap-mandatory cursor-grab active:cursor-grabbing"
+             @mousedown="
+                let isDown = true;
+                let startX = $event.pageX - $el.offsetLeft;
+                let scrollLeft = $el.scrollLeft;
+                $el.addEventListener('mouseup', () => isDown = false);
+                $el.addEventListener('mouseleave', () => isDown = false);
+                $el.addEventListener('mousemove', (e) => {
+                    if(!isDown) return;
+                    e.preventDefault();
+                    const x = e.pageX - $el.offsetLeft;
+                    const walk = (x - startX) * 2; // scroll-fast
+                    $el.scrollLeft = scrollLeft - walk;
+                });
+             ">
             <!-- 'All' Pill -->
             <a href="{{ route('store.index') }}" 
                class="flex-shrink-0 snap-start px-6 py-3 rounded-full font-bold transition-all duration-200 border border-transparent whitespace-nowrap {{ !request('category') ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20' : 'bg-white text-slate-600 border-gray-200 hover:border-orange-200 hover:text-orange-600' }}">
@@ -198,10 +232,10 @@
             
             <div class="flex items-center gap-3 w-full sm:w-auto">
                 <select onchange="window.location.href=this.value" class="w-full sm:w-48 appearance-none pl-4 pr-10 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-medium text-slate-700 hover:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 cursor-pointer shadow-sm transition-all">
-                    <option value="#">Recomendados</option>
-                    <option value="#">Menor Precio</option>
-                    <option value="#">Mayor Precio</option>
-                    <option value="#">Nuevos</option>
+                    <option value="{{ route('store.index', array_merge(request()->except('sort'), ['sort' => 'recommended'])) }}" {{ request('sort') == 'recommended' ? 'selected' : '' }}>Recomendados</option>
+                    <option value="{{ route('store.index', array_merge(request()->except('sort'), ['sort' => 'price_asc'])) }}" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Menor Precio</option>
+                    <option value="{{ route('store.index', array_merge(request()->except('sort'), ['sort' => 'price_desc'])) }}" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Mayor Precio</option>
+                    <option value="{{ route('store.index', array_merge(request()->except('sort'), ['sort' => 'newest'])) }}" {{ request('sort') == 'newest' ? 'selected' : '' }}>Nuevos</option>
                 </select>
             </div>
         </div>
