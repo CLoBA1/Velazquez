@@ -50,24 +50,26 @@ class StoreController extends Controller
         $products = $query->paginate(100);
         $categories = Category::all();
 
-        // 1. Featured Offer (Highest Discount)
-        $featured_offer = Product::where('stock', '>', 0)
+        // 1. Featured Offers (Top 5 Highest Discount)
+        $featured_offers = Product::with('category')->where('stock', '>', 0)
             ->whereNotNull('sale_price')
             ->whereColumn('sale_price', '<', 'public_price')
             ->orderByRaw('(public_price - sale_price) DESC')
-            ->first();
+            ->take(5)
+            ->get();
 
-        // 2. New Arrival (Latest Created)
-        $new_arrival = Product::where('stock', '>', 0)
+        // 2. New Arrivals (Latest 3)
+        $new_arrivals = Product::where('stock', '>', 0)
             ->latest()
-            ->first();
+            ->take(3)
+            ->get();
 
         // 3. Category Highlight (Random category with products)
         $category_highlight = Category::whereHas('products', function ($q) {
             $q->where('stock', '>', 0);
         })->inRandomOrder()->first();
 
-        return view('store.index', compact('products', 'categories', 'featured_offer', 'new_arrival', 'category_highlight'));
+        return view('store.index', compact('products', 'categories', 'featured_offers', 'new_arrivals', 'category_highlight'));
     }
 
     public function cart()
