@@ -13,19 +13,19 @@
                 </svg>
             </div>
 
-            <h1 class="text-4xl font-black text-slate-900 mb-4 tracking-tight animate-fade-in-up delay-100">¡Gracias por tu
+            <h1 class="text-4xl font-black text-dark mb-4 tracking-tight animate-fade-in-up delay-100">¡Gracias por tu
                 Compra!</h1>
             <p class="text-lg text-slate-600 mb-8 animate-fade-in-up delay-200">Tu pedido ha sido registrado exitosamente.
                 Nos pondremos en contacto contigo pronto para coordinar la entrega.</p>
 
             <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm mb-10 animate-fade-in-up delay-300">
-                <p class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-1">Número de Pedido</p>
-                <p class="text-3xl font-black text-slate-900 font-mono">#{{ str_pad($sale->id, 6, '0', STR_PAD_LEFT) }}</p>
+                <p class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-1">Número de Pedido</p>
+                <p class="text-3xl font-black text-dark font-mono">#{{ str_pad($sale->id, 6, '0', STR_PAD_LEFT) }}</p>
             </div>
 
             <div class="animate-fade-in-up delay-300">
                 <a href="{{ route('store.index') }}"
-                    class="inline-flex items-center gap-2 bg-slate-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-slate-800 transition-colors shadow-xl shadow-slate-900/20">
+                    class="inline-flex items-center gap-2 bg-primary text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-xl shadow-blue-500/20">
                     Volver a la Tienda
                 </a>
             </div>

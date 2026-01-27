@@ -3,8 +3,8 @@
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
     <div class="text-center mb-6">
-        <h2 class="text-2xl font-black text-slate-900 tracking-tight">Bienvenido de nuevo</h2>
-        <p class="text-slate-500 text-sm">Ingresa tus credenciales para acceder</p>
+        <h2 class="text-2xl font-black text-dark tracking-tight">Bienvenido de nuevo</h2>
+        <p class="text-gray-500 text-sm">Ingresa tus credenciales para acceder</p>
     </div>
 
     <form method="POST" action="{{ route('login') }}" class="space-y-5">
@@ -12,11 +12,11 @@
 
         <!-- Login (Username or Email) -->
         <div>
-            <label for="login"
-                class="block font-bold text-xs text-slate-500 uppercase tracking-widest mb-1 pl-1">Usuario o
+            <label for="login" class="block font-bold text-xs text-gray-500 uppercase tracking-widest mb-1 pl-1">Usuario
+                o
                 Email</label>
             <input id="login"
-                class="block w-full bg-slate-50 border border-gray-200 rounded-xl px-4 py-3 text-slate-900 font-medium focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all outline-none"
+                class="block w-full bg-light border border-gray-200 rounded-xl px-4 py-3 text-dark font-medium focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none"
                 type="text" name="login" :value="old('login')" required autofocus
                 placeholder="ej. JuanPerez o juan@correo.com" />
             <x-input-error :messages="$errors->get('login')" class="mt-2" />
@@ -25,15 +25,15 @@
         <!-- Password -->
         <div x-data="{ show: false }">
             <label for="password"
-                class="block font-bold text-xs text-slate-500 uppercase tracking-widest mb-1 pl-1">Contraseña</label>
+                class="block font-bold text-xs text-gray-500 uppercase tracking-widest mb-1 pl-1">Contraseña</label>
             <div class="relative">
                 <input id="password"
-                    class="block w-full bg-slate-50 border border-gray-200 rounded-xl px-4 py-3 text-slate-900 font-medium focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all outline-none pr-12"
+                    class="block w-full bg-light border border-gray-200 rounded-xl px-4 py-3 text-dark font-medium focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none pr-12"
                     :type="show ? 'text' : 'password'" name="password" required autocomplete="current-password"
                     placeholder="••••••••" />
 
                 <button type="button" @click="show = !show"
-                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-orange-500 transition-colors focus:outline-none">
+                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-primary transition-colors focus:outline-none">
                     <!-- Eye Icon -->
                     <svg x-show="!show" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -54,7 +54,7 @@
 
         <div class="flex items-center justify-end">
             @if (Route::has('password.request'))
-                <a class="text-sm text-slate-500 hover:text-orange-600 font-bold transition-colors"
+                <a class="text-sm text-gray-500 hover:text-primary font-bold transition-colors"
                     href="{{ route('password.request') }}">
                     ¿Olvidaste tu contraseña?
                 </a>
@@ -62,15 +62,15 @@
         </div>
 
         <button
-            class="w-full bg-slate-900 hover:bg-orange-600 text-white font-bold py-4 rounded-xl shadow-xl shadow-slate-900/20 hover:shadow-orange-600/30 transition-all transform hover:-translate-y-1 duration-300">
+            class="w-full bg-primary hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-xl shadow-blue-500/20 hover:shadow-blue-600/30 transition-all transform hover:-translate-y-1 duration-300">
             Iniciar Sesión
         </button>
 
         <div class="text-center mt-6">
-            <p class="text-sm text-slate-500">
+            <p class="text-sm text-gray-500">
                 ¿No tienes cuenta?
                 <a href="{{ route('register') }}"
-                    class="font-bold text-orange-600 hover:text-orange-700 hover:underline">Regístrate aquí</a>
+                    class="font-bold text-primary hover:text-blue-700 hover:underline">Regístrate aquí</a>
             </p>
         </div>
     </form>

@@ -1,7 +1,7 @@
 <div class="max-w-3xl mx-auto space-y-6">
     <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Registrar Nuevo Ajuste</h1>
+            <h1 class="text-2xl font-bold text-dark tracking-tight">Registrar Nuevo Ajuste</h1>
             <p class="text-slate-500 text-sm mt-0.5">Realiza movimientos manuales de inventario.</p>
         </div>
         <a href="{{ route('admin.inventory.movements') }}"
@@ -28,7 +28,7 @@
                         </svg>
                     </div>
                     <input type="text" wire:model.live.debounce.300ms="search"
-                        class="pl-10 block w-full rounded-xl border-slate-200 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:bg-slate-50 disabled:text-slate-500 transition-all shadow-sm"
+                        class="pl-10 block w-full rounded-xl border-slate-200 py-3 text-sm focus:border-primary focus:ring-primary disabled:bg-slate-50 disabled:text-slate-500 transition-all shadow-sm"
                         placeholder="Escribe el nombre, código o SKU..." {{ $productId ? 'readonly' : '' }}>
 
                     @if($productId)
@@ -51,8 +51,9 @@
                                     wire:click="selectProduct({{ $product->id }})">
                                     <div class="flex items-center justify-between">
                                         <div>
-                                            <div class="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
-                                                {{ $product->name }}</div>
+                                            <div class="font-bold text-dark group-hover:text-primary transition-colors">
+                                                {{ $product->name }}
+                                            </div>
                                             <div class="text-xs text-slate-500 font-mono mt-0.5">
                                                 Code: {{ $product->internal_code }}
                                                 @if($product->supplier_sku) | SKU: {{ $product->supplier_sku }} @endif
@@ -85,7 +86,7 @@
                             class="text-red-500">*</span></label>
                     <div class="relative">
                         <select wire:model="type"
-                            class="block w-full rounded-xl border-slate-200 py-3 pl-3 pr-10 text-sm focus:border-blue-500 focus:ring-blue-500 transition-all shadow-sm">
+                            class="block w-full rounded-xl border-slate-200 py-3 pl-3 pr-10 text-sm focus:border-primary focus:ring-primary transition-all shadow-sm">
                             <option value="adjustment_add" class="font-bold">➕ Ajuste de Entrada (Positivo)</option>
                             <option value="adjustment_sub" class="font-bold">➖ Ajuste de Salida (Negativo)</option>
                             <option disabled class="text-slate-300">──────────</option>
@@ -103,7 +104,7 @@
                             class="text-red-500">*</span></label>
                     <div class="relative">
                         <input type="number" step="0.01" wire:model="quantity"
-                            class="block w-full rounded-xl border-slate-200 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 transition-all shadow-sm font-mono font-bold"
+                            class="block w-full rounded-xl border-slate-200 py-3 text-sm focus:border-primary focus:ring-primary transition-all shadow-sm font-mono font-bold"
                             placeholder="0.00">
                     </div>
                     @error('quantity') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
@@ -114,7 +115,7 @@
             <div>
                 <label class="block text-sm font-bold text-slate-700 mb-2">Notas / Razón</label>
                 <textarea wire:model="notes" rows="3"
-                    class="block w-full rounded-xl border-slate-200 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 transition-all shadow-sm"
+                    class="block w-full rounded-xl border-slate-200 py-3 text-sm focus:border-primary focus:ring-primary transition-all shadow-sm"
                     placeholder="Describe por qué se realiza este ajuste (ej. daño en almacén, conteo cíclico incorrecto, etc.)"></textarea>
                 @error('notes') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
@@ -125,7 +126,7 @@
                     Cancelar
                 </a>
                 <button type="submit"
-                    class="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-6 py-2.5 text-sm font-bold text-white hover:bg-slate-800 shadow-lg shadow-slate-900/20 transition-all hover:-translate-y-0.5">
+                    class="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-sm font-bold text-white hover:bg-blue-700 shadow-lg shadow-blue-500/20 transition-all hover:-translate-y-0.5">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                     </svg>

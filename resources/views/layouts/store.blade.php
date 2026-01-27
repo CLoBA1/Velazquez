@@ -76,13 +76,13 @@
 </head>
 
 <body
-    class="bg-gray-50 text-slate-900 antialiased flex flex-col min-h-screen overflow-x-hidden selection:bg-orange-100 selection:text-orange-900">
+    class="bg-light text-dark antialiased flex flex-col min-h-screen overflow-x-hidden selection:bg-secondary selection:text-dark">
 
     <!-- Navbar -->
     <nav x-data="{ open: false, searchOpen: false, scrolled: false }"
         @scroll.window="scrolled = (window.pageYOffset > 20)"
         class="sticky top-0 z-40 transition-all duration-300 w-full"
-        :class="{ 'bg-white/95 backdrop-blur shadow-sm border-b border-gray-100': scrolled, 'bg-white': !scrolled }">
+        :class="{ 'bg-light/95 backdrop-blur shadow-sm border-b border-gray-100': scrolled, 'bg-light': !scrolled }">
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
@@ -99,16 +99,16 @@
 
                     <a href="{{ route('store.index') }}" class="flex items-center gap-2 group">
                         <div
-                            class="bg-slate-900 text-white p-2 rounded-xl group-hover:scale-110 transition-transform duration-300 shadow-md">
-                            <svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            class="bg-dark text-white p-2 rounded-xl group-hover:scale-110 transition-transform duration-300 shadow-md">
+                            <svg class="w-6 h-6 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                                     d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                             </svg>
                         </div>
                         <div class="flex flex-col">
-                            <span class="font-bold text-lg tracking-tight text-slate-900 leading-tight">Ferretería
+                            <span class="font-bold text-lg tracking-tight text-dark leading-tight">Ferretería
                                 Velázquez</span>
-                            <span class="text-[9px] uppercase tracking-wide text-slate-500 font-medium">Materiales para
+                            <span class="text-[9px] uppercase tracking-wide text-gray-500 font-medium">Materiales para
                                 Construcción</span>
                         </div>
                     </a>
@@ -117,17 +117,17 @@
                 <!-- Desktop Nav -->
                 <div class="hidden md:flex items-center gap-8">
                     <a href="{{ route('store.index') }}"
-                        class="text-sm font-semibold {{ request()->routeIs('store.index') ? 'text-orange-600' : 'text-slate-600 hover:text-orange-600' }} transition-colors">Catálogo</a>
+                        class="text-sm font-semibold {{ request()->routeIs('store.index') ? 'text-primary' : 'text-gray-600 hover:text-primary' }} transition-colors">Catálogo</a>
                     <a href="{{ route('store.brands.index') }}"
-                        class="text-sm font-semibold {{ request()->routeIs('store.brands.*') ? 'text-orange-600' : 'text-slate-600 hover:text-orange-600' }} transition-colors">Marcas</a>
+                        class="text-sm font-semibold {{ request()->routeIs('store.brands.*') ? 'text-primary' : 'text-gray-600 hover:text-primary' }} transition-colors">Marcas</a>
                     <a href="{{ route('store.offers.index') }}"
-                        class="text-sm font-semibold {{ request()->routeIs('store.offers.*') ? 'text-orange-600' : 'text-slate-600 hover:text-orange-600' }} transition-colors">Ofertas</a>
+                        class="text-sm font-semibold {{ request()->routeIs('store.offers.*') ? 'text-primary' : 'text-gray-600 hover:text-primary' }} transition-colors">Ofertas</a>
                 </div>
 
                 <!-- Right Actions -->
                 <div class="flex items-center gap-3">
                     <button @click="searchOpen = !searchOpen"
-                        class="p-2.5 text-slate-600 hover:text-orange-600 bg-gray-50 hover:bg-orange-50 rounded-full transition-all">
+                        class="p-2.5 text-gray-600 hover:text-primary bg-gray-50 hover:bg-blue-50 rounded-full transition-all">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -137,7 +137,7 @@
                     @auth
                         <div x-data="{ openProfile: false }" class="relative">
                             <button @click="openProfile = !openProfile"
-                                class="hidden sm:flex items-center gap-2 text-sm font-bold text-slate-700 hover:text-orange-600 transition-colors px-4 py-2 bg-gray-50 hover:bg-orange-50 rounded-full border border-gray-100 hover:border-orange-100">
+                                class="hidden sm:flex items-center gap-2 text-sm font-bold text-gray-700 hover:text-primary transition-colors px-4 py-2 bg-gray-50 hover:bg-blue-50 rounded-full border border-gray-100 hover:border-blue-100">
                                 <span>{{ auth()->user()->name }}</span>
                                 <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -151,14 +151,14 @@
 
                                 @if(auth()->user()->isAdmin() || auth()->user()->isStaff())
                                     <a href="{{ route('admin.dashboard') }}"
-                                        class="block px-4 py-2 text-sm text-slate-700 hover:bg-orange-50 hover:text-orange-600">
+                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-primary">
                                         Admin Dashboard
                                     </a>
                                 @endif
 
                                 <!-- Aquí iría 'Mis Pedidos', etc para clientes -->
                                 <a href="#"
-                                    class="block px-4 py-2 text-sm text-slate-700 hover:bg-orange-50 hover:text-orange-600">Mis
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-primary">Mis
                                     Compras</a>
 
                                 <form method="POST" action="{{ route('logout') }}">
@@ -173,11 +173,11 @@
                         </div>
                     @else
                         <a href="{{ route('login') }}"
-                            class="hidden sm:flex items-center gap-2 text-sm font-bold text-slate-700 hover:text-orange-600 transition-colors px-4 py-2 bg-gray-50 hover:bg-orange-50 rounded-full border border-gray-100 hover:border-orange-100">
+                            class="hidden sm:flex items-center gap-2 text-sm font-bold text-gray-700 hover:text-primary transition-colors px-4 py-2 bg-gray-50 hover:bg-blue-50 rounded-full border border-gray-100 hover:border-blue-100">
                             <span>Iniciar Sesión</span>
                         </a>
                         <a href="{{ route('register') }}"
-                            class="hidden sm:flex items-center gap-2 text-sm font-bold text-white bg-orange-600 hover:bg-orange-700 transition-colors px-4 py-2 rounded-full shadow-lg shadow-orange-600/20">
+                            class="hidden sm:flex items-center gap-2 text-sm font-bold text-white bg-primary hover:bg-blue-800 transition-colors px-4 py-2 rounded-full shadow-lg shadow-blue-900/20">
                             <span>Registro</span>
                         </a>
                     @endauth
@@ -213,14 +213,14 @@
                 <!-- Mobile Auth Section -->
                 <div class="border-t border-gray-100 pt-6 mt-2 space-y-4">
                     @auth
-                        <div class="px-3 py-3 bg-orange-50/50 rounded-xl border border-orange-100">
-                            <span class="block text-sm font-bold text-slate-800">Hola, {{ auth()->user()->name }}</span>
-                            <span class="text-xs text-slate-500">{{ auth()->user()->email }}</span>
+                        <div class="px-3 py-3 bg-blue-50/50 rounded-xl border border-blue-100">
+                            <span class="block text-sm font-bold text-gray-800">Hola, {{ auth()->user()->name }}</span>
+                            <span class="text-xs text-gray-500">{{ auth()->user()->email }}</span>
                         </div>
 
                         @if(auth()->user()->isAdmin() || auth()->user()->isStaff())
                             <a href="{{ route('admin.dashboard') }}"
-                                class="flex items-center gap-2 text-base font-medium text-slate-700 hover:text-orange-600 transition-colors">
+                                class="flex items-center gap-2 text-base font-medium text-gray-700 hover:text-primary transition-colors">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z">
@@ -231,7 +231,7 @@
                         @endif
 
                         <a href="#"
-                            class="flex items-center gap-2 text-base font-medium text-slate-700 hover:text-orange-600 transition-colors">
+                            class="flex items-center gap-2 text-base font-medium text-gray-700 hover:text-primary transition-colors">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
@@ -242,7 +242,7 @@
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit"
-                                class="flex items-center gap-2 w-full text-left text-base font-medium text-red-600 hover:bg-red-50 p-2 -ml-2 rounded-lg transition-colors">
+                                class="flex items-center gap-2 w-full text-left text-base font-medium text-accent hover:bg-red-50 p-2 -ml-2 rounded-lg transition-colors">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
@@ -254,11 +254,11 @@
                     @else
                         <div class="grid grid-cols-2 gap-3">
                             <a href="{{ route('login') }}"
-                                class="flex items-center justify-center py-3 rounded-xl bg-white border border-gray-200 text-slate-700 font-bold hover:bg-gray-50 transition-colors shadow-sm">
+                                class="flex items-center justify-center py-3 rounded-xl bg-white border border-gray-200 text-gray-700 font-bold hover:bg-gray-50 transition-colors shadow-sm">
                                 Entrar
                             </a>
                             <a href="{{ route('register') }}"
-                                class="flex items-center justify-center py-3 rounded-xl bg-orange-600 text-white font-bold hover:bg-orange-700 shadow-lg shadow-orange-600/20 transition-colors">
+                                class="flex items-center justify-center py-3 rounded-xl bg-primary text-white font-bold hover:bg-blue-800 shadow-lg shadow-blue-900/20 transition-colors">
                                 Registrarse
                             </a>
                         </div>
@@ -272,9 +272,9 @@
             class="absolute top-full left-0 w-full bg-white border-y border-gray-100 shadow-xl py-6 px-4 z-40">
             <form action="{{ route('store.index') }}" method="GET" class="max-w-4xl mx-auto relative group">
                 <input type="text" name="search" placeholder="Buscar productos..."
-                    class="w-full pl-6 pr-14 py-4 bg-gray-50 border border-gray-200 rounded-2xl text-lg focus:ring-2 focus:ring-orange-500 transition-all outline-none">
+                    class="w-full pl-6 pr-14 py-4 bg-gray-50 border border-gray-200 rounded-2xl text-lg focus:ring-2 focus:ring-primary transition-all outline-none">
                 <button type="submit"
-                    class="absolute right-3 top-3 p-2 bg-orange-500 text-white rounded-xl hover:bg-orange-600"><svg
+                    class="absolute right-3 top-3 p-2 bg-primary text-white rounded-xl hover:bg-blue-800"><svg
                         class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -289,7 +289,7 @@
     </main>
 
     <!-- Corrected Footer -->
-    <footer class="bg-black text-white pt-16 pb-8 border-t border-slate-900 mt-auto w-full">
+    <footer class="bg-dark text-white pt-16 pb-8 border-t border-gray-800 mt-auto w-full">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
             <!-- Grid Layout Fix -->
@@ -298,36 +298,36 @@
                 <!-- Brand -->
                 <div class="space-y-4">
                     <div class="flex items-center gap-2">
-                        <div class="bg-white/10 p-2 rounded-lg"><svg class="w-6 h-6 text-orange-500" fill="none"
+                        <div class="bg-white/10 p-2 rounded-lg"><svg class="w-6 h-6 text-secondary" fill="none"
                                 stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                             </svg></div>
                         <div class="flex flex-col">
                             <span class="font-bold text-lg leading-none">Ferretería Velázquez</span>
-                            <span class="text-[10px] uppercase text-slate-400">Materiales para Construcción</span>
+                            <span class="text-[10px] uppercase text-gray-400">Materiales para Construcción</span>
                         </div>
                     </div>
-                    <p class="text-slate-400 text-sm leading-relaxed">Calidad y confianza en cada herramienta.</p>
+                    <p class="text-gray-400 text-sm leading-relaxed">Calidad y confianza en cada herramienta.</p>
                 </div>
 
                 <!-- Links 1 -->
                 <div>
                     <h3 class="font-bold text-sm uppercase tracking-wider mb-4 opacity-80">Tienda</h3>
-                    <ul class="space-y-3 text-sm text-slate-400">
-                        <li><a href="#" class="hover:text-orange-400 transition-colors">Catálogo Completo</a></li>
-                        <li><a href="#" class="hover:text-orange-400 transition-colors">Ofertas del Mes</a></li>
-                        <li><a href="#" class="hover:text-orange-400 transition-colors">Nuevos Productos</a></li>
+                    <ul class="space-y-3 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-secondary transition-colors">Catálogo Completo</a></li>
+                        <li><a href="#" class="hover:text-secondary transition-colors">Ofertas del Mes</a></li>
+                        <li><a href="#" class="hover:text-secondary transition-colors">Nuevos Productos</a></li>
                     </ul>
                 </div>
 
                 <!-- Links 2 -->
                 <div>
                     <h3 class="font-bold text-sm uppercase tracking-wider mb-4 opacity-80">Ayuda</h3>
-                    <ul class="space-y-3 text-sm text-slate-400">
-                        <li><a href="#" class="hover:text-orange-400 transition-colors">Envíos</a></li>
-                        <li><a href="#" class="hover:text-orange-400 transition-colors">Devoluciones</a></li>
-                        <li><a href="#" class="hover:text-orange-400 transition-colors">Contacto</a></li>
+                    <ul class="space-y-3 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-secondary transition-colors">Envíos</a></li>
+                        <li><a href="#" class="hover:text-secondary transition-colors">Devoluciones</a></li>
+                        <li><a href="#" class="hover:text-secondary transition-colors">Contacto</a></li>
                     </ul>
                 </div>
 
@@ -336,9 +336,9 @@
                     <h3 class="font-bold text-sm uppercase tracking-wider mb-4 opacity-80">Suscríbete</h3>
                     <form class="flex flex-col gap-2">
                         <input type="email" placeholder="Email"
-                            class="bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white w-full focus:ring-1 focus:ring-orange-500">
+                            class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white w-full focus:ring-1 focus:ring-primary">
                         <button
-                            class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 rounded-lg text-sm transition-colors">Enviar</button>
+                            class="bg-primary hover:bg-blue-600 text-white font-bold py-2 rounded-lg text-sm transition-colors">Enviar</button>
                     </form>
                 </div>
             </div>

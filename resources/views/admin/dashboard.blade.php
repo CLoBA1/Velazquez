@@ -23,7 +23,7 @@
 
     <div class="space-y-8">
         {{-- HERO / HEADER (Standardized) --}}
-        <div class="relative bg-slate-900 rounded-3xl p-8 overflow-hidden shadow-2xl">
+        <div class="relative bg-dark rounded-3xl p-8 overflow-hidden shadow-2xl">
             <!-- Background Decor -->
             <div class="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-slate-800 rounded-full blur-3xl opacity-50"></div>
             <div class="absolute bottom-0 left-0 -ml-16 -mb-16 w-64 h-64 bg-orange-900 rounded-full blur-3xl opacity-30"></div>
@@ -31,7 +31,7 @@
             <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
                 <div>
                     <h1 class="text-3xl font-black text-white tracking-tight flex items-center gap-3">
-                        <span class="bg-gradient-to-br from-orange-400 to-orange-600 w-3 h-8 rounded-full shadow-lg shadow-orange-500/50"></span>
+                        <span class="bg-gradient-to-br from-secondary to-yellow-600 w-3 h-8 rounded-full shadow-lg shadow-yellow-500/50"></span>
                         Dashboard
                     </h1>
                     <p class="text-slate-400 mt-2 text-lg font-medium pl-6">Resumen general y accesos rápidos.</p>
@@ -43,7 +43,7 @@
                         Ver Productos
                     </a>
                     <a href="{{ route('admin.products.create') }}"
-                       class="inline-flex items-center gap-2 rounded-xl bg-orange-500 px-5 py-3 text-sm font-bold text-white hover:bg-orange-600 shadow-xl shadow-orange-900/40 transition-all hover:-translate-y-1 hover:shadow-orange-900/60">
+                       class="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-bold text-white hover:bg-blue-700 shadow-xl shadow-blue-900/40 transition-all hover:-translate-y-1 hover:shadow-blue-900/60">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                         Nuevo Producto
                     </a>
@@ -92,7 +92,7 @@
                             {{ $kpis['low_stock'] }}
                         </p>
                     </div>
-                    <div class="rounded-2xl bg-orange-50 p-3.5 text-orange-600">
+                    <div class="rounded-2xl bg-yellow-50 p-3.5 text-yellow-600">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" /></svg>
                     </div>
                 </div>
@@ -130,7 +130,7 @@
         <div class="reveal grid grid-cols-1 lg:grid-cols-3 gap-6" style="animation-delay: 240ms;">
             <div class="lg:col-span-3 rounded-[2rem] border border-slate-100 bg-white p-8 shadow-xl shadow-slate-200/50">
                 <h3 class="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
-                    <span class="w-1 h-5 bg-orange-500 rounded-full"></span>
+                    <span class="w-1 h-5 bg-secondary rounded-full"></span>
                     Movimientos últimos 7 días
                 </h3>
                 <div id="movementsChart" class="w-full h-64"></div>
@@ -154,7 +154,7 @@
                         fontFamily: 'inherit'
                     },
                     dataLabels: { enabled: false },
-                    stroke: { curve: 'smooth', width: 3, colors: ['#f97316'] }, // Orange-500
+                    stroke: { curve: 'smooth', width: 3, colors: ['#FFD700'] }, // Regal Gold
                     xaxis: {
                         categories: @json($chartLabels),
                         axisBorder: { show: false },
@@ -165,9 +165,9 @@
                     fill: {
                         type: 'gradient',
                         gradient: { shadeIntensity: 1, opacityFrom: 0.5, opacityTo: 0.1, stops: [0, 90, 100], colorStops: [
-                            { offset: 0, color: '#f97316', opacity: 0.5 },
-                            { offset: 100, color: '#f97316', opacity: 0.05 },
-                        ]} // Orange gradient
+                            { offset: 0, color: '#FFD700', opacity: 0.5 },
+                            { offset: 100, color: '#FFD700', opacity: 0.05 },
+                        ]} // Gold gradient
                     },
                     theme: { monochrome: { enabled: false } }, // Custom colors
                     grid: { show: true, borderColor: '#f1f5f9', strokeDashArray: 4, padding: { top: 0, right: 0, bottom: 0, left: 10 } }
@@ -186,7 +186,7 @@
             </div>
 
             <a href="{{ route('admin.products.index') }}"
-               class="text-sm font-bold text-orange-600 hover:text-orange-700 hover:underline">
+               class="text-sm font-bold text-info hover:text-blue-800 hover:underline">
                 Ver todos
             </a>
         </div>
@@ -249,7 +249,7 @@
                         {{-- Content --}}
                         <div class="flex flex-1 flex-col p-5">
                             <div class="mb-4">
-                                <h3 class="text-sm font-bold text-slate-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug" title="{{ $p->name }}">
+                                <h3 class="text-sm font-bold text-slate-900 group-hover:text-secondary transition-colors line-clamp-2 leading-snug" title="{{ $p->name }}">
                                     {{ $p->name }}
                                 </h3>
                                 <div class="mt-2 flex items-center gap-2 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
@@ -265,7 +265,7 @@
                                     </p>
                                 </div>
                                 
-                                <a href="{{ route('admin.products.edit', $p) }}" class="rounded-xl p-2 bg-slate-50 text-slate-400 hover:bg-orange-500 hover:text-white transition-colors" title="Editar Producto">
+                                <a href="{{ route('admin.products.edit', $p) }}" class="rounded-xl p-2 bg-slate-50 text-slate-400 hover:bg-primary hover:text-white transition-colors" title="Editar Producto">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                                 </a>
                             </div>

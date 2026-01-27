@@ -4,10 +4,10 @@
 
 @section('content')
     <div class="bg-white min-h-screen pb-20" x-data="{ 
-                activeImage: '{{ $product->image_url }}', 
-                qty: 1,
-                zoom: false
-            }">
+                    activeImage: '{{ $product->image_url }}', 
+                    qty: 1,
+                    zoom: false
+                }">
 
         <!-- Breadcrumb (Modern) -->
         <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -72,7 +72,7 @@
                             <!-- Main Image Thumb -->
                             <button @click="activeImage = '{{ $product->image_url }}'"
                                 class="w-20 h-20 rounded-xl border-2 transition-all p-2 bg-white flex items-center justify-center"
-                                :class="activeImage === '{{ $product->image_url }}' ? 'border-orange-500 ring-2 ring-orange-100' : 'border-gray-100 hover:border-gray-300'">
+                                :class="activeImage === '{{ $product->image_url }}' ? 'border-primary ring-2 ring-blue-100' : 'border-gray-100 hover:border-gray-300'">
                                 <img src="{{ $product->image_url }}" class="w-full h-full object-contain pointer-events-none">
                             </button>
 
@@ -87,10 +87,10 @@
 
                     <!-- Header -->
                     <div>
-                        <h2 class="text-sm font-bold text-orange-500 uppercase tracking-widest mb-2">
+                        <h2 class="text-sm font-bold text-secondary uppercase tracking-widest mb-2">
                             {{ $product->brand ? $product->brand->name : 'FERRETERÍA PREMIUM' }}
                         </h2>
-                        <h1 class="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight mb-4">
+                        <h1 class="text-4xl sm:text-5xl font-extrabold text-dark tracking-tight leading-tight mb-4">
                             {{ $product->name }}
                         </h1>
 
@@ -135,13 +135,13 @@
                                     <span class="text-sm text-gray-500 line-through">USD
                                         ${{ number_format($product->public_price * 1.1, 2) }}</span>
                                     <span
-                                        class="text-4xl font-extrabold text-orange-600">${{ number_format($product->public_price, 2) }}</span>
+                                        class="text-4xl font-extrabold text-accent">${{ number_format($product->public_price, 2) }}</span>
                                 </div>
                                 <span class="bg-red-100 text-red-600 text-xs font-bold px-2 py-1 rounded-lg mb-2">-10%
                                     OFF</span>
                             @else
                                 <span
-                                    class="text-4xl font-extrabold text-slate-900">${{ number_format($product->public_price, 2) }}</span>
+                                    class="text-4xl font-extrabold text-dark">${{ number_format($product->public_price, 2) }}</span>
                             @endif
                         </div>
                         <p class="text-sm text-gray-500 mb-6">Impuestos incluidos. Envío calculado al finalizar compra.</p>

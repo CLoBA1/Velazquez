@@ -24,15 +24,14 @@
     </style>
 </head>
 
-<body class="font-sans text-gray-900 antialiased bg-slate-900 selection:bg-orange-500 selection:text-white">
+<body class="font-sans text-gray-900 antialiased bg-dark selection:bg-secondary selection:text-dark">
     <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 relative overflow-hidden">
 
         <!-- Background Enhancements -->
         <div class="absolute inset-0 z-0 opacity-20"
             style="background-image: radial-gradient(#94a3b8 1px, transparent 1px); background-size: 32px 32px;"></div>
-        <div class="absolute top-0 left-1/4 w-96 h-96 bg-orange-600/20 rounded-full blur-3xl animate-pulse"></div>
-        <div
-            class="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl animate-pulse delay-1000">
+        <div class="absolute top-0 left-1/4 w-96 h-96 bg-secondary/20 rounded-full blur-3xl animate-pulse"></div>
+        <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse delay-1000">
         </div>
 
         <div
@@ -43,14 +42,14 @@
                 <a href="/" class="flex items-center gap-3 group">
                     <div
                         class="bg-slate-900 text-white p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                        <svg class="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-8 h-8 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                                 d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                         </svg>
                     </div>
                     <div class="flex flex-col">
                         <span
-                            class="font-black text-2xl text-slate-800 tracking-tight leading-none group-hover:text-orange-600 transition-colors">Ferretería<br>Velázquez</span>
+                            class="font-black text-2xl text-slate-800 tracking-tight leading-none group-hover:text-secondary transition-colors">Ferretería<br>Velázquez</span>
                     </div>
                 </a>
             </div>

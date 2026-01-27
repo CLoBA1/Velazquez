@@ -1,7 +1,7 @@
 <div class="flex flex-col gap-6">
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-            <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Movimientos de Inventario</h1>
+            <h1 class="text-3xl font-bold text-dark tracking-tight">Movimientos de Inventario</h1>
             <p class="text-slate-500 mt-1">Historial completo de entradas, salidas y ajustes de stock.</p>
         </div>
 
@@ -17,7 +17,7 @@
                 <span wire:loading wire:target="downloadPdf">Generando...</span>
             </button>
             <a href="{{ route('admin.inventory.create') }}"
-               class="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 shadow-lg shadow-slate-900/20 transition-all hover:-translate-y-0.5">
+               class="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 shadow-lg shadow-blue-500/20 transition-all hover:-translate-y-0.5">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                 Nuevo Ajuste
             </a>
@@ -31,14 +31,14 @@
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Buscar Producto</label>
                 <div class="relative">
                     <input type="text" wire:model.live.debounce.300ms="search" placeholder="Nombre o SKU..."
-                        class="w-full rounded-xl border-slate-200 bg-slate-50 py-2.5 pl-10 pr-4 text-sm focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-100 transition-all">
+                        class="w-full rounded-xl border-slate-200 bg-slate-50 py-2.5 pl-10 pr-4 text-sm focus:border-primary focus:bg-white focus:ring-2 focus:ring-blue-100 transition-all">
                     <svg class="absolute left-3 top-2.5 w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 </div>
             </div>
             <div>
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Tipo</label>
                 <select wire:model.live="type"
-                    class="w-full rounded-xl border-slate-200 bg-slate-50 py-2.5 px-3 text-sm focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-100 transition-all">
+                    class="w-full rounded-xl border-slate-200 bg-slate-50 py-2.5 px-3 text-sm focus:border-primary focus:bg-white focus:ring-2 focus:ring-blue-100 transition-all">
                     <option value="">Todos</option>
                     <option value="purchase">Compra</option>
                     <option value="sale">Venta</option>
@@ -50,12 +50,12 @@
             <div>
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Desde</label>
                 <input type="date" wire:model.live="date_from"
-                    class="w-full rounded-xl border-slate-200 bg-slate-50 py-2.5 px-3 text-sm focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-100 transition-all">
+                    class="w-full rounded-xl border-slate-200 bg-slate-50 py-2.5 px-3 text-sm focus:border-primary focus:bg-white focus:ring-2 focus:ring-blue-100 transition-all">
             </div>
             <div>
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Hasta</label>
                 <input type="date" wire:model.live="date_to"
-                    class="w-full rounded-xl border-slate-200 bg-slate-50 py-2.5 px-3 text-sm focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-100 transition-all">
+                    class="w-full rounded-xl border-slate-200 bg-slate-50 py-2.5 px-3 text-sm focus:border-primary focus:bg-white focus:ring-2 focus:ring-blue-100 transition-all">
             </div>
         </div>
     </div>
@@ -83,7 +83,7 @@
                                 {{ $movement->created_at->format('d/m/Y H:i') }}
                             </td>
                             <td class="px-6 py-4">
-                                <div class="font-bold text-slate-900">{{ $movement->product->name }}</div>
+                                <div class="font-bold text-dark">{{ $movement->product->name }}</div>
                                 <div class="text-xs text-slate-500 font-mono mt-0.5">{{ $movement->product->internal_code }}</div>
                             </td>
                             <td class="px-6 py-4">
@@ -93,7 +93,7 @@
                                         'adjustment_add' => 'bg-blue-50 text-blue-700 border-blue-100',
                                         'return' => 'bg-purple-50 text-purple-700 border-purple-100',
                                         'sale' => 'bg-slate-100 text-slate-700 border-slate-200',
-                                        'adjustment_sub' => 'bg-amber-50 text-amber-700 border-amber-100',
+                                        'adjustment_sub' => 'bg-yellow-50 text-yellow-700 border-yellow-100',
                                     ];
                                     $colorClass = $typeColors[$movement->type] ?? 'bg-gray-50 text-gray-700';
                                     

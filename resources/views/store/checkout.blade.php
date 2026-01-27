@@ -5,7 +5,7 @@
 @section('content')
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div class="max-w-3xl mx-auto">
-            <h1 class="text-3xl font-black text-slate-900 mb-8 tracking-tight text-center">Finalizar Compra</h1>
+            <h1 class="text-3xl font-black text-dark mb-8 tracking-tight text-center">Finalizar Compra</h1>
 
             <div class="bg-white rounded-[2rem] shadow-xl border border-gray-100 overflow-hidden">
                 <div class="p-8 sm:p-12">
@@ -21,9 +21,9 @@
 
                         <!-- Contact Info -->
                         <div class="space-y-4">
-                            <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                            <h3 class="text-xl font-bold text-dark flex items-center gap-2">
                                 <span
-                                    class="bg-orange-100 text-orange-600 w-8 h-8 rounded-full flex items-center justify-center text-sm">1</span>
+                                    class="bg-secondary text-dark w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold">1</span>
                                 Datos de Contacto
                             </h3>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -58,9 +58,9 @@
 
                         <!-- Shipping Address -->
                         <div class="space-y-4">
-                            <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                            <h3 class="text-xl font-bold text-dark flex items-center gap-2">
                                 <span
-                                    class="bg-orange-100 text-orange-600 w-8 h-8 rounded-full flex items-center justify-center text-sm">2</span>
+                                    class="bg-secondary text-dark w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold">2</span>
                                 Dirección de Entrega
                             </h3>
                             <div class="space-y-1">
@@ -82,23 +82,23 @@
 
                         <!-- Payment -->
                         <div class="space-y-4">
-                            <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                            <h3 class="text-xl font-bold text-dark flex items-center gap-2">
                                 <span
-                                    class="bg-orange-100 text-orange-600 w-8 h-8 rounded-full flex items-center justify-center text-sm">3</span>
+                                    class="bg-secondary text-dark w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold">3</span>
                                 Método de Pago
                             </h3>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <label
-                                    class="border-2 border-gray-100 has-[:checked]:border-orange-500 has-[:checked]:bg-orange-50 rounded-xl p-4 cursor-pointer transition-all hover:border-orange-200">
+                                    class="border-2 border-gray-100 has-[:checked]:border-secondary has-[:checked]:bg-yellow-50/50 rounded-xl p-4 cursor-pointer transition-all hover:border-yellow-200">
                                     <input type="radio" name="payment_method" value="cash" checked class="hidden">
-                                    <span class="font-bold text-slate-800 block mb-1">Pago contra Entrega</span>
-                                    <span class="text-xs text-slate-500">Pagas en efectivo al recibir tu pedido.</span>
+                                    <span class="font-bold text-dark block mb-1">Pago contra Entrega</span>
+                                    <span class="text-xs text-gray-500">Pagas en efectivo al recibir tu pedido.</span>
                                 </label>
                                 <label
-                                    class="border-2 border-gray-100 has-[:checked]:border-orange-500 has-[:checked]:bg-orange-50 rounded-xl p-4 cursor-pointer transition-all hover:border-orange-200">
+                                    class="border-2 border-gray-100 has-[:checked]:border-secondary has-[:checked]:bg-yellow-50/50 rounded-xl p-4 cursor-pointer transition-all hover:border-yellow-200">
                                     <input type="radio" name="payment_method" value="transfer" class="hidden">
-                                    <span class="font-bold text-slate-800 block mb-1">Transferencia</span>
-                                    <span class="text-xs text-slate-500">Te enviaremos los datos bancarios.</span>
+                                    <span class="font-bold text-dark block mb-1">Transferencia</span>
+                                    <span class="text-xs text-gray-500">Te enviaremos los datos bancarios.</span>
                                 </label>
                             </div>
                         </div>
@@ -107,10 +107,10 @@
                         <div class="bg-gray-50 -mx-8 -mb-12 p-8 sm:p-12 mt-8 border-t border-gray-100">
                             <div class="flex justify-between items-center mb-6 text-xl">
                                 <span class="font-bold text-slate-700">Total a Pagar</span>
-                                <span class="font-black text-slate-900 text-3xl">${{ number_format($total, 2) }}</span>
+                                <span class="font-black text-dark text-3xl">${{ number_format($total, 2) }}</span>
                             </div>
                             <button type="submit"
-                                class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-xl shadow-xl shadow-slate-900/20 transition-all hover:scale-[1.01] transform flex items-center justify-center gap-3">
+                                class="w-full bg-primary hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-xl shadow-blue-500/20 transition-all hover:scale-[1.01] transform flex items-center justify-center gap-3">
                                 <span>Confirmar Pedido</span>
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

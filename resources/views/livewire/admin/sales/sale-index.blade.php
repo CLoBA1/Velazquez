@@ -10,7 +10,7 @@
                 <div class="relative flex-1 sm:w-64">
                     <input type="text" wire:model.live.debounce.300ms="search"
                         placeholder="Buscar por Folio o Cliente..."
-                        class="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-300 focus:ring-orange-500 focus:border-orange-500 text-sm">
+                        class="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-300 focus:ring-primary focus:border-primary text-sm">
                     <svg class="w-5 h-5 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor"
                         viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -20,7 +20,7 @@
 
                 <!-- Filter -->
                 <select wire:model.live="sourceFilter"
-                    class="rounded-lg border border-slate-300 focus:ring-orange-500 focus:border-orange-500 text-sm py-2">
+                    class="rounded-lg border border-slate-300 focus:ring-primary focus:border-primary text-sm py-2">
                     <option value="">Todas</option>
                     <option value="web">Tienda Web</option>
                     <option value="pos">Punto de Venta</option>
@@ -47,7 +47,7 @@
                 <tbody class="divide-y divide-slate-100">
                     @forelse($sales as $sale)
                                     <tr class="hover:bg-slate-50/50 transition-colors">
-                                        <td class="px-6 py-4 font-mono font-bold text-indigo-600">
+                                        <td class="px-6 py-4 font-mono font-bold text-info">
                                             #{{ $sale->id }}
                                         </td>
                                         <td class="px-6 py-4">
@@ -78,7 +78,7 @@
                                                     @endif
 
                                                     @if($sale->source === 'web' && $sale->shipping_address)
-                                                        <span class="text-[10px] text-orange-600 mt-1 truncate max-w-[200px]"
+                                                        <span class="text-[10px] text-primary mt-1 truncate max-w-[200px]"
                                                             title="{{ $sale->shipping_address }}">
                                                             📍 Envío
                                                         </span>
@@ -107,14 +107,14 @@
                                         <td class="px-6 py-4 text-center">
                                             <span
                                                 class="capitalize px-2 py-1 rounded text-xs font-bold
-                                                                    {{ $sale->status === 'completed' ? 'bg-green-100 text-green-700' :
-                        ($sale->status === 'pending' ? 'bg-orange-100 text-orange-700' : 'bg-red-100 text-red-700') }}">
+                                                                                                    {{ $sale->status === 'completed' ? 'bg-green-100 text-green-700' :
+                        ($sale->status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700') }}">
                                                 {{ $sale->status }}
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 text-right">
                                             <a href="{{ route('admin.sales.pdf', $sale) }}" target="_blank"
-                                                class="text-indigo-600 hover:text-indigo-800 font-medium text-xs hover:underline">
+                                                class="text-info hover:text-blue-800 font-medium text-xs hover:underline">
                                                 Ver Ticket
                                             </a>
                                         </td>

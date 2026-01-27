@@ -11,7 +11,7 @@
     <div class="min-h-screen bg-gray-100 flex flex-col md:flex-row">
         
         <!-- Mobile Header -->
-        <div class="md:hidden bg-slate-900 text-white p-4 flex items-center justify-between sticky top-0 z-40 shadow-md">
+        <div class="md:hidden bg-dark text-white p-4 flex items-center justify-between sticky top-0 z-40 shadow-md">
             <span class="font-bold tracking-wider">FERRETERÍA VELÁZQUEZ</span>
             <button @click="sidebarOpen = !sidebarOpen" class="p-2 rounded-lg hover:bg-slate-800 transition-colors">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -33,11 +33,11 @@
              style="display: none;"></div>
 
         <!-- Sidebar -->
-        <aside class="fixed inset-y-0 left-0 w-64 bg-slate-900 text-white flex flex-col shadow-2xl transition-transform duration-300 z-50 transform md:translate-x-0"
+        <aside class="fixed inset-y-0 left-0 w-64 bg-dark text-white flex flex-col shadow-2xl transition-transform duration-300 z-50 transform md:translate-x-0"
                :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
             <div class="h-16 flex items-center justify-center border-b border-slate-800 bg-slate-950 relative">
                 <div class="flex flex-col items-center">
-                    <span class="text-sm font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400 text-center leading-tight">
+                    <span class="text-sm font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-secondary to-yellow-200 text-center leading-tight">
                         FERRETERÍA VELÁZQUEZ
                     </span>
                     <span class="text-[8px] text-slate-500 uppercase tracking-widest mt-0.5">Materiales</span>
@@ -52,7 +52,7 @@
                 <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2 mt-2">Principal</p>
                 <a href="{{ route('admin.dashboard') }}" 
                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
-                          {{ request()->routeIs('admin.dashboard') ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/50' : 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
+                          {{ request()->routeIs('admin.dashboard') ? 'bg-primary text-white shadow-lg shadow-blue-900/50' : 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
                     <svg class="w-5 h-5 opacity-75" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
                     Dashboard
                 </a>
@@ -60,13 +60,13 @@
                 <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2 mt-6">Ventas</p>
                 <a href="{{ route('admin.pos') }}" 
                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
-                          {{ request()->routeIs('admin.pos') ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/50' : 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
+                          {{ request()->routeIs('admin.pos') ? 'bg-primary text-white shadow-lg shadow-blue-900/50' : 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
                     <svg class="w-5 h-5 opacity-75" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                     Punto de Venta
                 </a>
                 <a href="{{ route('admin.sales.index') }}" 
                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
-                          {{ request()->routeIs('admin.sales.index') ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/50' : 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
+                          {{ request()->routeIs('admin.sales.index') ? 'bg-primary text-white shadow-lg shadow-blue-900/50' : 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
                     <svg class="w-5 h-5 opacity-75" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
                     Historial de Ventas
                 </a>
@@ -83,7 +83,7 @@
                 ] as $item)
                 <a href="{{ route($item['route']) }}" 
                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
-                          {{ request()->routeIs($item['route'].'*') ? 'bg-slate-800 text-white shadow-inner border-l-4 border-blue-500' : 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
+                          {{ request()->routeIs($item['route'].'*') ? 'bg-slate-800 text-white shadow-inner border-l-4 border-secondary' : 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
                     <svg class="w-5 h-5 opacity-75" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $item['icon'] }}"></path></svg>
                     {{ $item['label'] }}
                 </a>
@@ -92,7 +92,7 @@
                 <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2 mt-6">Inventario</p>
                 <a href="{{ route('admin.inventory.movements') }}" 
                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
-                          {{ request()->routeIs('admin.inventory.*') ? 'bg-slate-800 text-white shadow-inner border-l-4 border-emerald-500' : 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
+                          {{ request()->routeIs('admin.inventory.*') ? 'bg-slate-800 text-white shadow-inner border-l-4 border-secondary' : 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
                     <svg class="w-5 h-5 opacity-75" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                     Movimientos
                 </a>
@@ -100,7 +100,7 @@
                 <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2 mt-6">Clientes</p>
                 <a href="{{ route('admin.clients.index') }}" 
                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
-                          {{ request()->routeIs('admin.clients.*') ? 'bg-slate-800 text-white shadow-inner border-l-4 border-emerald-500' : 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
+                          {{ request()->routeIs('admin.clients.*') ? 'bg-slate-800 text-white shadow-inner border-l-4 border-secondary' : 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
                     <svg class="w-5 h-5 opacity-75" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                     Directorio y Créditos
                 </a>
@@ -109,7 +109,7 @@
                     <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2 mt-6">Usuarios</p>
                     <a href="{{ route('admin.users.index') }}" 
                        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
-                              {{ request()->routeIs('admin.users.*') ? 'bg-slate-800 text-white shadow-inner border-l-4 border-indigo-500' : 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
+                              {{ request()->routeIs('admin.users.*') ? 'bg-slate-800 text-white shadow-inner border-l-4 border-secondary' : 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
                         <svg class="w-5 h-5 opacity-75" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                         Gestión de Usuarios
                     </a>

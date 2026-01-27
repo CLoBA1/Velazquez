@@ -3,10 +3,10 @@
 @section('title', 'Ofertas y Promociones | Ferretería Velázquez')
 
 @section('content')
-    <div class="bg-slate-50 min-h-screen pb-20">
+    <div class="bg-light min-h-screen pb-20">
 
         <!-- Hero Section -->
-        <div class="bg-slate-900 overflow-hidden relative isolate">
+        <div class="bg-dark overflow-hidden relative isolate">
             <!-- Background accents -->
             <div
                 class="absolute inset-0 -z-10 bg-[radial-gradient(45rem_50rem_at_top,theme(colors.indigo.500),theme(colors.slate.900))] opacity-20">
@@ -17,7 +17,7 @@
                 class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-24 relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
                 <div class="max-w-2xl text-center md:text-left animate-fade-in-up">
                     <span
-                        class="inline-flex items-center gap-2 rounded-full bg-orange-500/10 px-3 py-1 text-sm font-semibold text-orange-400 ring-1 ring-inset ring-orange-500/20 mb-6">
+                        class="inline-flex items-center gap-2 rounded-full bg-accent/10 px-3 py-1 text-sm font-semibold text-accent ring-1 ring-inset ring-accent/20 mb-6">
                         <svg class="w-4 h-4 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
@@ -28,7 +28,7 @@
                     </span>
                     <h1 class="text-4xl font-black tracking-tight text-white sm:text-6xl mb-6">
                         <span
-                            class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-amber-200">Descuentos</span>
+                            class="text-transparent bg-clip-text bg-gradient-to-r from-secondary to-yellow-200">Descuentos</span>
                         que construyen tus sueños
                     </h1>
                     <p class="text-lg leading-8 text-gray-300 mb-8">
@@ -37,7 +37,7 @@
                     </p>
                     <div class="flex items-center justify-center md:justify-start gap-x-6">
                         <a href="#catalogo"
-                            class="rounded-xl bg-orange-500 px-6 py-3.5 text-sm font-bold text-white shadow-sm hover:bg-orange-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-400 transition-all hover:scale-105">Ver
+                            class="rounded-xl bg-accent px-6 py-3.5 text-sm font-bold text-white shadow-sm hover:bg-red-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 transition-all hover:scale-105">Ver
                             Ofertas</a>
                     </div>
                 </div>
@@ -55,11 +55,11 @@
                         class="bg-white/5 backdrop-blur-lg rounded-3xl p-8 border border-white/10 shadow-2xl skew-y-3 hover:skew-y-0 transition-transform duration-500 cursor-pointer hover:bg-white/10">
                         <div class="flex items-center gap-4 mb-4">
                             <div
-                                class="w-12 h-12 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold text-xl">
+                                class="w-12 h-12 rounded-full bg-accent flex items-center justify-center text-white font-bold text-xl">
                                 %</div>
                             <div>
                                 <div class="text-white font-bold text-lg">Ahorra hasta</div>
-                                <div class="text-orange-400 font-black text-3xl">40% OFF</div>
+                                <div class="text-secondary font-black text-3xl">40% OFF</div>
                             </div>
                         </div>
                     </div>
@@ -78,7 +78,7 @@
                             <!-- Discount Badge -->
                             <div class="absolute top-0 right-0 z-20">
                                 <div
-                                    class="bg-orange-500 text-white text-xs font-bold px-4 py-2 rounded-bl-3xl rounded-tr-3xl shadow-lg shadow-orange-500/20">
+                                    class="bg-accent text-white text-xs font-bold px-4 py-2 rounded-bl-3xl rounded-tr-3xl shadow-lg shadow-red-500/20">
                                     -{{ number_format((1 - $product->sale_price / $product->public_price) * 100, 0) }}%
                                 </div>
                             </div>
@@ -102,24 +102,24 @@
                                 <!-- Countdown Overlay if Deadline exists -->
                                 @if($product->sale_deadline)
                                     <div
-                                        class="absolute bottom-2 left-2 right-2 bg-slate-900/80 backdrop-blur-md rounded-xl p-2 text-center text-white text-xs font-medium z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                        class="absolute bottom-2 left-2 right-2 bg-dark/80 backdrop-blur-md rounded-xl p-2 text-center text-white text-xs font-medium z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                         <span class="block text-[10px] text-slate-300 uppercase tracking-wide">Termina en:</span>
                                         <span x-data="{ 
-                                                                        timeLeft: '', 
-                                                                        deadline: new Date('{{ $product->sale_deadline->format('Y-m-d\TH:i:s') }}').getTime(),
-                                                                        update() {
-                                                                            const now = new Date().getTime();
-                                                                            const distance = this.deadline - now;
-                                                                            if (distance < 0) {
-                                                                                this.timeLeft = 'Expirada';
-                                                                            } else {
-                                                                                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                                                                                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                                                                                this.timeLeft = `${days}d ${hours}h`;
-                                                                            }
-                                                                        }
-                                                                    }" x-init="update(); setInterval(() => update(), 60000)"
-                                            x-text="timeLeft"></span>
+                                                                                        timeLeft: '', 
+                                                                                        deadline: new Date('{{ $product->sale_deadline->format('Y-m-d\TH:i:s') }}').getTime(),
+                                                                                        update() {
+                                                                                            const now = new Date().getTime();
+                                                                                            const distance = this.deadline - now;
+                                                                                            if (distance < 0) {
+                                                                                                this.timeLeft = 'Expirada';
+                                                                                            } else {
+                                                                                                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                                                                                                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                                                                                                this.timeLeft = `${days}d ${hours}h`;
+                                                                                            }
+                                                                                        }
+                                                                                    }"
+                                            x-init="update(); setInterval(() => update(), 60000)" x-text="timeLeft"></span>
                                     </div>
                                 @endif
                             </div>
@@ -131,7 +131,7 @@
                                         class="bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">{{ $product->brand->name ?? 'Genérico' }}</span>
                                 </div>
                                 <h3
-                                    class="font-bold text-lg text-slate-800 leading-snug mb-2 group-hover:text-orange-600 transition-colors line-clamp-2">
+                                    class="font-bold text-lg text-dark leading-snug mb-2 group-hover:text-primary transition-colors line-clamp-2">
                                     <a href="{{ route('store.show', $product->id) }}">{{ $product->name }}</a>
                                 </h3>
 
@@ -141,7 +141,7 @@
                                             <span class="text-xs font-semibold text-gray-400 line-through">Before
                                                 ${{ number_format($product->public_price, 2) }}</span>
                                             <span
-                                                class="text-2xl font-black text-slate-900 tracking-tight">${{ number_format($product->sale_price, 2) }}</span>
+                                                class="text-2xl font-black text-dark tracking-tight">${{ number_format($product->sale_price, 2) }}</span>
                                         </div>
                                     </div>
 

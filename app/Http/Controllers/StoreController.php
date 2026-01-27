@@ -12,44 +12,6 @@ class StoreController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Product::with('category');
-
-        if ($request->has('search')) {
-            $search = $request->input('search');
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
-            });
-        }
-
-        if ($request->has('category')) {
-            $query->where('category_id', $request->input('category'));
-        }
-
-        // Sorting
-        if ($request->has('sort')) {
-            switch ($request->input('sort')) {
-                case 'price_asc':
-                    $query->orderBy('public_price', 'asc');
-                    break;
-                case 'price_desc':
-                    $query->orderBy('public_price', 'desc');
-                    break;
-                case 'newest':
-                    $query->latest();
-                    break;
-                default:
-                    // Recommended logic (can be random or default)
-                    break;
-            }
-        } else {
-            // Default sort (e.g. latest)
-            $query->latest();
-        }
-
-        $products = $query->paginate(100);
-        $categories = Category::all();
-
         // 1. Featured Offers (Top 5 Highest Discount)
         $featured_offers = Product::with('category')->where('stock', '>', 0)
             ->whereNotNull('sale_price')
@@ -69,7 +31,7 @@ class StoreController extends Controller
             $q->where('stock', '>', 0);
         })->inRandomOrder()->first();
 
-        return view('store.index', compact('products', 'categories', 'featured_offers', 'new_arrivals', 'category_highlight'));
+        return view('store.index', compact('featured_offers', 'new_arrivals', 'category_highlight'));
     }
 
     public function cart()

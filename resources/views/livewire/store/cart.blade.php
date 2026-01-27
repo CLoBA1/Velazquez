@@ -1,5 +1,5 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <h1 class="text-3xl font-black text-slate-900 mb-8 tracking-tight">Tu Carrito de Compras</h1>
+    <h1 class="text-3xl font-black text-dark mb-8 tracking-tight">Tu Carrito de Compras</h1>
 
     @if($cartItems->count() > 0)
         <div class="flex flex-col lg:flex-row gap-12">
@@ -24,8 +24,8 @@
 
                         <!-- Info -->
                         <div class="flex-1 text-center sm:text-left">
-                            <h3 class="font-bold text-slate-900 text-lg leading-tight">{{ $item['name'] }}</h3>
-                            <p class="text-slate-500 text-sm mt-1 mb-2 font-mono">${{ number_format($item['price'], 2) }}
+                            <h3 class="font-bold text-dark text-lg leading-tight">{{ $item['name'] }}</h3>
+                            <p class="text-gray-500 text-sm mt-1 mb-2 font-mono">${{ number_format($item['price'], 2) }}
                                 unitario</p>
                             <button wire:click="removeItem({{ $id }})"
                                 class="text-red-500 text-xs font-bold hover:underline">Eliminar</button>
@@ -43,7 +43,7 @@
                         <!-- Total Item -->
                         <div class="text-right min-w-[100px]">
                             <span
-                                class="block text-xl font-bold text-slate-900">${{ number_format($item['price'] * $item['quantity'], 2) }}</span>
+                                class="block text-xl font-bold text-dark">${{ number_format($item['price'] * $item['quantity'], 2) }}</span>
                         </div>
                     </div>
                 @endforeach
@@ -69,13 +69,13 @@
                             <span class="text-green-600 font-bold">Gratis</span> <!-- Logic can be added later -->
                         </div>
                         <div class="border-t border-gray-200 pt-4 flex justify-between items-center">
-                            <span class="font-bold text-slate-900 text-lg">Total</span>
-                            <span class="font-black text-slate-900 text-3xl">${{ number_format($total, 2) }}</span>
+                            <span class="font-bold text-dark text-lg">Total</span>
+                            <span class="font-black text-dark text-3xl">${{ number_format($total, 2) }}</span>
                         </div>
                     </div>
 
                     <a href="{{ route('store.checkout') }}"
-                        class="block w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 rounded-xl text-center shadow-lg shadow-orange-500/30 transition-all hover:scale-[1.02] transform">
+                        class="block w-full bg-primary hover:bg-blue-700 text-white font-bold py-4 rounded-xl text-center shadow-lg shadow-blue-500/30 transition-all hover:scale-[1.02] transform">
                         Proceder al Pago
                     </a>
 
@@ -92,15 +92,15 @@
             <div class="bg-gray-50 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
                 <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z">
+                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13L4.707 15.293a1 1 0 00.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z">
                     </path>
                 </svg>
             </div>
-            <h2 class="text-2xl font-bold text-slate-900 mb-4">Tu carrito está vacío</h2>
+            <h2 class="text-2xl font-bold text-dark mb-4">Tu carrito está vacío</h2>
             <p class="text-slate-500 mb-8 max-w-md mx-auto">Parece que aún no has agregado productos. Explora nuestro
                 catálogo y encuentra las mejores herramientas.</p>
             <a href="{{ route('store.index') }}"
-                class="inline-flex items-center gap-2 bg-slate-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-slate-800 transition-colors shadow-xl shadow-slate-900/20">
+                class="inline-flex items-center gap-2 bg-dark text-white px-8 py-4 rounded-xl font-bold hover:bg-gray-800 transition-colors shadow-xl shadow-dark/20">
                 Ir al Catálogo
             </a>
         </div>

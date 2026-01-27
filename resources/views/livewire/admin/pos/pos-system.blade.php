@@ -9,10 +9,10 @@
                        id="posSearchInput"
                        type="text" 
                        placeholder="Escanea el código o busca por nombre..."
-                       class="w-full pl-12 pr-4 py-4 rounded-xl border-0 bg-slate-800 text-white placeholder-slate-400 focus:ring-2 focus:ring-orange-500 text-lg shadow-inner font-medium transition-all"
+                       class="w-full pl-12 pr-4 py-4 rounded-xl border-0 bg-slate-800 text-white placeholder-slate-400 focus:ring-2 focus:ring-secondary text-lg shadow-inner font-medium transition-all"
                        autofocus>
                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <svg class="h-6 w-6 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="h-6 w-6 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/>
                     </svg>
                 </div>
@@ -29,7 +29,7 @@
                     <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
                         @foreach($products as $product)
                             <button wire:click="addToCart({{ $product->id }})" 
-                                    class="group flex flex-col bg-white rounded-xl shadow-sm border border-slate-200 hover:border-orange-500 hover:ring-2 hover:ring-orange-500/20 hover:shadow-xl transition-all p-3 text-left relative overflow-hidden h-full">
+                                    class="group flex flex-col bg-white rounded-xl shadow-sm border border-slate-200 hover:border-primary hover:ring-2 hover:ring-primary/20 hover:shadow-xl transition-all p-3 text-left relative overflow-hidden h-full">
                                 
                                 @if($product->stock <= 0)
                                     <div class="absolute inset-0 bg-white/80 z-20 flex items-center justify-center backdrop-blur-[1px]">
@@ -51,7 +51,7 @@
                                 </div>
                                 
                                 <div class="flex-1 min-w-0 flex flex-col">
-                                    <h3 class="font-bold text-slate-800 text-sm leading-snug mb-1 line-clamp-2 group-hover:text-orange-600 transition-colors">{{ $product->name }}</h3>
+                                    <h3 class="font-bold text-slate-800 text-sm leading-snug mb-1 line-clamp-2 group-hover:text-secondary transition-colors">{{ $product->name }}</h3>
                                     
                                     <div class="mt-auto flex justify-between items-end pt-2 border-t border-slate-50">
                                         <div>
@@ -60,7 +60,7 @@
                                         </div>
                                         <div class="text-right">
                                             <span class="block text-[10px] text-slate-400 font-medium uppercase tracking-wider">Stock</span>
-                                            <span class="text-xs font-bold px-2 py-0.5 rounded {{ $product->stock > 5 ? 'bg-emerald-100 text-emerald-700' : 'bg-orange-100 text-orange-700' }}">
+                                            <span class="text-xs font-bold px-2 py-0.5 rounded {{ $product->stock > 5 ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700' }}">
                                                 {{ $product->stock }}
                                             </span>
                                         </div>
@@ -95,7 +95,7 @@
             activeSlide: 0,
             slides: [
                 {
-                    title: 'MAESTRÍA EN <span class=\'text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600\'>HERRAMIENTAS</span>',
+                    title: 'MAESTRÍA EN <span class=\'text-transparent bg-clip-text bg-gradient-to-r from-secondary to-yellow-600\'>HERRAMIENTAS</span>',
                     subtitle: 'Descuentos exclusivos en marca Truper',
                     badge: '-20% OFF'
                 },
@@ -134,11 +134,11 @@
                 </div>
                 
                 <div class="relative z-10 flex flex-col items-end">
-                    <div class="bg-orange-600 text-white font-black text-xl px-4 py-2 rounded-lg shadow-lg rotate-3 transition-transform duration-300"
-                         :class="{'bg-blue-600': index === 1, 'bg-yellow-500': index === 2, 'bg-orange-600': index === 0}">
+                    <div class="bg-secondary text-primary font-black text-xl px-4 py-2 rounded-lg shadow-lg rotate-3 transition-transform duration-300"
+                         :class="{'bg-blue-600': index === 1, 'bg-yellow-500': index === 2, 'bg-secondary': index === 0}">
                         <span x-text="slide.badge"></span>
                     </div>
-                    <span class="text-[10px] text-slate-500 mt-2 font-medium cursor-pointer hover:text-orange-400 transition-colors">Ver detalles -></span>
+                    <span class="text-[10px] text-slate-500 mt-2 font-medium cursor-pointer hover:text-secondary transition-colors">Ver detalles -></span>
                 </div>
             </div>
         </template>
@@ -148,7 +148,7 @@
             <template x-for="(slide, index) in slides" :key="index">
                 <button @click="activeSlide = index" 
                         class="h-1 rounded-full transition-all duration-300"
-                        :class="activeSlide === index ? 'w-6 bg-orange-500' : 'w-2 bg-slate-700'">
+                        :class="activeSlide === index ? 'w-6 bg-secondary' : 'w-2 bg-slate-700'">
                 </button>
             </template>
         </div>
@@ -162,7 +162,7 @@
     <!-- Right Panel: Cart & Checkout -->
     <div class="w-full md:w-1/4 bg-white rounded-2xl shadow-xl flex flex-col border border-slate-200 h-full overflow-hidden">
         <div class="p-5 border-b border-slate-100 bg-slate-50 flex items-center gap-3">
-             <div class="w-10 h-10 bg-[#0f172a] rounded-lg flex items-center justify-center text-orange-500 shadow-md">
+             <div class="w-10 h-10 bg-[#0f172a] rounded-lg flex items-center justify-center text-secondary shadow-md">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
              </div>
             <div>
@@ -213,7 +213,7 @@
              <!-- Client Selection -->
             <div class="mb-4">
                 <div class="flex gap-2 mb-2">
-                    <select wire:model.live="selected_client_id" class="flex-1 bg-white border border-slate-200 text-slate-700 text-xs rounded-lg focus:ring-orange-500 focus:border-orange-500 block p-2.5 font-bold">
+                    <select wire:model.live="selected_client_id" class="flex-1 bg-white border border-slate-200 text-slate-700 text-xs rounded-lg focus:ring-primary focus:border-primary block p-2.5 font-bold">
                         <option value="">Público General</option>
                         @foreach($clients as $client)
                             <option value="{{ $client->id }}">{{ $client->name }}</option>
@@ -265,7 +265,7 @@
             <!-- Pay Button -->
             <button wire:click="openPaymentModal" 
                     @if(empty($cart)) disabled @endif
-                    class="w-full mt-4 bg-orange-500 hover:bg-orange-600 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-black py-4 rounded-xl shadow-lg shadow-orange-500/30 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 text-lg">
+                    class="w-full mt-4 bg-secondary hover:bg-yellow-400 disabled:bg-slate-300 disabled:cursor-not-allowed text-primary font-black py-4 rounded-xl shadow-lg shadow-yellow-500/30 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 text-lg">
                 <span>COBRAR</span>
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
             </button>
@@ -281,8 +281,8 @@
                 <div class="relative inline-block bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-lg w-full">
                     <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                         <div class="sm:flex sm:items-start">
-                            <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-orange-100 sm:mx-0 sm:h-10 sm:w-10">
-                                <svg class="h-6 w-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 sm:mx-0 sm:h-10 sm:w-10">
+                                <svg class="h-6 w-6 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
                                 </svg>
                             </div>
@@ -358,7 +358,7 @@
                                             <div class="relative">
                                                 <span class="absolute left-3 top-3 text-slate-400 font-bold">$</span>
                                                 <input type="number" step="0.01" wire:model.live="amountPaid" 
-                                                       class="w-full pl-8 pr-4 py-3 rounded-xl border-slate-200 focus:border-orange-500 focus:ring-orange-500 font-bold text-lg"
+                                                       class="w-full pl-8 pr-4 py-3 rounded-xl border-slate-200 focus:border-secondary focus:ring-secondary font-bold text-lg"
                                                        placeholder="0.00">
                                             </div>
                                             @if($change >= 0)
@@ -379,7 +379,7 @@
                                         @php $c = $clients->find($selected_client_id); @endphp
                                         <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm">
                                             <p class="font-bold text-[#0f172a] mb-2 flex items-center gap-2">
-                                                <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                                                <svg class="w-4 h-4 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                                                 Resumen de cuenta
                                             </p>
                                             <div class="space-y-1">
@@ -402,7 +402,7 @@
                         <button wire:click="finalizeSale" 
                                 @if($paymentMethod === 'cash' && $change < 0) disabled @endif
                                 type="button" 
-                                class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-lg shadow-orange-500/20 px-4 py-3 bg-orange-500 text-base font-bold text-white hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98]">
+                                class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-lg shadow-yellow-500/20 px-4 py-3 bg-secondary text-base font-bold text-primary hover:bg-yellow-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98]">
                             Confirmar Venta
                         </button>
                         <button wire:click="$set('showPaymentModal', false)" type="button" 

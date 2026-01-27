@@ -14,6 +14,15 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            colors: {
+                primary: '#353839', // Onyx Black (Base Brand Color)
+                secondary: '#FFD700', // Regal Gold (Highlights/CTA)
+                accent: '#C1121F', // Red (Urgent/Sale - Palette 1)
+                dark: '#353839', // Onyx (Aliased for consistency)
+                light: '#FDF0D5', // Warm Cream (increased warmth)
+                info: '#2E5E99', // Sapphire Blue (Links/Info - Palette 5)
+                surface: '#FDF0D5', // Cream (Cards/Warmth - Palette 1)
+            },
         },
     },
 

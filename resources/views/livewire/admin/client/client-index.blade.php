@@ -5,7 +5,7 @@
             <span class="text-sm font-normal text-slate-500 ml-2">Gestión y Créditos</span>
         </h2>
         <button wire:click="openModal"
-            class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-bold shadow-lg shadow-blue-500/30 transition-all">
+            class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-bold shadow-lg shadow-blue-500/30 transition-all">
             + Nuevo Cliente
         </button>
     </div>
@@ -19,7 +19,7 @@
                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
             </svg>
             <input wire:model.live.debounce.300ms="search" type="text" placeholder="Buscar por nombre, email, RFC..."
-                class="w-full pl-10 pr-4 py-2.5 rounded-lg border-slate-200 focus:border-blue-500 focus:ring-blue-500">
+                class="w-full pl-10 pr-4 py-2.5 rounded-lg border-slate-200 focus:border-primary focus:ring-primary">
         </div>
     </div>
 
@@ -50,7 +50,7 @@
                     @forelse($clients as $client)
                         <tr class="hover:bg-slate-50 transition-colors">
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-bold text-slate-900">{{ $client->name }}</div>
+                                <div class="text-sm font-bold text-dark">{{ $client->name }}</div>
                                 <div class="text-xs text-slate-500">{{ $client->rfc }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
@@ -63,7 +63,7 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span
-                                    class="text-sm font-bold {{ $client->credit_used > 0 ? 'text-orange-600' : 'text-slate-400' }}">${{ number_format($client->credit_used, 2) }}</span>
+                                    class="text-sm font-bold {{ $client->credit_used > 0 ? 'text-secondary' : 'text-slate-400' }}">${{ number_format($client->credit_used, 2) }}</span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span
@@ -73,7 +73,7 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <button wire:click="openModal({{ $client->id }})"
-                                    class="text-blue-600 hover:text-blue-900 mr-3">Editar</button>
+                                    class="text-primary hover:text-blue-900 mr-3">Editar</button>
                                 <button wire:click="openPaymentModal({{ $client->id }}, '{{ $client->name }}')" 
                                     class="text-emerald-600 hover:text-emerald-900 mr-3 font-bold">Abonar</button>
                                 <button wire:click="openHistoryModal({{ $client->id }})" 
@@ -102,7 +102,7 @@
     @if($showModal)
         <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-                <div class="fixed inset-0 bg-slate-900 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+                <div class="fixed inset-0 bg-dark bg-opacity-75 transition-opacity" aria-hidden="true"></div>
                 <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
                 <div
                     class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
@@ -114,7 +114,7 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Nombre Completo</label>
                                 <input wire:model="form.name" type="text"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm">
                                 @error('form.name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                             </div>
 
@@ -122,12 +122,12 @@
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700">Email</label>
                                     <input wire:model="form.email" type="email"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700">Teléfono</label>
                                     <input wire:model="form.phone" type="text"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm">
                                 </div>
                             </div>
 
@@ -135,7 +135,7 @@
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700">RFC</label>
                                     <input wire:model="form.rfc" type="text"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700">Límite Crédito</label>
@@ -144,7 +144,7 @@
                                             <span class="text-gray-500 sm:text-sm">$</span>
                                         </div>
                                         <input wire:model="form.credit_limit" type="number" step="0.01"
-                                            class="pl-7 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                            class="pl-7 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm">
                                     </div>
                                     @error('form.credit_limit') <span class="text-red-500 text-xs">{{ $message }}</span>
                                     @enderror
@@ -154,13 +154,13 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Dirección</label>
                                 <textarea wire:model="form.address" rows="2"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"></textarea>
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"></textarea>
                             </div>
                         </div>
                     </div>
                     <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-2">
                         <button wire:click="save" type="button"
-                            class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
+                            class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:ml-3 sm:w-auto sm:text-sm">
                             Guardar
                         </button>
                         <button wire:click="$set('showModal', false)" type="button"
@@ -177,7 +177,7 @@
     @if($showPaymentModal)
         <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-                <div class="fixed inset-0 bg-slate-900 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+                <div class="fixed inset-0 bg-dark bg-opacity-75 transition-opacity" aria-hidden="true"></div>
                 <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
                 <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md w-full">
                     <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
@@ -233,7 +233,7 @@
     @if($showHistoryModal && $historyClient)
         <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-                <div class="fixed inset-0 bg-slate-900 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+                <div class="fixed inset-0 bg-dark bg-opacity-75 transition-opacity" aria-hidden="true"></div>
                 <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
                 <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl w-full">
                     <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
