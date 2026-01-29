@@ -37,8 +37,10 @@
                :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
             <div class="h-20 flex items-center justify-center border-b border-slate-800 bg-slate-950 relative p-4">
                 <div class="flex flex-col items-center">
-                    <img src="{{ asset('images/logo-final.png') }}" alt="Logo" class="h-10 object-contain mb-1">
-                    <span class="text-[10px] text-slate-500 uppercase tracking-widest">Panel Administrativo</span>
+                    <span class="text-sm font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-secondary to-yellow-200 text-center leading-tight">
+                        FERRETERÍA VELÁZQUEZ
+                    </span>
+                    <span class="text-[10px] text-slate-500 uppercase tracking-widest mt-0.5">Panel Administrativo</span>
                 </div>
                 <!-- Close Button (Mobile) -->
                 <button @click="sidebarOpen = false" class="md:hidden absolute right-3 text-slate-400 hover:text-white">
