@@ -13,14 +13,13 @@ class Search extends Component
     public function updatedQuery()
     {
         if (strlen($this->query) >= 2) {
-            $this->results = Product::where('status', 'active')
-                ->where(function ($q) {
-                    $q->where('name', 'like', '%' . $this->query . '%')
-                        ->orWhere('description', 'like', '%' . $this->query . '%')
-                        ->orWhereHas('brand', function ($brandQ) {
-                            $brandQ->where('name', 'like', '%' . $this->query . '%');
-                        });
-                })
+            $this->results = Product::where(function ($q) {
+                $q->where('name', 'like', '%' . $this->query . '%')
+                    ->orWhere('description', 'like', '%' . $this->query . '%')
+                    ->orWhereHas('brand', function ($brandQ) {
+                        $brandQ->where('name', 'like', '%' . $this->query . '%');
+                    });
+            })
                 ->take(5)
                 ->get();
         } else {
