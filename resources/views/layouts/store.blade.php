@@ -98,9 +98,12 @@
                         </svg>
                     </button>
 
-                    <a href="{{ route('store.index') }}">
-                        <img src="{{ asset('images/logo-final.png') }}" alt="Ferretería Velázquez"
-                            class="h-20 w-auto object-contain hover:scale-105 transition-transform duration-300">
+                    <a href="{{ route('store.index') }}" class="flex items-center gap-3 group">
+                        <img src="{{ asset('images/logo-final.png') }}" alt="Ferretería Velázquez" class="h-16 w-auto object-contain group-hover:scale-105 transition-transform duration-300">
+                        <div class="flex flex-col">
+                            <span class="font-bold text-lg tracking-tight text-dark leading-tight">Ferretería Velázquez</span>
+                            <span class="text-[9px] uppercase tracking-wide text-gray-500 font-medium">Materiales para Construcción</span>
+                        </div>
                     </a>
                 </div>
 
