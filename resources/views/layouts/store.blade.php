@@ -76,6 +76,7 @@
 </head>
 
 <body
+    x-data="{ authModal: {{ $errors->any() ? 'true' : 'false' }}, activeTab: '{{ $errors->has('name') || $errors->has('username') || $errors->has('email') ? 'register' : 'login' }}' }"
     class="bg-light text-dark antialiased flex flex-col min-h-screen overflow-x-hidden selection:bg-secondary selection:text-dark">
 
     <!-- Navbar -->
@@ -97,14 +98,13 @@
                         </svg>
                     </button>
 
-                    <a href="{{ route('store.index') }}" class="flex items-center gap-2 group">
+                    <a href="{{ route('store.index') }}" class="flex items-center gap-3 group">
+                        <!-- Icono con el logo completo (sin recortar) -->
                         <div
-                            class="bg-dark text-white p-2 rounded-xl group-hover:scale-110 transition-transform duration-300 shadow-md">
-                            <svg class="w-6 h-6 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                    d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                            </svg>
+                            class="h-16 w-16 flex items-center justify-center rounded-xl bg-white shadow-md p-1 group-hover:scale-110 transition-transform duration-300">
+                            <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-full h-full object-contain">
                         </div>
+
                         <div class="flex flex-col">
                             <span class="font-bold text-lg tracking-tight text-dark leading-tight">Ferretería
                                 Velázquez</span>
@@ -172,14 +172,14 @@
                             </div>
                         </div>
                     @else
-                        <a href="{{ route('login') }}"
+                        <button @click="authModal = true; activeTab = 'login'"
                             class="hidden sm:flex items-center gap-2 text-sm font-bold text-gray-700 hover:text-primary transition-colors px-4 py-2 bg-gray-50 hover:bg-blue-50 rounded-full border border-gray-100 hover:border-blue-100">
                             <span>Iniciar Sesión</span>
-                        </a>
-                        <a href="{{ route('register') }}"
+                        </button>
+                        <button @click="authModal = true; activeTab = 'register'"
                             class="hidden sm:flex items-center gap-2 text-sm font-bold text-white bg-primary hover:bg-blue-800 transition-colors px-4 py-2 rounded-full shadow-lg shadow-blue-900/20">
                             <span>Registro</span>
-                        </a>
+                        </button>
                     @endauth
 
 
@@ -253,14 +253,14 @@
                         </form>
                     @else
                         <div class="grid grid-cols-2 gap-3">
-                            <a href="{{ route('login') }}"
+                            <button @click="authModal = true; activeTab = 'login'"
                                 class="flex items-center justify-center py-3 rounded-xl bg-white border border-gray-200 text-gray-700 font-bold hover:bg-gray-50 transition-colors shadow-sm">
                                 Entrar
-                            </a>
-                            <a href="{{ route('register') }}"
+                            </button>
+                            <button @click="authModal = true; activeTab = 'register'"
                                 class="flex items-center justify-center py-3 rounded-xl bg-primary text-white font-bold hover:bg-blue-800 shadow-lg shadow-blue-900/20 transition-colors">
                                 Registrarse
-                            </a>
+                            </button>
                         </div>
                     @endauth
                 </div>
@@ -298,11 +298,12 @@
                 <!-- Brand -->
                 <div class="space-y-4">
                     <div class="flex items-center gap-2">
-                        <div class="bg-white/10 p-2 rounded-lg"><svg class="w-6 h-6 text-secondary" fill="none"
-                                stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                            </svg></div>
+                        <div class="bg-white/10 p-2 rounded-lg">
+                            <svg class="h-6 w-6 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                    d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                        </div>
                         <div class="flex flex-col">
                             <span class="font-bold text-lg leading-none">Ferretería Velázquez</span>
                             <span class="text-[10px] uppercase text-gray-400">Materiales para Construcción</span>
@@ -315,9 +316,12 @@
                 <div>
                     <h3 class="font-bold text-sm uppercase tracking-wider mb-4 opacity-80">Tienda</h3>
                     <ul class="space-y-3 text-sm text-gray-400">
-                        <li><a href="#" class="hover:text-secondary transition-colors">Catálogo Completo</a></li>
-                        <li><a href="#" class="hover:text-secondary transition-colors">Ofertas del Mes</a></li>
-                        <li><a href="#" class="hover:text-secondary transition-colors">Nuevos Productos</a></li>
+                        <li><a href="{{ route('store.index') }}" class="hover:text-secondary transition-colors">Catálogo
+                                Completo</a></li>
+                        <li><a href="{{ route('store.offers.index') }}"
+                                class="hover:text-secondary transition-colors">Ofertas del Mes</a></li>
+                        <li><a href="{{ route('store.index', ['sort' => 'newest']) }}"
+                                class="hover:text-secondary transition-colors">Nuevos Productos</a></li>
                     </ul>
                 </div>
 
@@ -325,19 +329,23 @@
                 <div>
                     <h3 class="font-bold text-sm uppercase tracking-wider mb-4 opacity-80">Ayuda</h3>
                     <ul class="space-y-3 text-sm text-gray-400">
-                        <li><a href="#" class="hover:text-secondary transition-colors">Envíos</a></li>
-                        <li><a href="#" class="hover:text-secondary transition-colors">Devoluciones</a></li>
-                        <li><a href="#" class="hover:text-secondary transition-colors">Contacto</a></li>
+                        <li><a href="{{ route('pages.shipping') }}"
+                                class="hover:text-secondary transition-colors">Envíos</a></li>
+                        <li><a href="{{ route('pages.returns') }}"
+                                class="hover:text-secondary transition-colors">Devoluciones</a></li>
+                        <li><a href="{{ route('pages.contact') }}"
+                                class="hover:text-secondary transition-colors">Contacto</a></li>
                     </ul>
                 </div>
 
                 <!-- Newsletter -->
                 <div>
                     <h3 class="font-bold text-sm uppercase tracking-wider mb-4 opacity-80">Suscríbete</h3>
-                    <form class="flex flex-col gap-2">
-                        <input type="email" placeholder="Email"
-                            class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white w-full focus:ring-1 focus:ring-primary">
-                        <button
+                    <form action="{{ route('newsletter.subscribe') }}" method="POST" class="flex flex-col gap-2">
+                        @csrf
+                        <input type="email" name="email" placeholder="Email" required
+                            class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white w-full focus:ring-1 focus:ring-primary outline-none">
+                        <button type="submit"
                             class="bg-primary hover:bg-blue-600 text-white font-bold py-2 rounded-lg text-sm transition-colors">Enviar</button>
                     </form>
                 </div>
@@ -348,9 +356,9 @@
                 class="border-t border-slate-900 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
                 <p>&copy; {{ date('Y') }} Ferretería Velázquez. Todos los derechos reservados.</p>
                 <div class="flex gap-6">
-                    <a href="#" class="hover:text-white">Privacidad</a>
-                    <a href="#" class="hover:text-white">Términos</a>
-                    <a href="#" class="hover:text-white">Cookies</a>
+                    <a href="{{ route('pages.privacy') }}" class="hover:text-white">Privacidad</a>
+                    <a href="{{ route('pages.terms') }}" class="hover:text-white">Términos</a>
+                    <a href="{{ route('pages.cookies') }}" class="hover:text-white">Cookies</a>
                 </div>
             </div>
         </div>
@@ -419,6 +427,180 @@
                 <div x-init="setTimeout(() => remove(notification.id), 3000)"></div>
             </div>
         </template>
+    </div>
+    <!-- Auth Modal -->
+    <div x-show="authModal" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto" role="dialog"
+        aria-modal="true">
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-dark/60 backdrop-blur-sm transition-opacity" x-show="authModal"
+            x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
+            x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="authModal = false"></div>
+
+        <!-- Modal Panel -->
+        <div class="relative min-h-screen flex items-center justify-center p-4">
+            <div x-show="authModal" x-transition:enter="ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave="ease-in duration-200"
+                x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                class="relative bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden transform transition-all">
+
+                <!-- Close Button -->
+                <button @click="authModal = false"
+                    class="absolute top-4 right-4 text-gray-400 hover:text-dark z-10 p-1 hover:bg-gray-100 rounded-full transition-colors">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+
+                <!-- Tabs -->
+                <div class="flex border-b border-gray-100 bg-gray-50/50">
+                    <button @click="activeTab = 'login'"
+                        :class="{ 'text-primary border-b-2 border-secondary bg-white': activeTab === 'login', 'text-gray-500 hover:text-gray-700 hover:bg-gray-50': activeTab !== 'login' }"
+                        class="flex-1 py-4 text-sm font-extrabold uppercase tracking-wider transition-all duration-200">
+                        Iniciar Sesión
+                    </button>
+                    <button @click="activeTab = 'register'"
+                        :class="{ 'text-primary border-b-2 border-secondary bg-white': activeTab === 'register', 'text-gray-500 hover:text-gray-700 hover:bg-gray-50': activeTab !== 'register' }"
+                        class="flex-1 py-4 text-sm font-extrabold uppercase tracking-wider transition-all duration-200">
+                        Registrarse
+                    </button>
+                </div>
+
+                <!-- Content -->
+                <div class="p-6 sm:p-8 bg-white">
+                    <!-- Login Form -->
+                    <div x-show="activeTab === 'login'" x-transition:enter="transition ease-out duration-300"
+                        x-transition:enter-start="opacity-0 -translate-x-4"
+                        x-transition:enter-end="opacity-100 translate-x-0">
+                        <form method="POST" action="{{ route('login') }}" class="space-y-5">
+                            @csrf
+                            <div>
+                                <label
+                                    class="block font-bold text-xs text-gray-400 uppercase tracking-widest mb-1.5 pl-1">Usuario
+                                    o Email</label>
+                                <input type="text" name="login" value="{{ old('login') }}" required autofocus
+                                    class="block w-full bg-surface border-transparent focus:border-secondary rounded-xl px-4 py-3 text-dark font-medium focus:ring-4 focus:ring-secondary/20 transition-all duration-300 outline-none placeholder-gray-300 shadow-inner focus:shadow-xl transform focus:-translate-y-0.5"
+                                    placeholder="ej. JuanPerez">
+                                @error('login') <span
+                                    class="text-accent text-xs mt-1 block font-bold">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div x-data="{ show: false }">
+                                <label
+                                    class="block font-bold text-xs text-gray-400 uppercase tracking-widest mb-1.5 pl-1">Contraseña</label>
+                                <div class="relative">
+                                    <input :type="show ? 'text' : 'password'" name="password" required
+                                        class="block w-full bg-surface border-transparent focus:border-secondary rounded-xl px-4 py-3 text-dark font-medium focus:ring-4 focus:ring-secondary/20 transition-all duration-300 outline-none pr-10 placeholder-gray-300 shadow-inner focus:shadow-xl transform focus:-translate-y-0.5"
+                                        placeholder="••••••••">
+                                    <button type="button" @click="show = !show"
+                                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-secondary transition-colors">
+                                        <svg x-show="!show" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                                            stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                        <svg x-show="show" style="display: none;" class="w-5 h-5" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                @error('password') <span
+                                class="text-accent text-xs mt-1 block font-bold">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="flex justify-end mb-2">
+                                @if (Route::has('password.request'))
+                                    <a class="text-xs font-bold text-gray-400 hover:text-secondary hover:underline transition-all duration-300 transform hover:translate-x-1"
+                                        href="{{ route('password.request') }}">
+                                        ¿Olvidaste tu contraseña?
+                                    </a>
+                                @endif
+                            </div>
+
+                            <button
+                                class="group w-full bg-dark text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-2xl hover:bg-black transition-all duration-300 transform hover:-translate-y-1 active:scale-95 border-b-4 border-gray-800 hover:border-secondary relative overflow-hidden">
+                                <span
+                                    class="relative z-10 group-hover:text-secondary transition-colors duration-300">Iniciar
+                                    Sesión</span>
+                                <div
+                                    class="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                </div>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Register Form -->
+                    <div x-show="activeTab === 'register'" x-transition:enter="transition ease-out duration-300"
+                        x-transition:enter-start="opacity-0 translate-x-4"
+                        x-transition:enter-end="opacity-100 translate-x-0" style="display: none;">
+                        <form method="POST" action="{{ route('register') }}" class="space-y-4">
+                            @csrf
+                            <div>
+                                <label
+                                    class="block font-bold text-xs text-gray-400 uppercase tracking-widest mb-1.5 pl-1">Nombre</label>
+                                <input type="text" name="name" value="{{ old('name') }}" required
+                                    class="block w-full bg-surface border-transparent focus:border-secondary rounded-xl px-4 py-3 text-dark font-medium focus:ring-4 focus:ring-secondary/20 transition-all duration-300 outline-none placeholder-gray-300 shadow-inner focus:shadow-xl transform focus:-translate-y-0.5"
+                                    placeholder="Tu nombre completo">
+                                @error('name') <span
+                                    class="text-accent text-xs mt-1 block font-bold">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div>
+                                <label
+                                    class="block font-bold text-xs text-gray-400 uppercase tracking-widest mb-1.5 pl-1">Usuario</label>
+                                <input type="text" name="username" value="{{ old('username') }}" required
+                                    class="block w-full bg-surface border-transparent focus:border-secondary rounded-xl px-4 py-3 text-dark font-medium focus:ring-4 focus:ring-secondary/20 transition-all duration-300 outline-none placeholder-gray-300 shadow-inner focus:shadow-xl transform focus:-translate-y-0.5"
+                                    placeholder="Usuario único">
+                                @error('username') <span
+                                class="text-accent text-xs mt-1 block font-bold">{{ $message }}</span> @enderror
+                            </div>
+                            <div>
+                                <label
+                                    class="block font-bold text-xs text-gray-400 uppercase tracking-widest mb-1.5 pl-1">Email</label>
+                                <input type="email" name="email" value="{{ old('email') }}" required
+                                    class="block w-full bg-surface border-transparent focus:border-secondary rounded-xl px-4 py-3 text-dark font-medium focus:ring-4 focus:ring-secondary/20 transition-all duration-300 outline-none placeholder-gray-300 shadow-inner focus:shadow-xl transform focus:-translate-y-0.5"
+                                    placeholder="tucorreo@ejemplo.com">
+                                @error('email') <span
+                                    class="text-accent text-xs mt-1 block font-bold">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div>
+                                <label
+                                    class="block font-bold text-xs text-gray-400 uppercase tracking-widest mb-1.5 pl-1">Contraseña</label>
+                                <input type="password" name="password" required
+                                    class="block w-full bg-surface border-transparent focus:border-secondary rounded-xl px-4 py-3 text-dark font-medium focus:ring-4 focus:ring-secondary/20 transition-all duration-300 outline-none placeholder-gray-300 shadow-inner focus:shadow-xl transform focus:-translate-y-0.5"
+                                    placeholder="Mínimo 8 caracteres">
+                                @error('password') <span
+                                class="text-accent text-xs mt-1 block font-bold">{{ $message }}</span> @enderror
+                            </div>
+                            <div>
+                                <label
+                                    class="block font-bold text-xs text-gray-400 uppercase tracking-widest mb-1.5 pl-1">Confirmar
+                                    Contraseña</label>
+                                <input type="password" name="password_confirmation" required
+                                    class="block w-full bg-surface border-transparent focus:border-secondary rounded-xl px-4 py-3 text-dark font-medium focus:ring-4 focus:ring-secondary/20 transition-all duration-300 outline-none placeholder-gray-300 shadow-inner focus:shadow-xl transform focus:-translate-y-0.5"
+                                    placeholder="Repite tu contraseña">
+                            </div>
+
+                            <button
+                                class="group w-full bg-secondary hover:bg-yellow-400 text-dark font-bold py-4 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 active:scale-95 mt-2 border-b-4 border-yellow-500 hover:border-yellow-400 relative overflow-hidden">
+                                <span class="relative z-10 group-hover:text-black transition-colors duration-300">Crear Cuenta</span>
+                                <div class="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     @livewireScripts
 </body>

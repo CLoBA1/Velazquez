@@ -30,6 +30,19 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/producto/{product}', [\App\Http\Controllers\StoreController::class, 'show'])->name('store.show');
 
+// Static Pages
+Route::controller(\App\Http\Controllers\PageController::class)->group(function () {
+    Route::get('/envios', 'shipping')->name('pages.shipping');
+    Route::get('/devoluciones', 'returns')->name('pages.returns');
+    Route::get('/contacto', 'contact')->name('pages.contact');
+    Route::get('/privacidad', 'privacy')->name('pages.privacy');
+    Route::get('/terminos', 'terms')->name('pages.terms');
+    Route::get('/cookies', 'cookies')->name('pages.cookies');
+});
+
+// Newsletter
+Route::post('/newsletter', [\App\Http\Controllers\NewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
+
 Route::prefix('admin')->group(function () {
 
     Route::post('productos/generar-codigo', [ProductCodeController::class, 'generate'])
