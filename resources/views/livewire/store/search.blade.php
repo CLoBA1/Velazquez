@@ -32,7 +32,7 @@
                 <div class="py-2">
                     <div class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider">Productos encontrados</div>
                     @foreach($results as $product)
-                        <a href="{{ route('store.products.show', $product) }}" class="flex items-center gap-4 px-4 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0 group">
+                        <a href="{{ route('store.show', $product) }}" class="flex items-center gap-4 px-4 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0 group">
                             <div class="h-10 w-10 bg-white rounded-lg border border-gray-100 flex items-center justify-center p-1">
                                 @if($product->main_image_path)
                                     <img src="{{ Storage::url($product->main_image_path) }}" alt="{{ $product->name }}" class="h-full w-full object-contain">
