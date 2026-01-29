@@ -99,10 +99,13 @@
                     </button>
 
                     <a href="{{ route('store.index') }}" class="flex items-center gap-3 group">
-                        <img src="{{ asset('images/logo-final.png') }}" alt="Ferretería Velázquez" class="h-16 w-auto object-contain group-hover:scale-105 transition-transform duration-300">
+                        <img src="{{ asset('images/logo-final.png') }}" alt="Ferretería Velázquez"
+                            class="h-16 w-auto object-contain group-hover:scale-105 transition-transform duration-300">
                         <div class="flex flex-col">
-                            <span class="font-bold text-lg tracking-tight text-dark leading-tight">Ferretería Velázquez</span>
-                            <span class="text-[9px] uppercase tracking-wide text-gray-500 font-medium">Materiales para Construcción</span>
+                            <span class="font-bold text-lg tracking-tight text-dark leading-tight">Ferretería
+                                Velázquez</span>
+                            <span class="text-[9px] uppercase tracking-wide text-gray-500 font-medium">Materiales para
+                                Construcción</span>
                         </div>
                     </a>
                 </div>
@@ -264,16 +267,11 @@
         <!-- Search Overlay -->
         <div x-show="searchOpen" @click.away="searchOpen = false" style="display: none;"
             class="absolute top-full left-0 w-full bg-white border-y border-gray-100 shadow-xl py-6 px-4 z-40">
-            <form action="{{ route('store.index') }}" method="GET" class="max-w-4xl mx-auto relative group">
-                <input type="text" name="search" placeholder="Buscar productos..."
-                    class="w-full pl-6 pr-14 py-4 bg-gray-50 border border-gray-200 rounded-2xl text-lg focus:ring-2 focus:ring-primary transition-all outline-none">
-                <button type="submit"
-                    class="absolute right-3 top-3 p-2 bg-primary text-white rounded-xl hover:bg-blue-800"><svg
-                        class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                    </svg></button>
-            </form>
+            <livewire:store.search />
+        </div>
+        <!-- Search Bar -->
+        <div class="flex-1 max-w-2xl mx-auto px-8 hidden md:block">
+            <livewire:store.search />
         </div>
     </nav>
 
