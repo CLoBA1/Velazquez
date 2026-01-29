@@ -32,9 +32,9 @@
                 <div>
                     <h1 class="text-3xl font-black text-white tracking-tight flex items-center gap-3">
                         <span class="bg-gradient-to-br from-secondary to-yellow-600 w-3 h-8 rounded-full shadow-lg shadow-yellow-500/50"></span>
-                        Dashboard
+                        Hola, {{ auth()->user()->name }}
                     </h1>
-                    <p class="text-slate-400 mt-2 text-lg font-medium pl-6">Resumen general y accesos rápidos.</p>
+                    <p class="text-slate-400 mt-2 text-lg font-medium pl-6">Bienvenido a tu panel de control.</p>
                 </div>
     
                 <div class="flex items-center gap-3 pl-6 md:pl-0">

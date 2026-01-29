@@ -35,12 +35,10 @@
         <!-- Sidebar -->
         <aside class="fixed inset-y-0 left-0 w-64 bg-dark text-white flex flex-col shadow-2xl transition-transform duration-300 z-50 transform md:translate-x-0"
                :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
-            <div class="h-16 flex items-center justify-center border-b border-slate-800 bg-slate-950 relative">
+            <div class="h-20 flex items-center justify-center border-b border-slate-800 bg-slate-950 relative p-4">
                 <div class="flex flex-col items-center">
-                    <span class="text-sm font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-secondary to-yellow-200 text-center leading-tight">
-                        FERRETERÍA VELÁZQUEZ
-                    </span>
-                    <span class="text-[8px] text-slate-500 uppercase tracking-widest mt-0.5">Materiales</span>
+                    <img src="{{ asset('images/logo-final.png') }}" alt="Logo" class="h-10 object-contain mb-1">
+                    <span class="text-[10px] text-slate-500 uppercase tracking-widest">Panel Administrativo</span>
                 </div>
                 <!-- Close Button (Mobile) -->
                 <button @click="sidebarOpen = false" class="md:hidden absolute right-3 text-slate-400 hover:text-white">
@@ -49,6 +47,7 @@
             </div>
 
             <nav class="flex-1 overflow-y-auto py-6 px-3 space-y-1">
+                <!-- Navigation Items (Unchanged) -->
                 <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2 mt-2">Principal</p>
                 <a href="{{ route('admin.dashboard') }}" 
                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
@@ -124,12 +123,22 @@
                 </a>
             </nav>
 
-            <div class="p-4 border-t border-slate-800">
+            <div class="p-4 border-t border-slate-800 bg-slate-900/50">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="h-10 w-10 rounded-full bg-secondary flex items-center justify-center text-dark font-bold text-lg shadow-lg shadow-yellow-500/20">
+                        {{ substr(auth()->user()->name, 0, 1) }}
+                    </div>
+                    <div>
+                        <p class="text-sm font-bold text-white leading-tight">{{ auth()->user()->name }}</p>
+                        <p class="text-[10px] text-slate-400 uppercase tracking-wider">{{ auth()->user()->role ?? 'Staff' }}</p>
+                    </div>
+                </div>
+
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-lg bg-slate-800 py-2.5 text-sm font-medium text-slate-300 hover:bg-red-600 hover:text-white transition-colors group">
+                    <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-lg bg-slate-800 py-2.5 text-xs font-bold text-slate-300 hover:bg-red-600 hover:text-white transition-colors group border border-slate-700 hover:border-red-500">
                         <svg class="w-4 h-4 group-hover:animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                        Cerrar sesión
+                        CERRAR SESIÓN
                     </button>
                 </form>
             </div>

@@ -98,19 +98,9 @@
                         </svg>
                     </button>
 
-                    <a href="{{ route('store.index') }}" class="flex items-center gap-3 group">
-                        <!-- Icono con el logo completo (sin recortar) -->
-                        <div
-                            class="h-16 w-16 flex items-center justify-center rounded-xl bg-white shadow-md p-1 group-hover:scale-110 transition-transform duration-300">
-                            <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-full h-full object-contain">
-                        </div>
-
-                        <div class="flex flex-col">
-                            <span class="font-bold text-lg tracking-tight text-dark leading-tight">Ferretería
-                                Velázquez</span>
-                            <span class="text-[9px] uppercase tracking-wide text-gray-500 font-medium">Materiales para
-                                Construcción</span>
-                        </div>
+                    <a href="{{ route('store.index') }}">
+                        <img src="{{ asset('images/logo-final.png') }}" alt="Ferretería Velázquez"
+                            class="h-20 w-auto object-contain hover:scale-105 transition-transform duration-300">
                     </a>
                 </div>
 
@@ -141,7 +131,8 @@
                                 <span>{{ auth()->user()->name }}</span>
                                 <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M19 9l-7 7-7-7"></path>
+                                        d="M19 9l-7 7-7-7">
+                                    </path>
                                 </svg>
                             </button>
 
@@ -593,8 +584,11 @@
 
                             <button
                                 class="group w-full bg-secondary hover:bg-yellow-400 text-dark font-bold py-4 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 active:scale-95 mt-2 border-b-4 border-yellow-500 hover:border-yellow-400 relative overflow-hidden">
-                                <span class="relative z-10 group-hover:text-black transition-colors duration-300">Crear Cuenta</span>
-                                <div class="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                <span class="relative z-10 group-hover:text-black transition-colors duration-300">Crear
+                                    Cuenta</span>
+                                <div
+                                    class="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                </div>
                             </button>
                         </form>
                     </div>
