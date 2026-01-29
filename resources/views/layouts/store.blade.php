@@ -269,10 +269,6 @@
             class="absolute top-full left-0 w-full bg-white border-y border-gray-100 shadow-xl py-6 px-4 z-40">
             <livewire:store.search />
         </div>
-        <!-- Search Bar -->
-        <div class="flex-1 max-w-2xl mx-auto px-8 hidden md:block">
-            <livewire:store.search />
-        </div>
     </nav>
 
     <!-- Main Content -->
