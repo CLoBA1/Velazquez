@@ -61,6 +61,14 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="md:col-span-2">
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Línea de Negocio</label>
+                            <select name="business_line"
+                                class="w-full rounded-xl border-slate-200 py-2.5 px-3 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all">
+                                <option value="hardware" @selected(old('business_line', $product->business_line) == 'hardware')>Ferretería General</option>
+                                <option value="construction" @selected(old('business_line', $product->business_line) == 'construction')>Materiales de Construcción</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-2">
                             <label class="block text-sm font-bold text-slate-700 mb-2">Nombre del Producto</label>
                             <input name="name" value="{{ old('name', $product->name) }}" required
                                 class="w-full rounded-xl border-slate-200 py-2.5 px-3 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all">
@@ -156,40 +164,40 @@
                 {{-- Card: Precios --}}
                 @if(auth()->user()->isAdmin())
                     <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" x-data="{
-                                            cost: '{{ old('cost_price', $product->cost_price) }}',
-                                            tax_percent: '{{ old('taxes_percent', $product->taxes_percent) }}',
-                                            net_cost: '', 
-                                            init() {
-                                                let c = parseFloat(this.cost);
-                                                let t = parseFloat(this.tax_percent);
-                                                if(!isNaN(c) && !isNaN(t)) {
-                                                    if (t === 0) {
-                                                        this.net_cost = c;
-                                                    } else {
-                                                        this.net_cost = (c / (1 + (t / 100))).toFixed(2);
-                                                    }
-                                                }
-                                            },
-                                            updateGrossCost() {
-                                                let n = parseFloat(this.net_cost);
-                                                let t = parseFloat(this.tax_percent);
-                                                if(isNaN(n)) n = 0;
-                                                if(isNaN(t)) t = 0;
+                                                    cost: '{{ old('cost_price', $product->cost_price) }}',
+                                                    tax_percent: '{{ old('taxes_percent', $product->taxes_percent) }}',
+                                                    net_cost: '', 
+                                                    init() {
+                                                        let c = parseFloat(this.cost);
+                                                        let t = parseFloat(this.tax_percent);
+                                                        if(!isNaN(c) && !isNaN(t)) {
+                                                            if (t === 0) {
+                                                                this.net_cost = c;
+                                                            } else {
+                                                                this.net_cost = (c / (1 + (t / 100))).toFixed(2);
+                                                            }
+                                                        }
+                                                    },
+                                                    updateGrossCost() {
+                                                        let n = parseFloat(this.net_cost);
+                                                        let t = parseFloat(this.tax_percent);
+                                                        if(isNaN(n)) n = 0;
+                                                        if(isNaN(t)) t = 0;
 
-                                                this.cost = (n * (1 + (t / 100))).toFixed(2);
-                                                // update prices logic if needed
-                                            },
-                                            calculatePrice(percent) {
-                                                let c = parseFloat(this.cost);
-                                                let p = parseFloat(percent);
-                                                if(isNaN(c) || isNaN(p)) return '';
-                                                return (c * (1 + (p / 100))).toFixed(2);
-                                            },
-                                            updatePrice(e, targetId) {
-                                                let val = this.calculatePrice(e.target.value);
-                                                if(val) document.getElementById(targetId).value = val;
-                                            }
-                                         }">
+                                                        this.cost = (n * (1 + (t / 100))).toFixed(2);
+                                                        // update prices logic if needed
+                                                    },
+                                                    calculatePrice(percent) {
+                                                        let c = parseFloat(this.cost);
+                                                        let p = parseFloat(percent);
+                                                        if(isNaN(c) || isNaN(p)) return '';
+                                                        return (c * (1 + (p / 100))).toFixed(2);
+                                                    },
+                                                    updatePrice(e, targetId) {
+                                                        let val = this.calculatePrice(e.target.value);
+                                                        if(val) document.getElementById(targetId).value = val;
+                                                    }
+                                                 }">
                         <h2 class="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
                             <span class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

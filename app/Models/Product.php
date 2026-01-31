@@ -26,6 +26,7 @@ class Product extends Model
         'min_stock',
         'taxes_percent',
         'sale_deadline',
+        'business_line',
     ];
 
     protected $casts = [
@@ -104,5 +105,14 @@ class Product extends Model
             return asset('storage/' . $this->main_image_path);
         }
         return null;
+    }
+    public function scopeHardware($query)
+    {
+        return $query->where('business_line', 'hardware');
+    }
+
+    public function scopeConstruction($query)
+    {
+        return $query->where('business_line', 'construction');
     }
 }

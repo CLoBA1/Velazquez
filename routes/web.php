@@ -11,21 +11,38 @@ use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\UnitController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductCodeController;
+
 use App\Http\Controllers\Admin\ProductImportController;
+use App\Http\Controllers\Admin\MachineController;
 
 Route::get('/admin/ping', fn() => response('PING', 200));
 
 // Public Store Routes
-Route::get('/', [\App\Http\Controllers\StoreController::class, 'index'])->name('store.index');
+Route::get('/', [\App\Http\Controllers\PageController::class, 'home'])->name('home');
+Route::get('/ferreteria', [\App\Http\Controllers\StoreController::class, 'index'])->name('store.index');
 Route::get('/marcas', [\App\Http\Controllers\Store\BrandController::class, 'index'])->name('store.brands.index');
 Route::get('/marcas/{id}', [\App\Http\Controllers\Store\BrandController::class, 'show'])->name('store.brands.show');
 Route::get('/ofertas', [\App\Http\Controllers\Store\OfferController::class, 'index'])->name('store.offers.index');
 Route::get('/carrito', [\App\Http\Controllers\StoreController::class, 'cart'])->name('store.cart');
 
+// Expansion Routes
+Route::get('/construccion', [\App\Http\Controllers\ConstructionStoreController::class, 'index'])->name('construction.index');
+Route::get('/maquinaria', [\App\Http\Controllers\MachineStoreController::class, 'index'])->name('machinery.index');
+Route::get('/maquinaria/{machine}', [\App\Http\Controllers\MachineStoreController::class, 'show'])->name('machinery.show');
+
 Route::middleware('auth')->group(function () {
     Route::get('/checkout', [\App\Http\Controllers\Store\CheckoutController::class, 'index'])->name('store.checkout');
     Route::post('/checkout', [\App\Http\Controllers\Store\CheckoutController::class, 'store'])->name('store.checkout.process');
     Route::get('/checkout/success/{sale}', [\App\Http\Controllers\Store\CheckoutController::class, 'success'])->name('store.checkout.success');
+
+    // Customer History
+    Route::get('/mis-compras', [\App\Http\Controllers\SalesController::class, 'myPurchases'])->name('sales.my-purchases');
+    Route::get('/mis-compras/{sale}', [\App\Http\Controllers\SalesController::class, 'showPurchase'])->name('sales.show');
+
+    // Rentals
+    Route::get('/mis-rentas', [\App\Http\Controllers\RentalsController::class, 'index'])->name('rentals.index');
+    Route::get('/mis-rentas/{rental}', [\App\Http\Controllers\RentalsController::class, 'show'])->name('rentals.show');
+    Route::post('/rentas', [\App\Http\Controllers\RentalsController::class, 'store'])->name('rentals.store');
 });
 
 Route::get('/producto/{product}', [\App\Http\Controllers\StoreController::class, 'show'])->name('store.show');
@@ -100,6 +117,14 @@ Route::prefix('admin')->group(function () {
             ->except(['show'])
             ->parameters(['productos' => 'product'])
             ->names('admin.products');
+
+        Route::resource('maquinas', MachineController::class)
+            ->parameters(['maquinas' => 'machine'])
+            ->names('admin.machines');
+
+        Route::resource('materiales', \App\Http\Controllers\Admin\ConstructionController::class)
+            ->parameters(['materiales' => 'product'])
+            ->names('admin.construction');
 
         Route::resource('ofertas', \App\Http\Controllers\Admin\OfferController::class)
             ->only(['index', 'update', 'destroy'])

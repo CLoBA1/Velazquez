@@ -72,18 +72,18 @@
             scrollbar-width: none;
         }
     </style>
-    @livewireStyles
+
 </head>
 
 <body
     x-data="{ authModal: {{ $errors->any() ? 'true' : 'false' }}, activeTab: '{{ $errors->has('name') || $errors->has('username') || $errors->has('email') ? 'register' : 'login' }}' }"
-    class="bg-light text-dark antialiased flex flex-col min-h-screen overflow-x-hidden selection:bg-secondary selection:text-dark">
+    class="bg-white text-dark antialiased flex flex-col min-h-screen overflow-x-hidden selection:bg-secondary selection:text-dark">
 
     <!-- Navbar -->
     <nav x-data="{ open: false, searchOpen: false, scrolled: false }"
-        @scroll.window="scrolled = (window.pageYOffset > 20)"
+        @scroll.window="scrolled = (window.pageYOffset > 10)"
         class="sticky top-0 z-40 transition-all duration-300 w-full"
-        :class="{ 'bg-light/95 backdrop-blur shadow-sm border-b border-gray-100': scrolled, 'bg-light': !scrolled }">
+        :class="{ 'bg-white/90 backdrop-blur-md shadow-sm border-b border-slate-100': scrolled, 'bg-transparent': !scrolled }">
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
@@ -98,42 +98,75 @@
                         </svg>
                     </button>
 
-                    <a href="{{ route('store.index') }}" class="flex items-center gap-3 group">
+                    <a href="{{ route('home') }}" class="flex items-center gap-3 group">
                         <img src="{{ asset('images/logo-final.png') }}" alt="Ferretería Velázquez"
-                            class="h-16 w-auto object-contain group-hover:scale-105 transition-transform duration-300">
+                            class="h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-300">
                         <div class="flex flex-col">
-                            <span class="font-bold text-lg tracking-tight text-dark leading-tight">Ferretería
+                            <span class="font-bold text-lg tracking-tight text-slate-900 leading-tight">Ferretería
                                 Velázquez</span>
-                            <span class="text-[9px] uppercase tracking-wide text-gray-500 font-medium">Materiales para
-                                Construcción</span>
+                            @if(request()->routeIs('store.*'))
+                                <span class="text-[10px] uppercase tracking-wide text-secondary font-bold">Ferretería</span>
+                            @elseif(request()->routeIs('construction.*'))
+                                <span
+                                    class="text-[10px] uppercase tracking-wide text-blue-600 font-bold">Construcción</span>
+                            @elseif(request()->routeIs('machinery.*'))
+                                <span
+                                    class="text-[10px] uppercase tracking-wide text-yellow-600 font-bold">Maquinaria</span>
+                            @else
+                                <span class="text-[10px] uppercase tracking-wide text-gray-500 font-medium">Materiales y
+                                    Equipos</span>
+                            @endif
                         </div>
                     </a>
                 </div>
 
-                <!-- Desktop Nav -->
+                <!-- Contextual Desktop Nav -->
                 <div class="hidden md:flex items-center gap-8">
-                    <a href="{{ route('store.index') }}"
-                        class="text-sm font-semibold {{ request()->routeIs('store.index') ? 'text-primary' : 'text-gray-600 hover:text-primary' }} transition-colors">Catálogo</a>
-                    <a href="{{ route('store.brands.index') }}"
-                        class="text-sm font-semibold {{ request()->routeIs('store.brands.*') ? 'text-primary' : 'text-gray-600 hover:text-primary' }} transition-colors">Marcas</a>
-                    <a href="{{ route('store.offers.index') }}"
-                        class="text-sm font-semibold {{ request()->routeIs('store.offers.*') ? 'text-primary' : 'text-gray-600 hover:text-primary' }} transition-colors">Ofertas</a>
+                    @if(request()->routeIs('home'))
+                        <!-- Home: Keep it clean or show main sections? User implied adapting to 'part', so home stays clean -->
+                    @elseif(request()->routeIs('construction.*'))
+                        <a href="{{ route('construction.index') }}" class="text-sm font-bold text-blue-600">Catálogo
+                            Materiales</a>
+                        <a href="{{ route('home') }}"
+                            class="text-sm font-medium text-slate-500 hover:text-slate-800">Inicio</a>
+                    @elseif(request()->routeIs('machinery.*'))
+                        <a href="{{ route('machinery.index') }}" class="text-sm font-bold text-yellow-600">Catálogo
+                            Renta</a>
+                        <a href="{{ route('home') }}"
+                            class="text-sm font-medium text-slate-500 hover:text-slate-800">Inicio</a>
+                    @else
+                        <!-- Default to Hardware (store.*) -->
+                        <a href="{{ route('store.index') }}"
+                            class="text-sm font-medium {{ request()->routeIs('store.index') ? 'text-secondary font-bold' : 'text-slate-600 hover:text-secondary' }} transition-colors">
+                            Catálogo
+                        </a>
+                        <a href="{{ route('store.brands.index') }}"
+                            class="text-sm font-medium {{ request()->routeIs('store.brands.*') ? 'text-secondary font-bold' : 'text-slate-600 hover:text-secondary' }} transition-colors">
+                            Marcas
+                        </a>
+                        <a href="{{ route('store.offers.index') }}"
+                            class="text-sm font-medium {{ request()->routeIs('store.offers.*') ? 'text-secondary font-bold' : 'text-slate-600 hover:text-secondary' }} transition-colors">
+                            Ofertas
+                        </a>
+                    @endif
                 </div>
 
                 <!-- Right Actions -->
                 <div class="flex items-center gap-3">
-                    <button @click="searchOpen = !searchOpen"
-                        class="p-2.5 text-gray-600 hover:text-primary bg-gray-50 hover:bg-blue-50 rounded-full transition-all">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                    </button>
+                    @if(!request()->routeIs('home'))
+                        <button @click="searchOpen = !searchOpen"
+                            class="p-2.5 text-slate-600 hover:text-secondary bg-slate-50 hover:bg-orange-50 rounded-full transition-all">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </button>
+                    @endif
 
                     @auth
                         <div x-data="{ openProfile: false }" class="relative">
                             <button @click="openProfile = !openProfile"
-                                class="hidden sm:flex items-center gap-2 text-sm font-bold text-gray-700 hover:text-primary transition-colors px-4 py-2 bg-gray-50 hover:bg-blue-50 rounded-full border border-gray-100 hover:border-blue-100">
+                                class="hidden sm:flex items-center gap-2 text-sm font-bold text-slate-700 hover:text-orange-600 transition-colors px-4 py-2 bg-slate-50 hover:bg-orange-50 rounded-full border border-slate-100 hover:border-orange-100">
                                 <span>{{ auth()->user()->name }}</span>
                                 <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -154,9 +187,12 @@
                                 @endif
 
                                 <!-- Aquí iría 'Mis Pedidos', etc para clientes -->
-                                <a href="#"
+                                <a href="{{ route('sales.my-purchases') }}"
                                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-primary">Mis
                                     Compras</a>
+                                <a href="{{ route('rentals.index') }}"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-primary">Mis
+                                    Rentas</a>
 
                                 <form method="POST" action="{{ route('logout') }}">
                                     <!-- Usando ruta logout de breeze, o admin.logout -->
@@ -194,18 +230,41 @@
             x-transition:leave-end="opacity-0 -translate-y-2" @click.away="open = false" style="display: none;"
             class="md:hidden bg-white border-t border-slate-100 absolute w-full left-0 z-30 shadow-lg top-20">
             <div class="px-4 py-6 space-y-4">
-                <a href="{{ route('store.index') }}"
-                    class="block text-base font-medium text-slate-700 hover:text-orange-600 transition-colors">
-                    Catálogo
-                </a>
-                <a href="{{ route('store.brands.index') }}"
-                    class="block text-base font-medium text-slate-700 hover:text-orange-600 transition-colors">
-                    Marcas
-                </a>
-                <a href="{{ route('store.offers.index') }}"
-                    class="block text-base font-medium text-slate-700 hover:text-orange-600 transition-colors">
-                    Ofertas
-                </a>
+                @if(request()->routeIs('home'))
+                    <!-- Home Mobile Menu -->
+                @elseif(request()->routeIs('construction.*'))
+                    <a href="{{ route('construction.index') }}"
+                        class="block text-base font-bold text-blue-600 hover:text-blue-800 transition-colors">
+                        Catálogo Materiales
+                    </a>
+                    <a href="{{ route('home') }}"
+                        class="block text-base font-medium text-slate-500 hover:text-slate-800 transition-colors">
+                        Inicio
+                    </a>
+                @elseif(request()->routeIs('machinery.*'))
+                    <a href="{{ route('machinery.index') }}"
+                        class="block text-base font-bold text-yellow-600 hover:text-yellow-800 transition-colors">
+                        Catálogo Renta
+                    </a>
+                    <a href="{{ route('home') }}"
+                        class="block text-base font-medium text-slate-500 hover:text-slate-800 transition-colors">
+                        Inicio
+                    </a>
+                @else
+                    <!-- Default Hardware Mobile Menu -->
+                    <a href="{{ route('store.index') }}"
+                        class="block text-base font-medium {{ request()->routeIs('store.index') ? 'text-orange-600 font-bold' : 'text-slate-700 hover:text-orange-600' }} transition-colors">
+                        Catálogo
+                    </a>
+                    <a href="{{ route('store.brands.index') }}"
+                        class="block text-base font-medium {{ request()->routeIs('store.brands.*') ? 'text-orange-600 font-bold' : 'text-slate-700 hover:text-orange-600' }} transition-colors">
+                        Marcas
+                    </a>
+                    <a href="{{ route('store.offers.index') }}"
+                        class="block text-base font-medium {{ request()->routeIs('store.offers.*') ? 'text-orange-600 font-bold' : 'text-slate-700 hover:text-orange-600' }} transition-colors">
+                        Ofertas
+                    </a>
+                @endif
 
                 <!-- Mobile Auth Section -->
                 <div class="border-t border-gray-100 pt-6 mt-2 space-y-4">
@@ -227,13 +286,23 @@
                             </a>
                         @endif
 
-                        <a href="#"
+                        <a href="{{ route('sales.my-purchases') }}"
                             class="flex items-center gap-2 text-base font-medium text-gray-700 hover:text-primary transition-colors">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                             </svg>
                             Mis Compras
+                        </a>
+
+                        <a href="{{ route('rentals.index') }}"
+                            class="flex items-center gap-2 text-base font-medium text-gray-700 hover:text-primary transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                                </path>
+                            </svg>
+                            Mis Rentas
                         </a>
 
                         <form method="POST" action="{{ route('logout') }}">
@@ -593,7 +662,7 @@
             </div>
         </div>
     </div>
-    @livewireScripts
+
 </body>
 
 </html>

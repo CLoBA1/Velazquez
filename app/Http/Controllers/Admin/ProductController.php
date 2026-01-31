@@ -70,6 +70,7 @@ class ProductController extends Controller
     {
         // 1. Validar datos comunes
         $data = $request->validate([
+            'business_line' => ['required', 'in:hardware,construction'],
             'internal_code' => ['required', 'string', 'max:255', 'unique:products,internal_code'],
             'supplier_sku' => ['nullable', 'string', 'max:255'],
             'barcode' => ['nullable', 'string', 'max:255'],
@@ -133,7 +134,9 @@ class ProductController extends Controller
     public function update(Request $request, Product $product)
     {
         // 1. Validar comunes
+        // 1. Validar comunes
         $data = $request->validate([
+            'business_line' => ['required', 'in:hardware,construction'],
             'internal_code' => ['required', 'string', 'max:255', 'unique:products,internal_code,' . $product->id],
             'supplier_sku' => ['nullable', 'string', 'max:255'],
             'barcode' => ['nullable', 'string', 'max:255'],
