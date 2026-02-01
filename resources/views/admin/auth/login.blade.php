@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -40,35 +41,29 @@
 
                     <div>
                         <label class="block text-sm font-semibold text-slate-800">Usuario</label>
-                        <input type="text"
-                               name="username"
-                               value="{{ old('username') }}"
-                               required
-                               autofocus
-                               autocomplete="username"
-                               class="mt-2 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-300">
+                        <input type="text" name="username" value="{{ old('username') }}" required autofocus
+                            autocomplete="username"
+                            class="mt-2 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-300">
                     </div>
 
                     <div>
                         <label class="block text-sm font-semibold text-slate-800">Contraseña</label>
-                        <input type="password"
-                               name="password"
-                               required
-                               autocomplete="current-password"
-                               class="mt-2 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-300">
+                        <input type="password" name="password" required autocomplete="current-password"
+                            class="mt-2 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-300">
                     </div>
 
                     <button type="submit"
-                            class="w-full rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900/20">
+                        class="w-full rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900/20">
                         Entrar
                     </button>
 
                     <p class="text-xs text-slate-500 text-center">
-                        Ferretería Velázquez · Administración
+                        Ferretería Velazquez · Administración
                     </p>
                 </form>
             </div>
         </div>
     </div>
 </body>
+
 </html>

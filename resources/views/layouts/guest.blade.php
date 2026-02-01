@@ -49,7 +49,7 @@
                     </div>
                     <div class="flex flex-col">
                         <span
-                            class="font-black text-2xl text-slate-800 tracking-tight leading-none group-hover:text-secondary transition-colors">Ferretería<br>Velázquez</span>
+                            class="font-black text-2xl text-slate-800 tracking-tight leading-none group-hover:text-secondary transition-colors">Ferretería<br>Velazquez</span>
                     </div>
                 </a>
             </div>
@@ -61,7 +61,7 @@
         </div>
 
         <div class="relative z-10 mt-8 text-slate-500 text-xs text-center">
-            &copy; {{ date('Y') }} Ferretería Velázquez. <br>Calidad y confianza en cada herramienta.
+            &copy; {{ date('Y') }} Ferretería Velazquez. <br>Calidad y confianza en cada herramienta.
         </div>
     </div>
 </body>

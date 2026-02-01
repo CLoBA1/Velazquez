@@ -14,8 +14,9 @@
         <div class="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <!-- Main Logo/Header -->
             <div class="mb-12 animate-fade-in-up">
-                <h1 class="text-4xl md:text-6xl font-black text-slate-900 mb-4 tracking-tight">
-                    Ferretería <span class="text-secondary">Velázquez</span>
+                <h1
+                    class="text-5xl md:text-7xl font-black text-slate-900 tracking-tight mb-6 leading-none animate-fade-in-up">
+                    Ferretería <span class="text-primary">Velazquez</span>
                 </h1>
                 <p class="text-xl md:text-2xl text-slate-500 font-light max-w-2xl mx-auto">
                     Tu socio experto en construcción, herramientas y maquinaria.
