@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Models\Unit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class ProductController extends Controller
 {
@@ -75,7 +76,11 @@ class ProductController extends Controller
             'supplier_sku' => ['nullable', 'string', 'max:255'],
             'barcode' => ['nullable', 'string', 'max:255'],
             'category_id' => ['required', 'exists:categories,id'],
-            'brand_id' => ['required', 'exists:brands,id'],
+            'brand_id' => [
+                Rule::requiredIf($request->business_line === 'hardware'),
+                'nullable',
+                'exists:brands,id'
+            ],
             'unit_id' => ['required', 'exists:units,id'],
             'name' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
@@ -141,7 +146,11 @@ class ProductController extends Controller
             'supplier_sku' => ['nullable', 'string', 'max:255'],
             'barcode' => ['nullable', 'string', 'max:255'],
             'category_id' => ['required', 'exists:categories,id'],
-            'brand_id' => ['required', 'exists:brands,id'],
+            'brand_id' => [
+                Rule::requiredIf($request->business_line === 'hardware'),
+                'nullable',
+                'exists:brands,id'
+            ],
             'unit_id' => ['required', 'exists:units,id'],
             'name' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],

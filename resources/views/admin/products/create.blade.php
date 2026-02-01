@@ -38,7 +38,8 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('admin.products.store') }}" enctype="multipart/form-data">
+    <form method="POST" action="{{ route('admin.products.store') }}" enctype="multipart/form-data" 
+        x-data="{ business_line: '{{ old('business_line', 'hardware') }}' }">
         @csrf
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -60,9 +61,9 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="md:col-span-2">
                              <label class="block text-sm font-bold text-slate-700 mb-2">Línea de Negocio</label>
-                             <select name="business_line" class="w-full rounded-xl border-slate-200 py-2.5 px-3 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all">
-                                 <option value="hardware" @selected(old('business_line') == 'hardware')>Ferretería General</option>
-                                 <option value="construction" @selected(old('business_line') == 'construction')>Materiales de Construcción</option>
+                             <select name="business_line" x-model="business_line" class="w-full rounded-xl border-slate-200 py-2.5 px-3 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all">
+                                 <option value="hardware">Ferretería General</option>
+                                 <option value="construction">Materiales de Construcción</option>
                              </select>
                         </div>
                         <div class="md:col-span-2">
@@ -124,8 +125,8 @@
 
                         {{-- Marca --}}
                         <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-2">Marca</label>
-                            <select name="brand_id" required
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Marca <span x-show="business_line === 'hardware'" class="text-red-500">*</span></label>
+                            <select name="brand_id" :required="business_line === 'hardware'"
                                 class="w-full rounded-xl border-slate-200 py-2.5 px-3 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all">
                                 <option value="">Seleccionar...</option>
                                 @foreach($brands as $b)
