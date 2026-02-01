@@ -104,8 +104,9 @@
                         <div class="flex flex-col">
                             <span class="font-bold text-lg tracking-tight text-slate-900 leading-tight">Ferretería
                                 Velázquez</span>
-                            @if(request()->routeIs('store.*'))
-                                <span class="text-[10px] uppercase tracking-wide text-secondary font-bold">Ferretería</span>
+                            @if(isset($product) && $product->business_line === 'construction')
+                                <span
+                                    class="text-[10px] uppercase tracking-wide text-blue-600 font-bold">Construcción</span>
                             @elseif(request()->routeIs('construction.*'))
                                 <span
                                     class="text-[10px] uppercase tracking-wide text-blue-600 font-bold">Construcción</span>
@@ -113,8 +114,7 @@
                                 <span
                                     class="text-[10px] uppercase tracking-wide text-yellow-600 font-bold">Maquinaria</span>
                             @else
-                                <span class="text-[10px] uppercase tracking-wide text-gray-500 font-medium">Materiales y
-                                    Equipos</span>
+                                <span class="text-[10px] uppercase tracking-wide text-secondary font-bold">Ferretería</span>
                             @endif
                         </div>
                     </a>
@@ -124,7 +124,7 @@
                 <div class="hidden md:flex items-center gap-8">
                     @if(request()->routeIs('home'))
                         <!-- Home: Keep it clean or show main sections? User implied adapting to 'part', so home stays clean -->
-                    @elseif(request()->routeIs('construction.*'))
+                    @elseif(request()->routeIs('construction.*') || (isset($product) && $product->business_line === 'construction'))
                         <a href="{{ route('construction.index') }}" class="text-sm font-bold text-blue-600">Catálogo
                             Materiales</a>
                         <a href="{{ route('home') }}"
@@ -137,7 +137,7 @@
                     @else
                         <!-- Default to Hardware (store.*) -->
                         <a href="{{ route('store.index') }}"
-                            class="text-sm font-medium {{ request()->routeIs('store.index') ? 'text-secondary font-bold' : 'text-slate-600 hover:text-secondary' }} transition-colors">
+                            class="text-sm font-medium {{ request()->routeIs('store.index') || (isset($product) && $product->business_line === 'hardware') ? 'text-secondary font-bold' : 'text-slate-600 hover:text-secondary' }} transition-colors">
                             Catálogo
                         </a>
                         <a href="{{ route('store.brands.index') }}"
@@ -232,7 +232,7 @@
             <div class="px-4 py-6 space-y-4">
                 @if(request()->routeIs('home'))
                     <!-- Home Mobile Menu -->
-                @elseif(request()->routeIs('construction.*'))
+                @elseif(request()->routeIs('construction.*') || (isset($product) && $product->business_line === 'construction'))
                     <a href="{{ route('construction.index') }}"
                         class="block text-base font-bold text-blue-600 hover:text-blue-800 transition-colors">
                         Catálogo Materiales
@@ -253,7 +253,7 @@
                 @else
                     <!-- Default Hardware Mobile Menu -->
                     <a href="{{ route('store.index') }}"
-                        class="block text-base font-medium {{ request()->routeIs('store.index') ? 'text-orange-600 font-bold' : 'text-slate-700 hover:text-orange-600' }} transition-colors">
+                        class="block text-base font-medium {{ request()->routeIs('store.index') || (isset($product) && $product->business_line === 'hardware') ? 'text-orange-600 font-bold' : 'text-slate-700 hover:text-orange-600' }} transition-colors">
                         Catálogo
                     </a>
                     <a href="{{ route('store.brands.index') }}"

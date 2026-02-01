@@ -4,23 +4,30 @@
 
 @section('content')
     <div class="bg-white min-h-screen pb-20" x-data="{ 
-                    activeImage: '{{ $product->image_url }}', 
-                    qty: 1,
-                    zoom: false
-                }">
+                                activeImage: '{{ $product->image_url }}', 
+                                qty: 1,
+                                zoom: false
+                            }">
 
         <!-- Breadcrumb (Modern) -->
         <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <ol class="flex items-center space-x-2 text-sm text-gray-400">
-                <li><a href="{{ route('store.index') }}" class="hover:text-slate-900 transition-colors">Inicio</a></li>
+                @if($product->business_line === 'construction')
+                    <li><a href="{{ route('construction.index') }}" class="hover:text-slate-900 transition-colors">Inicio</a>
+                    </li>
+                @else
+                    <li><a href="{{ route('store.index') }}" class="hover:text-slate-900 transition-colors">Inicio</a></li>
+                @endif
                 <li><svg class="w-4 h-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd"
                             d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
                             clip-rule="evenodd"></path>
                     </svg></li>
-                @if($product->category)
-                    <li><a href="{{ route('store.index', ['category' => $product->category_id]) }}"
-                            class="hover:text-slate-900 transition-colors">{{ $product->category->name }}</a></li>
+                @if($product->category && $product->business_line !== 'construction')
+                    <li>
+                        <a href="{{ route('store.index', ['category' => $product->category_id]) }}"
+                            class="hover:text-slate-900 transition-colors">{{ $product->category->name }}</a>
+                    </li>
                     <li><svg class="w-4 h-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd"
                                 d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
@@ -87,8 +94,9 @@
 
                     <!-- Header -->
                     <div>
-                        <h2 class="text-sm font-bold text-secondary uppercase tracking-widest mb-2">
-                            {{ $product->brand ? $product->brand->name : 'FERRETERÍA PREMIUM' }}
+                        <h2
+                            class="text-sm font-bold {{ $product->business_line === 'construction' ? 'text-blue-600' : 'text-secondary' }} uppercase tracking-widest mb-2">
+                            {{ $product->business_line === 'construction' ? 'MATERIALES DE CONSTRUCCIÓN' : ($product->brand ? $product->brand->name : 'FERRETERÍA PREMIUM') }}
                         </h2>
                         <h1 class="text-4xl sm:text-5xl font-extrabold text-dark tracking-tight leading-tight mb-4">
                             {{ $product->name }}
