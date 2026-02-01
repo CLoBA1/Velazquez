@@ -390,10 +390,7 @@
 
                 <!-- Links 2 -->
                 <div class="space-y-4">
-                    <h3 class="font-black text-2xl text-slate-900 tracking-tight">Ferretería Velazquez</h3>
-                    <p class="text-slate-500 leading-relaxed max-w-sm">
-                        Tu socio experto en construcción y herramientas. Calidad garantizada en cada producto.
-                    </p>
+
                     <h3 class="font-bold text-sm uppercase tracking-wider mb-4 opacity-80">Ayuda</h3>
                     <ul class="space-y-3 text-sm text-gray-400">
                         <li><a href="{{ route('pages.shipping') }}"
