@@ -102,7 +102,7 @@
                         <img src="{{ asset('images/logo-final.png') }}" alt="Ferretería Velázquez"
                             class="h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-300">
                         <div class="flex flex-col">
-                            <span class="font-bold text-lg tracking-tight text-slate-900 leading-tight">Ferretería
+                            <span class="font-bold text-xl text-slate-900 leading-none">Ferretería
                                 Velazquez</span>
                             @if(isset($product) && $product->business_line === 'construction')
                                 <span
