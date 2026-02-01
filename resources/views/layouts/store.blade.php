@@ -98,26 +98,32 @@
                         </svg>
                     </button>
 
-                    <a href="{{ route('home') }}" class="flex items-center gap-3 group">
-                        <img src="{{ asset('images/logo-final.png') }}" alt="Ferretería Velázquez"
-                            class="h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-300">
-                        <div class="flex flex-col">
-                            <span class="font-bold text-xl text-slate-900 leading-none">Ferretería
-                                Velazquez</span>
-                            @if(isset($product) && $product->business_line === 'construction')
-                                <span
-                                    class="text-[10px] uppercase tracking-wide text-blue-600 font-bold">Construcción</span>
-                            @elseif(request()->routeIs('construction.*'))
-                                <span
-                                    class="text-[10px] uppercase tracking-wide text-blue-600 font-bold">Construcción</span>
-                            @elseif(request()->routeIs('machinery.*'))
-                                <span
-                                    class="text-[10px] uppercase tracking-wide text-yellow-600 font-bold">Maquinaria</span>
-                            @else
-                                <span class="text-[10px] uppercase tracking-wide text-secondary font-bold">Ferretería</span>
-                            @endif
-                        </div>
-                    </a>
+                    <!-- Logo (Hidden on Home Page as per user request to avoid duplication) -->
+                    @if(!request()->routeIs('home'))
+                        <a href="{{ route('home') }}" class="flex items-center gap-3 group">
+                            <img src="{{ asset('images/logo-final.png') }}" alt="Ferretería Velázquez"
+                                class="h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-300">
+                            <div class="flex flex-col">
+                                <span class="font-bold text-xl text-slate-900 leading-none">Ferretería
+                                    Velazquez</span>
+                                @if(isset($product) && $product->business_line === 'construction')
+                                    <span
+                                        class="text-[10px] uppercase tracking-wide text-blue-600 font-bold">Construcción</span>
+                                @elseif(request()->routeIs('construction.*'))
+                                    <span
+                                        class="text-[10px] uppercase tracking-wide text-blue-600 font-bold">Construcción</span>
+                                @elseif(request()->routeIs('machinery.*'))
+                                    <span
+                                        class="text-[10px] uppercase tracking-wide text-yellow-600 font-bold">Maquinaria</span>
+                                @else
+                                    <span class="text-[10px] uppercase tracking-wide text-secondary font-bold">Ferretería</span>
+                                @endif
+                            </div>
+                        </a>
+                    @else
+                        <!-- Placeholder to keep spacing if needed, or just empty -->
+                        <div class="h-12"></div>
+                    @endif
                 </div>
 
                 <!-- Contextual Desktop Nav -->
