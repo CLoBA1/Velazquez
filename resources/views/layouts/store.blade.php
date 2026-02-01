@@ -98,8 +98,8 @@
                         </svg>
                     </button>
 
-                    <!-- Logo (Hidden on Home Page as per user request to avoid duplication) -->
-                    @if(!request()->routeIs('home'))
+                    <!-- Logo (Hidden on Home Page) -->
+                    @if(!request()->routeIs('home') && !request()->is('/'))
                         <a href="{{ route('home') }}" class="flex items-center gap-3 group">
                             <img src="{{ asset('images/logo-final.png') }}" alt="Ferretería Velázquez"
                                 class="h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-300">
