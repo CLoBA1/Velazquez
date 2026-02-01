@@ -8,7 +8,7 @@ class PageController extends Controller
 {
     public function home()
     {
-        return view('welcome');
+        return view('welcome', ['hide_header_brand' => true]);
     }
 
     public function shipping()
