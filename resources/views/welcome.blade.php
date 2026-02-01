@@ -1,6 +1,7 @@
 @extends('layouts.store')
 
 @section('title', 'Bienvenido a Ferretería Velázquez | Herramientas y Materiales')
+@section('hide_main_header_brand', true)
 
 @section('content')
     <div
