@@ -44,7 +44,7 @@
                                             {{ $product->name }}
                                         </a>
                                     </h3>
-                                    <p class="text-sm text-stone-500">{{ $product->brand->name ?? '' }} ·
+                                    <p class="text-sm text-stone-500">Material de construcción ·
                                         {{ $product->unit->name ?? 'Unidad' }}</p>
                                     <p class="text-sm text-stone-600 flex-1">{{ Str::limit($product->description, 60) }}</p>
                                     <div class="mt-4 flex items-center justify-between">
