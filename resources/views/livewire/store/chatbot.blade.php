@@ -1,4 +1,5 @@
 <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-4 font-sans"
+    style="position: fixed; bottom: 24px; right: 24px; z-index: 50;"
     x-data="{ scrollToBottom() { $nextTick(() => { $refs.chatContainer.scrollTop = $refs.chatContainer.scrollHeight }) } }"
     @scroll-to-bottom.window="scrollToBottom()">
 
