@@ -4,10 +4,10 @@
 
 @section('content')
     <div class="bg-white min-h-screen pb-20" x-data="{ 
-                                activeImage: '{{ $product->image_url }}', 
-                                qty: 1,
-                                zoom: false
-                            }">
+                                    activeImage: '{{ $product->image_url }}', 
+                                    qty: 1,
+                                    zoom: false
+                                }">
 
         <!-- Breadcrumb (Modern) -->
         <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -156,7 +156,8 @@
 
                         <!-- Actions -->
                         <!-- Actions Component (Livewire) -->
-                        <livewire:store.product-page-actions :productId="$product->id" :stock="$product->stock" />
+                        <!-- Actions Component (Livewire) -->
+                        <livewire:store.product-page-actions :product="$product" />
                     </div>
 
                     <!-- Details & Specs -->

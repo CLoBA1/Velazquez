@@ -427,6 +427,10 @@
             </div>
         </div>
     </footer>
+
+    <!-- Interactive Chatbot -->
+    <livewire:store.chatbot />
+
     <!-- Toast Notifications -->
     <div x-data="{ 
             notifications: [],

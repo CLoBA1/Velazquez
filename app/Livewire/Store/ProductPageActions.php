@@ -8,14 +8,16 @@ use Livewire\Component;
 
 class ProductPageActions extends Component
 {
+    public $product;
     public $productId;
     public $stock;
     public $quantity = 1;
 
-    public function mount($productId, $stock)
+    public function mount(Product $product)
     {
-        $this->productId = $productId;
-        $this->stock = $stock;
+        $this->product = $product;
+        $this->productId = $product->id;
+        $this->stock = $product->stock;
     }
 
     public function increment()
