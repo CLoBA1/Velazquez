@@ -162,3 +162,9 @@ Route::prefix('admin')->group(function () {
 
 // Breeze / auth routes (fuera de /admin para no chocar con /admin/login)
 require __DIR__ . '/auth.php';
+
+// Route for clearing cache on shared hosting
+Route::get('/clear-cache', function () {
+    \Illuminate\Support\Facades\Artisan::call('optimize:clear');
+    return 'Cache cleared! <br> <a href="/">Go Back</a>';
+});
