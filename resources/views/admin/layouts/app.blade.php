@@ -230,6 +230,7 @@
     
     <livewire:admin.order-notification />
 
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     @livewireScripts
 </body>
 </html>
