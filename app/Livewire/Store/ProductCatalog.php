@@ -56,6 +56,7 @@ class ProductCatalog extends Component
     {
         $this->category = $categoryId === $this->category ? null : $categoryId;
         $this->resetPage();
+        $this->dispatch('scroll-top');
     }
 
     public function render()

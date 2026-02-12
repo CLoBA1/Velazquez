@@ -1,4 +1,4 @@
-<div class="min-h-screen">
+<div class="min-h-screen" x-data x-on:scroll-top.window="scrollToTop()">
     <div class="flex flex-col lg:flex-row gap-8">
 
         <!-- Sidebar Navigation (Desktop) -->
@@ -17,7 +17,7 @@
                 <div class="space-y-2 max-h-[calc(100vh-200px)] overflow-y-auto pr-2 custom-scrollbar">
                     <!-- 'Todos' Link -->
                     <div>
-                        <button wire:click="setCategory(null)" @click="scrollToTop()"
+                        <button wire:click="setCategory(null)"
                             class="flex items-center gap-2 w-full text-left p-2 rounded-lg transition-colors {{ is_null($category) ? 'bg-blue-50 text-blue-700 font-bold' : 'text-slate-600 hover:bg-slate-50' }}">
                             <span
                                 class="w-2 h-2 rounded-full {{ is_null($category) ? 'bg-blue-600' : 'bg-slate-300' }}"></span>
@@ -46,7 +46,7 @@
                                     <ul class="space-y-1 pl-2 mt-1">
                                         @foreach($family->categories as $cat)
                                             <li>
-                                                <button wire:click="setCategory({{ $cat->id }})" @click="scrollToTop()"
+                                                <button wire:click="setCategory({{ $cat->id }})"
                                                     class="flex items-center gap-2 w-full text-left text-sm py-1.5 px-2 rounded-md transition-colors {{ $category == $cat->id ? 'bg-blue-50 text-blue-700 font-bold' : 'text-slate-500 hover:text-blue-600 hover:bg-slate-50' }}">
                                                     <span
                                                         class="w-1.5 h-1.5 rounded-full transition-colors {{ $category == $cat->id ? 'bg-blue-600' : 'bg-slate-200' }}"></span>
@@ -210,7 +210,11 @@
     function scrollToTop() {
         const element = document.getElementById('products-anchor');
         if (element) {
+            // Using scrollIntoView with smooth behavior
             element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+            // Fallback to top of page if anchor missing
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     }
 </script>
