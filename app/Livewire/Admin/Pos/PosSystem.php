@@ -274,6 +274,7 @@ class PosSystem extends Component
         if (strlen($this->search) > 1) { // Search after 2 chars
             $products = Product::where('name', 'like', '%' . $this->search . '%')
                 ->orWhere('internal_code', 'like', '%' . $this->search . '%')
+                ->orWhere('barcode', 'like', '%' . $this->search . '%')
                 ->take(12)
                 ->get();
         }

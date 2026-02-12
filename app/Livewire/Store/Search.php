@@ -16,6 +16,8 @@ class Search extends Component
             $this->results = Product::where(function ($q) {
                 $q->where('name', 'like', '%' . $this->query . '%')
                     ->orWhere('description', 'like', '%' . $this->query . '%')
+                    ->orWhere('internal_code', 'like', '%' . $this->query . '%')
+                    ->orWhere('barcode', 'like', '%' . $this->query . '%')
                     ->orWhereHas('brand', function ($brandQ) {
                         $brandQ->where('name', 'like', '%' . $this->query . '%');
                     });
