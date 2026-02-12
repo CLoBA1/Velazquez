@@ -75,8 +75,17 @@
             console.log(`Code matched = ${decodedText}`, decodedResult);
             this.scanResult = decodedText;
             this.show = false; // Close modal
-            // Dispatch event with the result
+            
+            // Dispatch standard Alpine event
             this.$dispatch('scan-completed', { code: decodedText });
+            
+            // Dispatch global window event (Brute Force)
+            window.dispatchEvent(new CustomEvent('global-scan-completed', { 
+                detail: { code: decodedText },
+                bubbles: true,
+                composed: true
+            }));
+
             this.stopScanner();
         }
     }" x-init="initScanner()" @open-scanner.window="show = true" x-show="show" style="display: none;"

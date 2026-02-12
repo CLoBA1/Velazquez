@@ -54,9 +54,7 @@
     @endif
 
     {{-- Filters (White & Clean) --}}
-    <div class="rounded-3xl border border-slate-100 bg-white p-8 shadow-xl shadow-slate-200/50 mb-10" 
-        x-data="{
-                search: '{{ request('search') }}',
+    <div class="rounded-3xl border border-slate-100 bg-white p-8 shadow-xl shadow-slate-200/50 mb-10" x-data="{
                 filterCategories() {
                     let fam = this.$refs.family.value;
                     let catSelect = this.$refs.category;
@@ -94,7 +92,7 @@
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Buscar</label>
                 <div class="flex gap-2">
                     <div class="relative group flex-1">
-                        <input id="searchInput" name="search" x-model="search" placeholder="Nombre, código, SKU..."
+                        <input id="searchInput" name="search" value="{{ request('search') }}" placeholder="Nombre, código, SKU..."
                             class="w-full rounded-xl border-slate-200 bg-slate-50 py-3 pl-10 pr-4 text-sm text-slate-800 focus:border-orange-500 focus:bg-white focus:ring-2 focus:ring-orange-100 transition-all font-medium">
                         <svg class="absolute left-3 top-3 w-5 h-5 text-slate-400 group-focus-within:text-orange-500 transition-colors"
                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -284,8 +282,15 @@
         {{ $products->links() }}
     </div>
 
-    <x-scanner-modal @scan-completed.window="
-        search = $event.detail.code;
-        $nextTick(() => document.getElementById('searchInput').form.submit());
-    " />
+    <x-scanner-modal />
+
+    <script>
+        window.addEventListener('global-scan-completed', event => {
+            const input = document.getElementById('searchInput');
+            if (input) {
+                input.value = event.detail.code;
+                input.form.submit();
+            }
+        });
+    </script>
 @endsection

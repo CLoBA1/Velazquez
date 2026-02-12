@@ -1,9 +1,4 @@
-<div class="h-[calc(100vh-6rem)] flex flex-col md:flex-row gap-6 font-sans" 
-    x-data="{ 
-        updateSearch(code) {
-            $wire.set('search', code);
-        }
-    }">
+<div class="h-[calc(100vh-6rem)] flex flex-col md:flex-row gap-6 font-sans">
     
     <!-- Left Panel: Product Search & Grid -->
     <div class="w-full md:w-3/4 flex flex-col gap-4">
@@ -482,5 +477,25 @@
         </div>
     @endif
     
-    <x-scanner-modal @scan-completed.window="updateSearch($event.detail.code)" />
+    <x-scanner-modal />
+
+    @script
+    <script>
+        window.addEventListener('global-scan-completed', event => {
+            console.log('POS Global Scan Received:', event.detail.code);
+            const code = event.detail.code;
+            
+            // Option 1: Direct Wire Set
+            $wire.set('search', code);
+            
+            // Option 2: Fallback to DOM input (visual feedback)
+            const input = document.getElementById('posSearchInput');
+            if (input) {
+                input.value = code;
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+                input.focus();
+            }
+        });
+    </script>
+    @endscript
 </div>

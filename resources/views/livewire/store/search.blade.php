@@ -67,5 +67,20 @@
         </div>
     @endif
 
-    <x-scanner-modal @scan-completed.window="$wire.set('query', $event.detail.code)" />
+    <x-scanner-modal />
+
+    @script
+    <script>
+        window.addEventListener('global-scan-completed', event => {
+            console.log('Store Search Global Scan Received:', event.detail.code);
+            $wire.set('query', event.detail.code);
+            
+            // Visual feedback
+            const input = document.getElementById('storeSearchInput');
+            if (input) {
+                input.value = event.detail.code;
+            }
+        });
+    </script>
+    @endscript
 </div>
