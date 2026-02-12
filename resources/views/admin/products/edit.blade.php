@@ -39,8 +39,10 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('admin.products.update', $product) }}" enctype="multipart/form-data"
-        x-data="{ business_line: '{{ old('business_line', $product->business_line) }}' }">
+    <form method="POST" action="{{ route('admin.products.update', $product) }}" enctype="multipart/form-data" x-data="{ 
+                business_line: '{{ old('business_line', $product->business_line) }}',
+                barcode: '{{ old('barcode', $product->barcode) }}'
+            }" @scan-completed.window="barcode = $event.detail.code">
         @csrf
         @method('PUT')
 
@@ -147,8 +149,19 @@
 
                         <div>
                             <label class="block text-sm font-bold text-slate-700 mb-2">Código de Barras (Opcional)</label>
-                            <input name="barcode" value="{{ old('barcode', $product->barcode) }}"
-                                class="w-full rounded-xl border-slate-200 py-2.5 px-3 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all">
+                            <div class="flex gap-2">
+                                <input name="barcode" x-model="barcode"
+                                    class="w-full rounded-xl border-slate-200 py-2.5 px-3 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all">
+                                <button type="button" @click="$dispatch('open-scanner')"
+                                    class="shrink-0 rounded-xl bg-slate-100 border border-slate-200 px-3 text-slate-600 hover:bg-slate-200 hover:text-slate-800 transition-colors"
+                                    title="Escanear código de barras">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 17h.01M9 17h.01M12 13h.01M12 21h4a2 2 0 002-2v-3.28a1 1 0 00-.684-.948l-1.923-.641a1 1 0 00-.578.024l-1.075.358a1 1 0 00-.684.948V21zM6.75 8.25A2.25 2.25 0 019 6h6a2.25 2.25 0 012.25 2.25v2.25a2.25 2.25 0 01-2.25 2.25H9a2.25 2.25 0 01-2.25-2.25V8.25z">
+                                        </path>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
 
                         <div>
@@ -167,40 +180,40 @@
                 {{-- Card: Precios --}}
                 @if(auth()->user()->isAdmin())
                     <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" x-data="{
-                                                                            cost: '{{ old('cost_price', $product->cost_price) }}',
-                                                                            tax_percent: '{{ old('taxes_percent', $product->taxes_percent) }}',
-                                                                            net_cost: '', 
-                                                                            init() {
-                                                                                let c = parseFloat(this.cost);
-                                                                                let t = parseFloat(this.tax_percent);
-                                                                                if(!isNaN(c) && !isNaN(t)) {
-                                                                                    if (t === 0) {
-                                                                                        this.net_cost = c;
-                                                                                    } else {
-                                                                                        this.net_cost = (c / (1 + (t / 100))).toFixed(2);
-                                                                                    }
-                                                                                }
-                                                                            },
-                                                                            updateGrossCost() {
-                                                                                let n = parseFloat(this.net_cost);
-                                                                                let t = parseFloat(this.tax_percent);
-                                                                                if(isNaN(n)) n = 0;
-                                                                                if(isNaN(t)) t = 0;
+                                                                                    cost: '{{ old('cost_price', $product->cost_price) }}',
+                                                                                    tax_percent: '{{ old('taxes_percent', $product->taxes_percent) }}',
+                                                                                    net_cost: '', 
+                                                                                    init() {
+                                                                                        let c = parseFloat(this.cost);
+                                                                                        let t = parseFloat(this.tax_percent);
+                                                                                        if(!isNaN(c) && !isNaN(t)) {
+                                                                                            if (t === 0) {
+                                                                                                this.net_cost = c;
+                                                                                            } else {
+                                                                                                this.net_cost = (c / (1 + (t / 100))).toFixed(2);
+                                                                                            }
+                                                                                        }
+                                                                                    },
+                                                                                    updateGrossCost() {
+                                                                                        let n = parseFloat(this.net_cost);
+                                                                                        let t = parseFloat(this.tax_percent);
+                                                                                        if(isNaN(n)) n = 0;
+                                                                                        if(isNaN(t)) t = 0;
 
-                                                                                this.cost = (n * (1 + (t / 100))).toFixed(2);
-                                                                                // update prices logic if needed
-                                                                            },
-                                                                            calculatePrice(percent) {
-                                                                                let c = parseFloat(this.cost);
-                                                                                let p = parseFloat(percent);
-                                                                                if(isNaN(c) || isNaN(p)) return '';
-                                                                                return (c * (1 + (p / 100))).toFixed(2);
-                                                                            },
-                                                                            updatePrice(e, targetId) {
-                                                                                let val = this.calculatePrice(e.target.value);
-                                                                                if(val) document.getElementById(targetId).value = val;
-                                                                            }
-                                                                         }">
+                                                                                        this.cost = (n * (1 + (t / 100))).toFixed(2);
+                                                                                        // update prices logic if needed
+                                                                                    },
+                                                                                    calculatePrice(percent) {
+                                                                                        let c = parseFloat(this.cost);
+                                                                                        let p = parseFloat(percent);
+                                                                                        if(isNaN(c) || isNaN(p)) return '';
+                                                                                        return (c * (1 + (p / 100))).toFixed(2);
+                                                                                    },
+                                                                                    updatePrice(e, targetId) {
+                                                                                        let val = this.calculatePrice(e.target.value);
+                                                                                        if(val) document.getElementById(targetId).value = val;
+                                                                                    }
+                                                                                 }">
                         <h2 class="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
                             <span class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -392,4 +405,6 @@
             </div>
         </div>
     </form>
+
+    <x-scanner-modal />
 @endsection

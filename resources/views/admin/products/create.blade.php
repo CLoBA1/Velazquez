@@ -39,7 +39,12 @@
     @endif
 
     <form method="POST" action="{{ route('admin.products.store') }}" enctype="multipart/form-data" 
-        x-data="{ business_line: '{{ old('business_line', 'hardware') }}' }">
+        x-data="{ 
+            business_line: '{{ old('business_line', 'hardware') }}',
+            barcode: '{{ old('barcode') }}'
+        }"
+        @scan-completed.window="barcode = $event.detail.code"
+    >
         @csrf
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -166,8 +171,19 @@
 
                         <div>
                             <label class="block text-sm font-bold text-slate-700 mb-2">Código de Barras (Opcional)</label>
-                            <input name="barcode" value="{{ old('barcode') }}"
-                                class="w-full rounded-xl border-slate-200 py-2.5 px-3 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all">
+                            <div class="flex gap-2">
+                                <input name="barcode" x-model="barcode"
+                                    class="w-full rounded-xl border-slate-200 py-2.5 px-3 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all">
+                                <button type="button" @click="$dispatch('open-scanner')"
+                                    class="shrink-0 rounded-xl bg-slate-100 border border-slate-200 px-3 text-slate-600 hover:bg-slate-200 hover:text-slate-800 transition-colors"
+                                    title="Escanear código de barras">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 17h.01M9 17h.01M12 13h.01M12 21h4a2 2 0 002-2v-3.28a1 1 0 00-.684-.948l-1.923-.641a1 1 0 00-.578.024l-1.075.358a1 1 0 00-.684.948V21zM6.75 8.25A2.25 2.25 0 019 6h6a2.25 2.25 0 012.25 2.25v2.25a2.25 2.25 0 01-2.25 2.25H9a2.25 2.25 0 01-2.25-2.25V8.25z">
+                                        </path>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
 
                         <div>
@@ -387,6 +403,8 @@
             </div>
         </div>
     </form>
+
+    <x-scanner-modal />
 
     <script>
         (function () {
