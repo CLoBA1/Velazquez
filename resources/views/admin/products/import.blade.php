@@ -126,7 +126,8 @@
                         @foreach($errs as $e)
                             <tr>
                                 <td class="px-6 py-3 whitespace-nowrap text-xs font-bold text-yellow-800 w-20">Fila
-                                    {{ $e['row'] }}</td>
+                                    {{ $e['row'] }}
+                                </td>
                                 <td class="px-6 py-3 text-sm text-yellow-700">{{ $e['message'] }}</td>
                             </tr>
                         @endforeach
@@ -134,6 +135,53 @@
                 </table>
             </div>
         </div>
+        @endif
+
+        {{-- Import History --}}
+        @php
+            $history = \App\Models\ImportHistory::where('user_id', auth()->id())->latest()->take(10)->get();
+        @endphp
+        @if($history->isNotEmpty())
+            <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+                <div class="bg-slate-50 px-6 py-4 border-b border-slate-100">
+                    <h3 class="font-bold text-slate-800">Historial Reciente</h3>
+                </div>
+                <table class="min-w-full divide-y divide-slate-100">
+                    <thead class="bg-slate-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                Fecha</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                Archivo</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                Resumen</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 bg-white">
+                        @foreach($history as $h)
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                                    {{ $h->created_at->format('d/m/Y H:i') }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
+                                    {{ $h->file_name }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                                    <span class="text-emerald-600 font-bold">{{ $h->created_count }}</span> Nuevos |
+                                    <span class="text-amber-500">{{ $h->skipped_count }}</span> Omitidos |
+                                    <span class="text-red-600">{{ $h->error_count }}</span> Errores
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <a href="{{ route('admin.products.import.report', $h->id) }}"
+                                        class="text-blue-600 hover:text-blue-900 font-bold">Descargar PDF</a>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         @endif
     </div>
 

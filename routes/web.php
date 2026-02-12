@@ -74,6 +74,9 @@ Route::prefix('admin')->group(function () {
     Route::get('productos/importar/plantilla', [ProductImportController::class, 'downloadTemplate'])
         ->name('admin.products.import.template');
 
+    Route::get('productos/importar/{history}/reporte', [ProductImportController::class, 'downloadReport'])
+        ->name('admin.products.import.report');
+
     // Login (no protegido)
     Route::get('/login', [AdminAuthController::class, 'showLogin'])->name('admin.login');
 

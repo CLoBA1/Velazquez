@@ -27,6 +27,7 @@ class ProductImportController extends Controller
         ]);
 
         $file = $request->file('file');
+        $fileName = $file->getClientOriginalName();
 
         $sheets = Excel::toArray([], $file);
         $rows = $sheets[0] ?? [];
@@ -38,13 +39,11 @@ class ProductImportController extends Controller
         $headers = array_map(fn($h) => $this->norm((string) $h), $rows[0]);
         $idx = $this->buildIndexMap($headers);
 
-        // Columnas MÍNIMAS requeridas (más flexible)
-        // Ya no exigimos family_code ni unit_symbol obligatoriamente si tenemos los nombres
         $required = [
-            'name', // description opcional (se puede dejar vacía)
-            'family', // basta con el nombre
+            'name',
+            'family',
             'category',
-            'unit_name', // basta con el nombre
+            'unit_name',
             'cost_price',
             'sale_price',
             'public_price',
@@ -56,8 +55,17 @@ class ProductImportController extends Controller
             }
         }
 
+        // Init History Log
+        $history = \App\Models\ImportHistory::create([
+            'user_id' => auth()->id(),
+            'file_name' => $fileName,
+            'total_rows' => count($rows) - 1,
+            'status' => 'processing', // You might want to add a status col to history later, but unrelated for now
+        ]);
+
         $created = 0;
         $skipped = 0;
+        $errorCount = 0;
         $errors = [];
 
         // caches
@@ -70,6 +78,7 @@ class ProductImportController extends Controller
         try {
             for ($i = 1; $i < count($rows); $i++) {
                 $row = $rows[$i];
+                $rowNum = $i + 1;
 
                 if ($this->isEmptyRow($row)) {
                     continue;
@@ -78,23 +87,40 @@ class ProductImportController extends Controller
                 try {
                     $p = $this->rowToPayload($row, $idx);
 
-                    // Validaciones básicas
+                    // --- VALIDATIONS ---
+
+                    // 1. Name Empty
                     if ($p['name'] === '')
                         throw new \RuntimeException("El nombre del producto está vacío.");
 
-                    // Si description viene vacía, usamos el nombre
+                    // 2. Barcode Duplicate
+                    if (!empty($p['barcode']) && Product::where('barcode', $p['barcode'])->exists()) {
+                        throw new \RuntimeException("Código de Barras '{$p['barcode']}' ya existe en el sistema.");
+                    }
+
+                    // 3. Internal Code Duplicate (If provided)
+                    if (!empty($p['internal_code']) && Product::where('internal_code', $p['internal_code'])->exists()) {
+                        throw new \RuntimeException("Código Interno '{$p['internal_code']}' ya existe.");
+                    }
+
+                    // 4. Name Duplicate (Optional strictness)
+                    // if (Product::where('name', $p['name'])->exists()) {
+                    //      throw new \RuntimeException("Ya existe un producto con el nombre '{$p['name']}'.");
+                    // }
+
+                    // Fill defaults
                     if ($p['description'] === '')
                         $p['description'] = $p['name'];
 
                     // Precios numéricos obligatorios
                     if ($p['cost_price'] === null)
-                        throw new \RuntimeException("El Costo es inválido o vacío.");
+                        throw new \RuntimeException("El Costo es inválido.");
                     if ($p['sale_price'] === null)
-                        throw new \RuntimeException("El Precio Venta es inválido o vacío.");
+                        throw new \RuntimeException("El Precio Venta es inválido.");
                     if ($p['public_price'] === null)
-                        throw new \RuntimeException("El Precio Público es inválido o vacío.");
+                        throw new \RuntimeException("El Precio Público es inválido.");
 
-                    // Rellenar precios opcionales si faltan
+                    // Rellenar precios
                     if ($p['mid_wholesale_price'] === null)
                         $p['mid_wholesale_price'] = $p['public_price'];
                     if ($p['wholesale_price'] === null)
@@ -102,40 +128,32 @@ class ProductImportController extends Controller
 
                     // Generar Internal Code si no viene
                     if ($p['internal_code'] === '') {
-                        // Generar uno temporal o basado en secuencia
-                        // Estrategia simple: PROD-{RANDOM} o secuencia DB. 
-                        // Idealmente el usuario debería darlo, pero para importar rapido lo generamos.
                         $p['internal_code'] = 'INT-' . strtoupper(Str::random(6));
+                        // Ensure uniqueness of generated code
+                        while (Product::where('internal_code', $p['internal_code'])->exists()) {
+                            $p['internal_code'] = 'INT-' . strtoupper(Str::random(6));
+                        }
                     }
 
-                    // Duplicados
-                    if (Product::where('internal_code', $p['internal_code'])->exists()) {
-                        $skipped++;
-                        $errors[] = [
-                            'row' => $i + 1,
-                            'message' => "Omitido: Código '{$p['internal_code']}' ya existe.",
-                        ];
-                        continue;
-                    }
+                    // --- TAXONOMY RESOLUTION ---
 
-                    // --- FAMILIA ---
-                    $familyCode = $p['family_code'];
+                    // Family
                     $familyName = $p['family'];
-
                     if ($familyName === '')
                         throw new \RuntimeException("El nombre de familia es obligatorio.");
 
-                    // Si no trae código, generamos uno del nombre
+                    $familyCode = $p['family_code'];
+                    // Generate code attempt if missing
                     if ($familyCode === '') {
                         $familyCode = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $familyName), 0, 3));
                         if (strlen($familyCode) < 3)
                             $familyCode = str_pad($familyCode, 3, 'X');
                     }
 
-                    $famKey = $familyCode;
+                    $famKey = $familyCode . '|' . mb_strtolower($familyName);
                     if (!isset($familyByCode[$famKey])) {
-                        // Buscar por código exacto o por nombre
-                        $existingFam = Family::where('code', $familyCode)->orWhere('name', $familyName)->first();
+                        // Look up strictly
+                        $existingFam = Family::where('name', $familyName)->orWhere('code', $familyCode)->first();
 
                         if ($existingFam) {
                             $familyByCode[$famKey] = $existingFam;
@@ -149,8 +167,7 @@ class ProductImportController extends Controller
                     }
                     $family = $familyByCode[$famKey];
 
-
-                    // --- CATEGORIA ---
+                    // Category
                     $catName = $p['category'];
                     if ($catName === '')
                         throw new \RuntimeException("La categoría es obligatoria.");
@@ -164,10 +181,10 @@ class ProductImportController extends Controller
                     }
                     $category = $categoryByKey[$catKey];
 
-                    // --- MARCA ---
+                    // Brand
                     $brandName = $p['brand'];
                     if ($brandName === '')
-                        $brandName = 'Genérica'; // Marca por defecto
+                        $brandName = 'Genérica';
 
                     $brandKey = mb_strtolower($brandName);
                     if (!isset($brandByName[$brandKey])) {
@@ -178,16 +195,13 @@ class ProductImportController extends Controller
                     }
                     $brand = $brandByName[$brandKey];
 
-                    // --- UNIDAD ---
+                    // Unit
                     $unitName = $p['unit_name'];
-                    $unitSymbol = $p['unit_symbol'];
-
                     if ($unitName === '')
                         throw new \RuntimeException("El nombre de la unidad es obligatorio.");
-                    // Si no hay símbolo, usar las primeras 3 letras del nombre
-                    if ($unitSymbol === '') {
+                    $unitSymbol = $p['unit_symbol'];
+                    if ($unitSymbol === '')
                         $unitSymbol = strtoupper(substr($unitName, 0, 3));
-                    }
 
                     $unitKey = mb_strtolower($unitName);
                     if (!isset($unitByKey[$unitKey])) {
@@ -202,7 +216,7 @@ class ProductImportController extends Controller
                     }
                     $unit = $unitByKey[$unitKey];
 
-                    // Crear producto
+                    // CREATE PRODUCT
                     Product::create([
                         'internal_code' => $p['internal_code'],
                         'supplier_sku' => $p['supplier_sku'] ?: null,
@@ -218,29 +232,80 @@ class ProductImportController extends Controller
                         'public_price' => $p['public_price'],
                         'mid_wholesale_price' => $p['mid_wholesale_price'],
                         'wholesale_price' => $p['wholesale_price'],
-                        'stock' => 0, // Stock inicial 0
-                        'min_stock' => 5, // Default
+                        'stock' => 0,
+                        'min_stock' => 5,
                     ]);
 
                     $created++;
+
+                    // Log Success
+                    $history->details()->create([
+                        'row_number' => $rowNum,
+                        'status' => 'success',
+                        'message' => 'Producto creado correctamente.',
+                        'row_data' => $p
+                    ]);
+
                 } catch (\Throwable $e) {
+                    $isSkip = $e instanceof \RuntimeException; // Or custom logical checks
+                    // We'll treat our custom RuntimeExceptions as Skips/Warnings usually, 
+                    // but for "Errors" in the summary we might want to separate them.
+                    // Let's count them as errors/skips based on logic. 
+
+                    // In this logic: "Already exists" -> Skip. "Invalid data" -> Error? 
+                    // To keep it simple: everything caught here is a "Skip/Fail" for that row.
+
+                    if (str_contains($e->getMessage(), 'ya existe')) {
+                        $skipped++;
+                        $status = 'skipped';
+                    } else {
+                        $errorCount++;
+                        $status = 'error';
+                    }
+
                     $errors[] = [
-                        'row' => $i + 1,
+                        'row' => $rowNum,
                         'message' => $e->getMessage(),
                     ];
+
+                    // Log Detail
+                    $history->details()->create([
+                        'row_number' => $rowNum,
+                        'status' => $status,
+                        'message' => $e->getMessage(),
+                        'row_data' => isset($p) ? $p : ['raw' => $row]
+                    ]);
                 }
             }
 
             DB::commit();
+
+            // Update History Summary
+            $history->update([
+                'processed_rows' => $created + $skipped + $errorCount,
+                'created_count' => $created,
+                'skipped_count' => $skipped,
+                'error_count' => $errorCount,
+            ]);
+
         } catch (\Throwable $e) {
             DB::rollBack();
+            // Fatal error logging
+            $history->update([
+                'error_count' => $history->total_rows, // Mark all as failed effectively?
+            ]);
+            $history->details()->create([
+                'row_number' => 0,
+                'status' => 'critical_error',
+                'message' => 'Error Crítico de Transacción: ' . $e->getMessage(),
+            ]);
+
             return back()->withErrors(['file' => 'Error crítico: ' . $e->getMessage()]);
         }
 
         return redirect()
             ->route('admin.products.import.create')
-            ->with('ok', "Proceso finalizado. Productos creados: {$created}. Filas omitidas/con error: " . count($errors))
-            ->with('import_errors', $errors);
+            ->with('ok', "Proceso finalizado. Creados: {$created}. Omitidos: {$skipped}. Errores: {$errorCount}.");
     }
 
     public function downloadTemplate()
@@ -442,5 +507,16 @@ class ProductImportController extends Controller
                 return false;
         }
         return true;
+    }
+
+    public function downloadReport($id)
+    {
+        $history = \App\Models\ImportHistory::with(['details', 'user'])->findOrFail($id);
+
+        // Basic security check (optional, depending on requirements)
+        // if($history->user_id !== auth()->id() && !auth()->user()->isAdmin()) abort(403);
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.products.import_report', compact('history'));
+        return $pdf->download("reporte-importacion-{$history->id}.pdf");
     }
 }
