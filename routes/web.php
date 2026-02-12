@@ -171,8 +171,3 @@ Route::get('/clear-cache', function () {
     \Illuminate\Support\Facades\Artisan::call('optimize:clear');
     return 'Cache cleared! <br> <a href="/">Go Back</a>';
 });
-
-Route::get('/migrate', function () {
-    \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
-    return 'Migrations ran successfully! <br> <a href="/">Go Back</a>';
-});
