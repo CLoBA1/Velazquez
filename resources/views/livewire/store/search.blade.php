@@ -67,11 +67,5 @@
         </div>
     @endif
 
-    <x-scanner-modal @scan-completed.window="
-        const input = document.getElementById('storeSearchInput');
-        if (input) {
-            input.value = $event.detail.code;
-            input.dispatchEvent(new Event('input', { bubbles: true }));
-        }
-    " />
+    <x-scanner-modal @scan-completed.window="$wire.set('query', $event.detail.code)" />
 </div>

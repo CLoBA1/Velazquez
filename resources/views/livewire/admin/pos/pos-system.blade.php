@@ -1,4 +1,9 @@
-<div class="h-[calc(100vh-6rem)] flex flex-col md:flex-row gap-6 font-sans">
+<div class="h-[calc(100vh-6rem)] flex flex-col md:flex-row gap-6 font-sans" 
+    x-data="{ 
+        updateSearch(code) {
+            $wire.set('search', code);
+        }
+    }">
     
     <!-- Left Panel: Product Search & Grid -->
     <div class="w-full md:w-3/4 flex flex-col gap-4">
@@ -26,6 +31,7 @@
                 </button>
             </div>
         </div>
+
 
         <!-- Product Grid -->
         <div class="flex-1 overflow-y-auto bg-slate-100 rounded-2xl border border-slate-200 p-4 shadow-inner">
@@ -476,11 +482,5 @@
         </div>
     @endif
     
-    <x-scanner-modal @scan-completed.window="
-        const input = document.getElementById('posSearchInput');
-        if (input) {
-            input.value = $event.detail.code;
-            input.dispatchEvent(new Event('input', { bubbles: true }));
-        }
-    " />
+    <x-scanner-modal @scan-completed.window="updateSearch($event.detail.code)" />
 </div>
