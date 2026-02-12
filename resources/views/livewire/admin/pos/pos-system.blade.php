@@ -4,21 +4,26 @@
     <div class="w-full md:w-3/4 flex flex-col gap-4">
         <!-- Search Bar -->
         <div class="bg-[#0f172a] p-4 rounded-2xl shadow-lg border border-slate-700">
-            <div class="relative">
-                <input wire:model.live.debounce.300ms="search" 
-                       id="posSearchInput"
-                       type="text" 
-                       placeholder="Escanea el código o busca por nombre..."
-                       class="w-full pl-12 pr-4 py-4 rounded-xl border-0 bg-slate-800 text-white placeholder-slate-400 focus:ring-2 focus:ring-secondary text-lg shadow-inner font-medium transition-all"
-                       autofocus>
-                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <svg class="h-6 w-6 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/>
-                    </svg>
+            <div class="relative flex gap-2">
+                <div class="relative flex-1">
+                    <input wire:model.live.debounce.300ms="search" 
+                           id="posSearchInput"
+                           type="text" 
+                           placeholder="Escanea el código o busca por nombre..."
+                           class="w-full pl-12 pr-4 py-4 rounded-xl border-0 bg-slate-800 text-white placeholder-slate-400 focus:ring-2 focus:ring-secondary text-lg shadow-inner font-medium transition-all"
+                           autofocus>
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <svg class="h-6 w-6 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </div>
+                    <div class="absolute inset-y-0 right-0 pr-4 flex items-center">
+                        <span class="text-xs text-slate-500 bg-slate-900 px-2 py-1 rounded border border-slate-700">ENTER para Agregar</span>
+                    </div>
                 </div>
-                <div class="absolute inset-y-0 right-0 pr-4 flex items-center">
-                    <span class="text-xs text-slate-500 bg-slate-900 px-2 py-1 rounded border border-slate-700">ENTER para Agregar</span>
-                </div>
+                <button @click="$dispatch('open-scanner')" class="bg-slate-800 border border-slate-700 text-secondary p-4 rounded-xl shadow-lg hover:bg-slate-700 hover:text-white transition-colors flex items-center justify-center flex-shrink-0" title="Escanear Código">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
+                </button>
             </div>
         </div>
 
@@ -470,4 +475,6 @@
             </div>
         </div>
     @endif
+    
+    <x-scanner-modal @scan-completed.window="$wire.set('search', $event.detail.code)" />
 </div>

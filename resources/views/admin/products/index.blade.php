@@ -80,16 +80,21 @@
 
         <form method="GET" action="{{ route('admin.products.index') }}"
             class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-6">
-            <div class="md:col-span-2">
+            <div class="md:col-span-2" x-data>
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Buscar</label>
-                <div class="relative group">
-                    <input name="search" value="{{ request('search') }}" placeholder="Nombre, código, SKU..."
-                        class="w-full rounded-xl border-slate-200 bg-slate-50 py-3 pl-10 pr-4 text-sm text-slate-800 focus:border-orange-500 focus:bg-white focus:ring-2 focus:ring-orange-100 transition-all font-medium">
-                    <svg class="absolute left-3 top-3 w-5 h-5 text-slate-400 group-focus-within:text-orange-500 transition-colors"
-                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                    </svg>
+                <div class="flex gap-2">
+                    <div class="relative group flex-1">
+                        <input name="search" value="{{ request('search') }}" placeholder="Nombre, código, SKU..."
+                            class="w-full rounded-xl border-slate-200 bg-slate-50 py-3 pl-10 pr-4 text-sm text-slate-800 focus:border-orange-500 focus:bg-white focus:ring-2 focus:ring-orange-100 transition-all font-medium">
+                        <svg class="absolute left-3 top-3 w-5 h-5 text-slate-400 group-focus-within:text-orange-500 transition-colors"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                    <button type="button" @click="$dispatch('open-scanner')" class="bg-slate-900 text-white px-3 rounded-xl hover:bg-slate-700 transition-colors shadow-md" title="Escanear">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
+                    </button>
                 </div>
             </div>
 
@@ -270,4 +275,12 @@
     </div>
 
     <livewire:admin.inventory.quick-adjustment />
+    
+    <x-scanner-modal @scan-completed.window="
+        const input = document.querySelector('input[name=\'search\']');
+        if (input) {
+            input.value = $event.detail.code;
+            input.form.submit();
+        }
+    " />
 @endsection

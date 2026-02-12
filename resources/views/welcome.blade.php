@@ -33,18 +33,18 @@
                     <div
                         class="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity transform group-hover:scale-110 duration-500">
                         <svg class="w-32 h-32 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <!-- Large Hammer for background -->
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                d="M11.4 10l-7.4 7.4a2.1 2.1 0 0 0 3 3l7.4-7.4M20 5a2 2 0 0 0-2-2h-6a2 2 0 0 0-2 2v3.6L14.4 13H18a2 2 0 0 0 2-2V5z" />
                         </svg>
                     </div>
 
                     <div
                         class="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mb-6 text-primary group-hover:bg-primary group-hover:text-secondary transition-colors duration-300">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <!-- Hammer (Ferretería) -->
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.7-3.7a1 1 0 0 0 0-1.4 1 1 0 0 0-1.4 0L14.7 6.3zm-3.2 1.6a1 1 0 0 0-1.4 0L2.3 15.7a1 1 0 0 0 0 1.4l2.6 2.6a1 1 0 0 0 1.4 0l7.8-7.8a1 1 0 0 0 0-1.4l-2.6-2.6z" />
+                                d="M11.4 10l-7.4 7.4a2.1 2.1 0 0 0 3 3l7.4-7.4M20 5a2 2 0 0 0-2-2h-6a2 2 0 0 0-2 2v3.6L14.4 13H18a2 2 0 0 0 2-2V5z" />
                         </svg>
                     </div>
 
@@ -99,17 +99,18 @@
                     <div
                         class="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity transform group-hover:scale-110 duration-500">
                         <svg class="w-32 h-32 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <!-- Large Backhoe for background -->
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                            <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                d="M4 16h13M4 16h-1v-5h3l5-5h6v5h1l1.5 2.5a1 1 0 0 1 0 1A1 1 0 0 1 18.5 16H17M8 16a2 2 0 1 0 4 0 2 2 0 0 0-4 0M17 16a2 2 0 1 0 4 0 2 2 0 0 0-4 0M8 11v5" />
                         </svg>
                     </div>
 
                     <div
                         class="w-16 h-16 bg-yellow-50 rounded-2xl flex items-center justify-center mb-6 text-yellow-600 group-hover:bg-yellow-500 group-hover:text-white transition-colors duration-300">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <!-- Backhoe (Maquinaria) -->
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M19.8 17.6c.4.5.2 1.3-.4 1.5-.2.1-.5.1-.7.1-1.3 0-2.5-.5-3.4-1.4l-3-3C11.5 14.1 10.3 13.9 9 14.1l-.2.1c-1.3.1-2.6.4-3.7 1-.7.4-1.6.4-2.2-.2L2 14c-.3-.3-.4-.8-.1-1.2l2.3-3.6c.3-.5.9-.7 1.5-.7h3.8c.3 0 .6.1.9.2l1.3.6c.7.3 1.5.3 2.2 0l4.3-2c.6-.3 1.3-.2 1.8.3l1.5 1.5c.5.5.5 1.3 0 1.8l-1.9 1.9c-.3.3-.3.8 0 1.1l1.5 1.5c.3.3.3.8 0 1.2z" />
+                                d="M4 16h13M4 16h-1v-5h3l5-5h6v5h1l1.5 2.5a1 1 0 0 1 0 1A1 1 0 0 1 18.5 16H17M8 16a2 2 0 1 0 4 0 2 2 0 0 0-4 0M17 16a2 2 0 1 0 4 0 2 2 0 0 0-4 0M8 11v5" />
                         </svg>
                     </div>
 
