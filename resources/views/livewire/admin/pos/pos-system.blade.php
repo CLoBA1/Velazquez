@@ -476,5 +476,11 @@
         </div>
     @endif
     
-    <x-scanner-modal @scan-completed.window="$wire.set('search', $event.detail.code)" />
+    <x-scanner-modal @scan-completed.window="
+        const input = document.getElementById('posSearchInput');
+        if (input) {
+            input.value = $event.detail.code;
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+    " />
 </div>

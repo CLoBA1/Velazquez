@@ -1,6 +1,7 @@
 <div class="relative w-full max-w-2xl mx-auto" x-data="{ open: false }" @click.away="open = false">
     <div class="relative">
         <input 
+            id="storeSearchInput"
             type="text" 
             wire:model.live.debounce.300ms="query"
             @focus="open = true"
@@ -66,5 +67,11 @@
         </div>
     @endif
 
-    <x-scanner-modal @scan-completed.window="$wire.set('query', $event.detail.code)" />
+    <x-scanner-modal @scan-completed.window="
+        const input = document.getElementById('storeSearchInput');
+        if (input) {
+            input.value = $event.detail.code;
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+    " />
 </div>

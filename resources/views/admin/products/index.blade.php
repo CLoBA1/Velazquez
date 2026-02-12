@@ -76,7 +76,15 @@
                         catSelect.value = '';
                     }
                 }
-             }" x-init="filterCategories()">
+             }" x-init="filterCategories()"
+             @scan-completed.window="
+                const input = document.getElementById('searchInput');
+                if (input) {
+                    input.value = $event.detail.code;
+                    input.form.submit();
+                }
+             "
+    >
 
         <form method="GET" action="{{ route('admin.products.index') }}"
             class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-6">
@@ -276,11 +284,5 @@
 
     <livewire:admin.inventory.quick-adjustment />
     
-    <x-scanner-modal @scan-completed.window="
-        const input = document.getElementById('searchInput');
-        if (input) {
-            input.value = $event.detail.code;
-            input.form.submit();
-        }
-    " />
+    <x-scanner-modal />
 @endsection
