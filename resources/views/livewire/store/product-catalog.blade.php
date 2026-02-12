@@ -17,7 +17,7 @@
                 <div class="space-y-2 max-h-[calc(100vh-200px)] overflow-y-auto pr-2 custom-scrollbar">
                     <!-- 'Todos' Link -->
                     <div>
-                        <button wire:click="setCategory(null); scrollToTop()"
+                        <button wire:click="setCategory(null)" @click="scrollToTop()"
                             class="flex items-center gap-2 w-full text-left p-2 rounded-lg transition-colors {{ is_null($category) ? 'bg-blue-50 text-blue-700 font-bold' : 'text-slate-600 hover:bg-slate-50' }}">
                             <span
                                 class="w-2 h-2 rounded-full {{ is_null($category) ? 'bg-blue-600' : 'bg-slate-300' }}"></span>
@@ -46,7 +46,7 @@
                                     <ul class="space-y-1 pl-2 mt-1">
                                         @foreach($family->categories as $cat)
                                             <li>
-                                                <button wire:click="setCategory({{ $cat->id }}); scrollToTop()"
+                                                <button wire:click="setCategory({{ $cat->id }})" @click="scrollToTop()"
                                                     class="flex items-center gap-2 w-full text-left text-sm py-1.5 px-2 rounded-md transition-colors {{ $category == $cat->id ? 'bg-blue-50 text-blue-700 font-bold' : 'text-slate-500 hover:text-blue-600 hover:bg-slate-50' }}">
                                                     <span
                                                         class="w-1.5 h-1.5 rounded-full transition-colors {{ $category == $cat->id ? 'bg-blue-600' : 'bg-slate-200' }}"></span>
