@@ -2,10 +2,9 @@
     <div class="flex flex-col lg:flex-row gap-8">
 
         <!-- Sidebar Navigation (Desktop) -->
-        <div class="hidden lg:block w-72 flex-shrink-0 sticky top-24 z-10">
-            <div
-                class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col max-h-[calc(100vh-8rem)]">
-                <div class="flex items-center justify-between mb-4 flex-shrink-0">
+        <div class="hidden lg:block w-72 flex-shrink-0 sticky top-24 self-start">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <div class="flex items-center justify-between mb-4">
                     <h3 class="font-bold text-lg text-slate-900">Departamentos</h3>
                     @if($category)
                         <button wire:click="setCategory(null)"
@@ -15,7 +14,7 @@
                     @endif
                 </div>
 
-                <div class="space-y-2 overflow-y-auto pr-2 custom-scrollbar flex-1 min-h-0">
+                <div class="space-y-2 max-h-[70vh] overflow-y-auto pr-2 custom-scrollbar">
                     <!-- 'Todos' Link -->
                     <div>
                         <button wire:click="setCategory(null)"
