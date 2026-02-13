@@ -14,7 +14,7 @@
                     @endif
                 </div>
 
-                <div class="space-y-2 max-h-[calc(100vh-200px)] overflow-y-auto pr-2 custom-scrollbar">
+                <div class="space-y-2 max-h-[calc(100vh-12rem)] overflow-y-auto pr-2 custom-scrollbar">
                     <!-- 'Todos' Link -->
                     <div>
                         <button wire:click="setCategory(null)"

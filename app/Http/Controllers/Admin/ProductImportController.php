@@ -138,7 +138,7 @@ class ProductImportController extends Controller
                     // --- TAXONOMY RESOLUTION ---
 
                     // Family
-                    $familyName = $p['family'];
+                    $familyName = trim($p['family']);
                     if ($familyName === '')
                         throw new \RuntimeException("El nombre de familia es obligatorio.");
 
@@ -152,14 +152,16 @@ class ProductImportController extends Controller
 
                     $famKey = $familyCode . '|' . mb_strtolower($familyName);
                     if (!isset($familyByCode[$famKey])) {
-                        // Look up strictly
-                        $existingFam = Family::where('name', $familyName)->orWhere('code', $familyCode)->first();
+                        // Look up strictly case-insensitive
+                        $existingFam = Family::whereRaw('LOWER(name) = ?', [mb_strtolower($familyName)])
+                            ->orWhere('code', $familyCode)
+                            ->first();
 
                         if ($existingFam) {
                             $familyByCode[$famKey] = $existingFam;
                         } else {
                             $familyByCode[$famKey] = Family::create([
-                                'name' => $familyName,
+                                'name' => ucfirst(mb_strtolower($familyName)), // Normalize casing
                                 'code' => $this->uniqueCode('families', 'code', $familyCode),
                                 'slug' => $this->uniqueSlug('families', $familyName),
                             ]);
@@ -168,30 +170,46 @@ class ProductImportController extends Controller
                     $family = $familyByCode[$famKey];
 
                     // Category
-                    $catName = $p['category'];
+                    $catName = trim($p['category']);
                     if ($catName === '')
                         throw new \RuntimeException("La categoría es obligatoria.");
 
                     $catKey = $family->id . '|' . mb_strtolower($catName);
                     if (!isset($categoryByKey[$catKey])) {
-                        $categoryByKey[$catKey] = Category::firstOrCreate(
-                            ['family_id' => $family->id, 'name' => $catName],
-                            ['slug' => $this->uniqueSlug('categories', $catName . ' ' . $family->code)]
-                        );
+                        // Check existing in this family
+                        $existingCat = Category::where('family_id', $family->id)
+                            ->whereRaw('LOWER(name) = ?', [mb_strtolower($catName)])
+                            ->first();
+
+                        if ($existingCat) {
+                            $categoryByKey[$catKey] = $existingCat;
+                        } else {
+                            $categoryByKey[$catKey] = Category::create([
+                                'family_id' => $family->id,
+                                'name' => ucfirst(mb_strtolower($catName)),
+                                'slug' => $this->uniqueSlug('categories', $catName . ' ' . $family->code)
+                            ]);
+                        }
                     }
                     $category = $categoryByKey[$catKey];
 
                     // Brand
-                    $brandName = $p['brand'];
+                    $brandName = trim($p['brand']);
                     if ($brandName === '')
                         $brandName = 'Genérica';
 
                     $brandKey = mb_strtolower($brandName);
                     if (!isset($brandByName[$brandKey])) {
-                        $brandByName[$brandKey] = Brand::firstOrCreate(
-                            ['name' => $brandName],
-                            ['slug' => $this->uniqueSlug('brands', $brandName)]
-                        );
+                        $existingBrand = Brand::whereRaw('LOWER(name) = ?', [mb_strtolower($brandName)])->first();
+
+                        if ($existingBrand) {
+                            $brandByName[$brandKey] = $existingBrand;
+                        } else {
+                            $brandByName[$brandKey] = Brand::create([
+                                'name' => ucfirst(mb_strtolower($brandName)),
+                                'slug' => $this->uniqueSlug('brands', $brandName)
+                            ]);
+                        }
                     }
                     $brand = $brandByName[$brandKey];
 
