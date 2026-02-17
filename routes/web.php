@@ -158,6 +158,15 @@ Route::prefix('admin')->group(function () {
         Route::get('/clientes', \App\Livewire\Admin\Client\ClientIndex::class)
             ->name('admin.clients.index');
 
+        Route::get('/reportes', [\App\Http\Controllers\Admin\ReportController::class, 'index'])
+            ->name('admin.reports.index');
+
+        Route::get('/reportes/inventario', [\App\Http\Controllers\Admin\ReportController::class, 'inventory'])
+            ->name('admin.reports.inventory');
+
+        Route::get('/reportes/movimientos', [\App\Http\Controllers\Admin\ReportController::class, 'movements'])
+            ->name('admin.reports.movements');
+
         Route::get('/importacion', fn() => 'Importación (en construcción)')
             ->name('admin.import.index');
     });
