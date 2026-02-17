@@ -12,7 +12,7 @@ class SaleController extends Controller
 {
     public function downloadPdf(Sale $sale)
     {
-        $sale->load(['items.product', 'client', 'user']);
+        $sale->load(['items.product', 'client', 'user', 'payments']);
 
         // Determine view based on type, or just one generic view capable of both?
         // Let's use a single robust view for now.

@@ -149,7 +149,18 @@
         <br>
         <strong>Folio:</strong> #{{ str_pad($sale->id, 6, '0', STR_PAD_LEFT) }}<br>
         <strong>Tipo:</strong> {{ ucfirst($sale->type) }}<br>
-        <strong>Método de Pago:</strong> {{ ucfirst(__($sale->payment_method)) }}
+        <strong>Tipo:</strong> {{ ucfirst($sale->type) }}<br>
+
+        @if($sale->payments->count() > 0)
+            <div style="margin-top: 5px; border-top: 1px dashed #ccc; padding-top: 2px;">
+                <strong>Pagos:</strong><br>
+                @foreach($sale->payments as $payment)
+                    - {{ ucfirst(__($payment->method)) }}: ${{ number_format($payment->amount, 2) }}<br>
+                @endforeach
+            </div>
+        @else
+            <strong>Método de Pago:</strong> {{ ucfirst(__($sale->payment_method)) }}
+        @endif
     </div>
 
     <table>
