@@ -169,12 +169,6 @@ Route::prefix('admin')->group(function () {
 
         Route::get('/importacion', fn() => 'Importación (en construcción)')
             ->name('admin.import.index');
-
-        // Helper Deployment Route (Hostinger)
-        Route::get('/migrate-db', function () {
-            \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
-            return 'Database Migrated Successfully! <a href="/admin/dashboard">Go to Dashboard</a>';
-        })->name('admin.migrate');
     });
 });
 
