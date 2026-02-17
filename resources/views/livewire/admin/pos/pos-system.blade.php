@@ -279,141 +279,121 @@
     </div>
 
     <!-- Payment Modal -->
+    <!-- Payment Modal (Split Payments) -->
     @if($showPaymentModal)
         <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
                 <div class="fixed inset-0 bg-slate-900 bg-opacity-90 transition-opacity" aria-hidden="true"></div>
 
-                <div class="relative inline-block bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-lg w-full">
+                <div class="relative inline-block bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-md w-full">
                     <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                        <div class="sm:flex sm:items-start">
-                            <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 sm:mx-0 sm:h-10 sm:w-10">
-                                <svg class="h-6 w-6 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                                </svg>
+                        <div class="text-center mb-6">
+                            <h3 class="text-xl leading-6 font-black text-gray-900" id="modal-title">
+                                Completar Venta
+                            </h3>
+                            <p class="text-sm text-slate-500 mt-1">Agrega los pagos para cubrir el total</p>
+                        </div>
+
+                        <!-- Summary Cards -->
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 text-center">
+                                <p class="text-xs text-slate-500 font-bold uppercase">Total</p>
+                                <p class="text-xl font-black text-slate-800">${{ number_format($total, 2) }}</p>
                             </div>
-                            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                                <h3 class="text-lg leading-6 font-bold text-gray-900" id="modal-title">
-                                    Completar Venta
-                                </h3>
-                                <div class="mt-4 space-y-4">
-                                    <div class="text-center p-4 bg-slate-50 rounded-xl border border-slate-100">
-                                        <p class="text-sm text-slate-500 font-bold uppercase">Total a Pagar</p>
-                                        <p class="text-3xl font-black text-[#0f172a]">${{ number_format($total, 2) }}</p>
-                                    </div>
-
-                                    <div>
-                                        <label class="block text-sm font-bold text-slate-700 mb-2">Método de Pago</label>
-                                        <div class="grid grid-cols-2 gap-3">
-                                            <button wire:click="$set('paymentMethod', 'cash')" 
-                                                    class="px-4 py-3 rounded-xl border {{ $paymentMethod === 'cash' ? 'bg-[#0f172a] text-white border-[#0f172a] shadow-lg shadow-slate-900/20' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50' }} font-bold text-sm transition-all flex items-center justify-center gap-2">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                                                Efectivo
-                                            </button>
-                                            <button wire:click="$set('paymentMethod', 'card')" 
-                                                    class="px-4 py-3 rounded-xl border {{ $paymentMethod === 'card' ? 'bg-[#0f172a] text-white border-[#0f172a] shadow-lg shadow-slate-900/20' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50' }} font-bold text-sm transition-all flex items-center justify-center gap-2">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
-                                                Tarjeta
-                                            </button>
-                                            <button wire:click="$set('paymentMethod', 'transfer')" 
-                                                    class="px-4 py-3 rounded-xl border {{ $paymentMethod === 'transfer' ? 'bg-[#0f172a] text-white border-[#0f172a] shadow-lg shadow-slate-900/20' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50' }} font-bold text-sm transition-all flex items-center justify-center gap-2">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
-                                                Transferencia
-                                            </button>
-                                            @php
-                                                $creditDisabled = false;
-                                                $creditTitle = '';
-                                                if (!$selected_client_id) {
-                                                    $creditDisabled = true;
-                                                    $creditTitle = 'Seleccione un cliente';
-                                                } elseif ($client = $clients->find($selected_client_id)) {
-                                                    if ($client->available_credit < $total) {
-                                                        $creditDisabled = true;
-                                                        $creditTitle = 'Crédito insuficiente';
-                                                    }
-                                                }
-                                            @endphp
-                                            <button wire:click="$set('paymentMethod', 'credit')" 
-                                                    @if($creditDisabled) disabled @endif
-                                                    class="px-4 py-3 rounded-xl border {{ $paymentMethod === 'credit' ? 'bg-[#0f172a] text-white border-[#0f172a] shadow-lg shadow-slate-900/20' : 'bg-white text-slate-600 border-slate-200' }} {{ $creditDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-slate-50' }} font-bold text-sm transition-all text-center flex flex-col items-center justify-center h-full relative overflow-hidden"
-                                                    title="{{ $creditTitle }}">
-                                                <div class="flex items-center gap-2">
-                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                                    <span>Crédito</span>
-                                                </div>
-                                                @if($creditDisabled && isset($client))
-                                                    <span class="text-[10px] font-normal opacity-75 mt-1">Disp: ${{ number_format($client->available_credit, 2) }}</span>
-                                                @endif
-                                            </button>
-                                        </div>
-                                        
-                                        @if($creditDisabled && isset($client) && $selected_client_id)
-                                            <div class="mt-3 p-3 bg-red-50 border border-red-100 rounded-lg text-xs text-red-800">
-                                                <div class="flex items-center gap-2 mb-1 font-bold">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                                                    {{ $client->available_credit < 0 ? '¡Saldo Vencido!' : 'Crédito Insuficiente' }}
-                                                </div>
-                                                <p>Faltante: <strong class="text-red-900">${{ number_format($total - $client->available_credit, 2) }}</strong></p>
-                                            </div>
-                                        @endif
-                                    </div>
-
-                                    @if($paymentMethod === 'cash')
-                                        <div>
-                                            <label class="block text-sm font-bold text-slate-700 mb-2">Monto Recibido</label>
-                                            <div class="relative">
-                                                <span class="absolute left-3 top-3 text-slate-400 font-bold">$</span>
-                                                <input type="number" step="0.01" wire:model.live="amountPaid" 
-                                                       class="w-full pl-8 pr-4 py-3 rounded-xl border-slate-200 focus:border-secondary focus:ring-secondary font-bold text-lg"
-                                                       placeholder="0.00">
-                                            </div>
-                                            @if($change >= 0)
-                                                <div class="mt-3 p-3 bg-emerald-50 rounded-xl border border-emerald-100 flex justify-between items-center">
-                                                    <span class="text-sm font-bold text-emerald-800">Cambio a entregar:</span>
-                                                    <span class="text-xl font-black text-emerald-600">${{ number_format($change, 2) }}</span>
-                                                </div>
-                                            @else
-                                                <div class="mt-2 text-xs text-red-500 font-bold text-right flex items-center justify-end gap-1">
-                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                                    Monto insuficiente
-                                                </div>
-                                            @endif
-                                        </div>
-                                    @endif
-
-                                    @if($paymentMethod === 'credit' && $selected_client_id)
-                                        @php $c = $clients->find($selected_client_id); @endphp
-                                        <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm">
-                                            <p class="font-bold text-[#0f172a] mb-2 flex items-center gap-2">
-                                                <svg class="w-4 h-4 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
-                                                Resumen de cuenta
-                                            </p>
-                                            <div class="space-y-1">
-                                                <div class="flex justify-between text-slate-500">
-                                                    <span>Crédito actual:</span>
-                                                    <span class="font-bold">${{ number_format($c->available_credit, 2) }}</span>
-                                                </div>
-                                                <div class="flex justify-between text-slate-800 font-bold pt-2 border-t border-slate-200">
-                                                    <span>Saldo final:</span>
-                                                    <span class="{{ ($c->available_credit - $total) < 0 ? 'text-red-600' : 'text-emerald-600' }}">${{ number_format($c->available_credit - $total, 2) }}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endif
-                                </div>
+                            <div class="p-3 rounded-xl border text-center {{ $remaining > 0.01 ? 'bg-red-50 border-red-100 text-red-800' : 'bg-emerald-50 border-emerald-100 text-emerald-800' }}">
+                                <p class="text-xs font-bold uppercase">{{ $remaining > 0.01 ? 'Faltante' : 'Cubierto' }}</p>
+                                <p class="text-xl font-black">${{ number_format($remaining, 2) }}</p>
                             </div>
                         </div>
+
+                        <!-- Payment Input Area -->
+                        <div class="mb-6 space-y-3">
+                             <div class="relative">
+                                <span class="absolute left-3 top-3.5 text-slate-400 font-bold">$</span>
+                                <input type="number" step="0.01" wire:model.live="amountPaid" 
+                                       class="w-full pl-8 pr-4 py-3 rounded-xl border-slate-200 focus:border-secondary focus:ring-secondary font-bold text-lg"
+                                       placeholder="Monto a pagar">
+                            </div>
+
+                             <div class="grid grid-cols-4 gap-2">
+                                <button wire:click="$set('paymentMethod', 'cash')" class="flex flex-col items-center justify-center p-2 rounded-lg border {{ $paymentMethod === 'cash' ? 'bg-slate-800 text-white border-slate-800' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50' }} transition-colors">
+                                    <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                                    <span class="text-[10px] font-bold">Efectivo</span>
+                                </button>
+                                <button wire:click="$set('paymentMethod', 'card')" class="flex flex-col items-center justify-center p-2 rounded-lg border {{ $paymentMethod === 'card' ? 'bg-slate-800 text-white border-slate-800' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50' }} transition-colors">
+                                    <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                                    <span class="text-[10px] font-bold">Tarjeta</span>
+                                </button>
+                                <button wire:click="$set('paymentMethod', 'transfer')" class="flex flex-col items-center justify-center p-2 rounded-lg border {{ $paymentMethod === 'transfer' ? 'bg-slate-800 text-white border-slate-800' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50' }} transition-colors">
+                                     <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                                    <span class="text-[10px] font-bold">Transf.</span>
+                                </button>
+                                <button wire:click="$set('paymentMethod', 'credit')" class="flex flex-col items-center justify-center p-2 rounded-lg border {{ $paymentMethod === 'credit' ? 'bg-slate-800 text-white border-slate-800' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50' }} transition-colors">
+                                     <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    <span class="text-[10px] font-bold">Crédito</span>
+                                </button>
+                            </div>
+
+                            @error('payment')
+                                <div class="text-red-500 text-xs font-bold text-center animate-pulse">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+
+                            <button wire:click="addPayment" 
+                                    class="w-full py-3 bg-slate-800 text-white font-bold rounded-xl hover:bg-slate-700 transition-colors flex items-center justify-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                                Agregar Pago
+                            </button>
+                        </div>
+
+                        <!-- Payments List -->
+                        <div class="bg-gray-50 rounded-xl border border-gray-100 overflow-hidden mb-4">
+                            <div class="px-4 py-2 bg-gray-100 border-b border-gray-200 text-xs font-bold text-gray-500 uppercase">Pagos Agregados</div>
+                            @if(count($payments) > 0)
+                                <ul class="divide-y divide-gray-100">
+                                    @foreach($payments as $index => $payment)
+                                        <li class="flex justify-between items-center p-3 text-sm">
+                                            <div class="flex items-center gap-2">
+                                                @if($payment['method'] == 'cash') 💵
+                                                @elseif($payment['method'] == 'card') 💳
+                                                @elseif($payment['method'] == 'transfer') 🏦
+                                                @elseif($payment['method'] == 'credit') 📄
+                                                @endif
+                                                <span class="font-medium text-slate-700 capitalize">{{ $payment['method'] == 'credit' ? 'Crédito' : ($payment['method'] == 'cash' ? 'Efectivo' : ($payment['method'] == 'card' ? 'Tarjeta' : 'Transferencia')) }}</span>
+                                            </div>
+                                            <div class="flex items-center gap-3">
+                                                <span class="font-bold text-slate-800">${{ number_format($payment['amount'], 2) }}</span>
+                                                <button wire:click="removePayment({{ $index }})" class="text-slate-400 hover:text-red-500">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                                </button>
+                                            </div>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            @else
+                                <div class="p-4 text-center text-slate-400 text-sm">No hay pagos registrados aún.</div>
+                            @endif
+                        </div>
+
+                         @if($change > 0)
+                            <div class="mt-3 p-3 bg-emerald-50 rounded-xl border border-emerald-100 flex justify-between items-center mb-4 animate-bounce">
+                                <span class="text-sm font-bold text-emerald-800">Cambio a entregar:</span>
+                                <span class="text-xl font-black text-emerald-600">${{ number_format($change, 2) }}</span>
+                            </div>
+                        @endif
+
                     </div>
-                    <div class="bg-slate-50 px-4 py-4 sm:px-6 sm:flex sm:flex-row-reverse gap-3 border-t border-slate-100">
-                        <button wire:click="finalizeSale" 
-                                @if($paymentMethod === 'cash' && $change < 0) disabled @endif
-                                type="button" 
-                                class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-lg shadow-yellow-500/20 px-4 py-3 bg-secondary text-base font-bold text-primary hover:bg-yellow-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98]">
-                            Confirmar Venta
-                        </button>
+                    <div class="bg-gray-50 px-4 py-4 sm:px-6 flex gap-3">
                         <button wire:click="$set('showPaymentModal', false)" type="button" 
-                                class="mt-3 w-full inline-flex justify-center rounded-xl border border-slate-200 shadow-sm px-4 py-3 bg-white text-base font-bold text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 sm:mt-0 sm:w-auto sm:text-sm transition-all">
+                                class="flex-1 justify-center rounded-xl border border-slate-200 shadow-sm px-4 py-3 bg-white text-base font-bold text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 sm:text-sm transition-all">
                             Cancelar
+                        </button>
+                         <button wire:click="finalizeSale" 
+                                @if($remaining > 0.01) disabled @endif
+                                type="button" 
+                                class="flex-1 justify-center rounded-xl border border-transparent shadow-lg shadow-yellow-500/20 px-4 py-3 bg-secondary text-base font-bold text-primary hover:bg-yellow-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+                            Finalizar Venta
                         </button>
                     </div>
                 </div>
