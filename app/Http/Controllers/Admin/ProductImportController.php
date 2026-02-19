@@ -100,13 +100,14 @@ class ProductImportController extends Controller
 
                     // 3. Internal Code Duplicate (If provided)
                     if (!empty($p['internal_code']) && Product::where('internal_code', $p['internal_code'])->exists()) {
-                        throw new \RuntimeException("Código Interno '{$p['internal_code']}' ya existe.");
+                        throw new \RuntimeException("OMITIDO: El Código Interno '{$p['internal_code']}' ya existe.");
                     }
 
-                    // 4. Name Duplicate (Optional strictness)
-                    // if (Product::where('name', $p['name'])->exists()) {
-                    //      throw new \RuntimeException("Ya existe un producto con el nombre '{$p['name']}'.");
-                    // }
+                    // 4. Name Duplicate (Strict Check enabled by user request)
+                    // Case-insensitive check to avoid variations like "Martillo" vs "MARTILLO"
+                    if (Product::whereRaw('LOWER(name) = ?', [mb_strtolower($p['name'])])->exists()) {
+                        throw new \RuntimeException("OMITIDO: El producto '{$p['name']}' ya existe (por nombre).");
+                    }
 
                     // Fill defaults
                     if ($p['description'] === '')
