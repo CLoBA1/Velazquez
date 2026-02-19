@@ -170,15 +170,15 @@ Route::prefix('admin')->group(function () {
         Route::get('/importacion', fn() => 'Importación (en construcción)')
             ->name('admin.import.index');
 
-        // Bulk Image Tool
-        Route::get('/asignar-imagenes', [\App\Http\Controllers\Admin\BulkImageController::class, 'index'])
-            ->name('admin.products.bulk-image.index');
+        // Bulk Operations Center
+        Route::get('/operaciones-masivas', [\App\Http\Controllers\Admin\BulkActionController::class, 'index'])
+            ->name('admin.bulk-actions.index');
 
-        Route::get('/asignar-imagenes/preview', [\App\Http\Controllers\Admin\BulkImageController::class, 'preview'])
-            ->name('admin.products.bulk-image.preview');
+        Route::get('/operaciones-masivas/preview', [\App\Http\Controllers\Admin\BulkActionController::class, 'preview'])
+            ->name('admin.bulk-actions.preview');
 
-        Route::post('/asignar-imagenes', [\App\Http\Controllers\Admin\BulkImageController::class, 'update'])
-            ->name('admin.products.bulk-image.update');
+        Route::post('/operaciones-masivas', [\App\Http\Controllers\Admin\BulkActionController::class, 'update'])
+            ->name('admin.bulk-actions.update');
     });
 });
 
