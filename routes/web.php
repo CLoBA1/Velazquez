@@ -179,6 +179,10 @@ Route::prefix('admin')->group(function () {
 
         Route::post('/operaciones-masivas', [\App\Http\Controllers\Admin\BulkActionController::class, 'update'])
             ->name('admin.bulk-actions.update');
+
+        // Duplicate Finder
+        Route::get('/duplicados', [\App\Http\Controllers\Admin\DuplicateController::class, 'index'])
+            ->name('admin.duplicates.index');
     });
 });
 
