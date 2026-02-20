@@ -40,9 +40,24 @@
     @endif
 
     <form method="POST" action="{{ route('admin.products.update', $product) }}" enctype="multipart/form-data" x-data="{ 
-                    business_line: '{{ old('business_line', $product->business_line) }}',
-                    barcode: '{{ old('barcode', $product->barcode) }}'
-                }" @scan-completed.window="barcode = $event.detail.code">
+                        business_line: '{{ old('business_line', $product->business_line) }}',
+                        barcode: '{{ old('barcode', $product->barcode) }}',
+                        units: {{ Js::from($product->units) }},
+                        addUnit() {
+                            this.units.push({
+                                unit_id: '',
+                                conversion_factor: 1,
+                                sale_price: '',
+                                public_price: '',
+                                mid_wholesale_price: '',
+                                wholesale_price: '',
+                                barcode: ''
+                            });
+                        },
+                        removeUnit(index) {
+                            this.units.splice(index, 1);
+                        }
+                    }" @scan-completed.window="barcode = $event.detail.code">
         @csrf
         @method('PUT')
 
@@ -172,6 +187,78 @@
 
                     </div>
                 </div>
+                {{-- Card: Unidades Adicionales --}}
+                <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm mt-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                             <span class="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center text-orange-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                                </svg>
+                            </span>
+                            Presentaciones Adicionales
+                        </h2>
+                        <button type="button" @click="addUnit()" class="text-sm text-blue-600 font-bold hover:text-blue-700">
+                            + Agregar Presentación
+                        </button>
+                    </div>
+
+                    <p class="text-sm text-slate-600 mb-4" x-show="units.length === 0">
+                        No hay presentaciones adicionales. Agrega una si vendes este producto en otras unidades (ej: Rollo 100m, Caja 12pzs).
+                    </p>
+
+                    <div class="space-y-4">
+                        <template x-for="(unit, index) in units" :key="index">
+                            <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 relative">
+                                <button type="button" @click="removeUnit(index)" class="absolute top-2 right-2 text-slate-400 hover:text-red-500">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </button>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-500 mb-1">Unidad</label>
+                                        <select :name="'units['+index+'][unit_id]'" x-model="unit.unit_id" required class="w-full rounded-lg border-slate-300 text-sm">
+                                            <option value="">Seleccionar...</option>
+                                            @foreach($units as $u)
+                                                <option value="{{ $u->id }}">{{ $u->name }} ({{ $u->symbol }})</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-500 mb-1">Factor (Equivalencia)</label>
+                                        <input type="number" step="0.0001" :name="'units['+index+'][conversion_factor]'" x-model="unit.conversion_factor" required placeholder="Ej: 100" class="w-full rounded-lg border-slate-300 text-sm">
+                                        <p class="text-[10px] text-slate-400 mt-1">Cuántas unidades base contiene.</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-500 mb-1">Código Barras (Opcional)</label>
+                                        <input type="text" :name="'units['+index+'][barcode]'" x-model="unit.barcode" class="w-full rounded-lg border-slate-300 text-sm">
+                                    </div>
+
+                                    {{-- Precios Específicos --}}
+                                    <div class="md:col-span-3 lg:col-span-3 grid grid-cols-2 md:grid-cols-4 gap-4 pt-2 border-t border-slate-200">
+                                        <div>
+                                            <label class="block text-xs font-bold text-slate-500 mb-1">Precio Venta</label>
+                                            <input type="number" step="0.01" :name="'units['+index+'][sale_price]'" x-model="unit.sale_price" class="w-full rounded-lg border-slate-300 text-sm">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-bold text-slate-500 mb-1">Precio Público</label>
+                                            <input type="number" step="0.01" :name="'units['+index+'][public_price]'" x-model="unit.public_price" class="w-full rounded-lg border-slate-300 text-sm">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-bold text-slate-500 mb-1">Medio Mayoreo</label>
+                                            <input type="number" step="0.01" :name="'units['+index+'][mid_wholesale_price]'" x-model="unit.mid_wholesale_price" class="w-full rounded-lg border-slate-300 text-sm">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-bold text-slate-500 mb-1">Mayoreo</label>
+                                            <input type="number" step="0.01" :name="'units['+index+'][wholesale_price]'" x-model="unit.wholesale_price" class="w-full rounded-lg border-slate-300 text-sm">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
             </div>
 
             {{-- Columna Derecha: Precios y Foto --}}
@@ -180,47 +267,47 @@
                 {{-- Card: Precios --}}
                 @if(auth()->user()->isAdmin())
                     <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" x-data="{
-                                                                                            cost: '{{ old('cost_price', $product->cost_price) }}',
-                                                                                            tax_percent: '{{ old('taxes_percent', $product->taxes_percent) }}',
-                                                                                            net_cost: '', 
-                                                                                            init() {
-                                                                                                let c = parseFloat(this.cost);
-                                                                                                let t = parseFloat(this.tax_percent);
-                                                                                                if(!isNaN(c) && !isNaN(t)) {
-                                                                                                    if (t === 0) {
-                                                                                                        this.net_cost = c;
-                                                                                                    } else {
-                                                                                                        this.net_cost = (c / (1 + (t / 100))).toFixed(2);
-                                                                                                    }
-                                                                                                }
-                                                                                            },
-                                                                                            updateGrossCost() {
-                                                                                                let n = parseFloat(this.net_cost);
-                                                                                                let t = parseFloat(this.tax_percent);
-                                                                                                if(isNaN(n)) n = 0;
-                                                                                                if(isNaN(t)) t = 0;
+                                                                                                    cost: '{{ old('cost_price', $product->cost_price) }}',
+                                                                                                    tax_percent: '{{ old('taxes_percent', $product->taxes_percent) }}',
+                                                                                                    net_cost: '', 
+                                                                                                    init() {
+                                                                                                        let c = parseFloat(this.cost);
+                                                                                                        let t = parseFloat(this.tax_percent);
+                                                                                                        if(!isNaN(c) && !isNaN(t)) {
+                                                                                                            if (t === 0) {
+                                                                                                                this.net_cost = c;
+                                                                                                            } else {
+                                                                                                                this.net_cost = (c / (1 + (t / 100))).toFixed(2);
+                                                                                                            }
+                                                                                                        }
+                                                                                                    },
+                                                                                                    updateGrossCost() {
+                                                                                                        let n = parseFloat(this.net_cost);
+                                                                                                        let t = parseFloat(this.tax_percent);
+                                                                                                        if(isNaN(n)) n = 0;
+                                                                                                        if(isNaN(t)) t = 0;
 
-                                                                                                this.cost = (n * (1 + (t / 100))).toFixed(2);
-                                                                                                // update prices logic if needed
-                                                                                            },
-                                                                                            calculatePrice(percent) {
-                                                                                                let c = parseFloat(this.cost);
-                                                                                                let p = parseFloat(percent);
-                                                                                                if(isNaN(c) || isNaN(p)) return '';
-                                                                                                return (c * (1 + (p / 100))).toFixed(2);
-                                                                                            },
-                                                                                            updatePrice(e, targetId) {
-                                                                                                let val = this.calculatePrice(e.target.value);
-                                                                                                if(val) document.getElementById(targetId).value = val;
-                                                                                            },
-                                                                                            updateMargin(e, marginId) {
-                                                                                                let price = parseFloat(e.target.value);
-                                                                                                let cost = parseFloat(this.cost);
-                                                                                                if (isNaN(price) || isNaN(cost) || cost === 0) return;
-                                                                                                let margin = ((price / cost - 1) * 100).toFixed(2);
-                                                                                                document.getElementById(marginId).value = margin;
-                                                                                            }
-                                                                                         }">
+                                                                                                        this.cost = (n * (1 + (t / 100))).toFixed(2);
+                                                                                                        // update prices logic if needed
+                                                                                                    },
+                                                                                                    calculatePrice(percent) {
+                                                                                                        let c = parseFloat(this.cost);
+                                                                                                        let p = parseFloat(percent);
+                                                                                                        if(isNaN(c) || isNaN(p)) return '';
+                                                                                                        return (c * (1 + (p / 100))).toFixed(2);
+                                                                                                    },
+                                                                                                    updatePrice(e, targetId) {
+                                                                                                        let val = this.calculatePrice(e.target.value);
+                                                                                                        if(val) document.getElementById(targetId).value = val;
+                                                                                                    },
+                                                                                                    updateMargin(e, marginId) {
+                                                                                                        let price = parseFloat(e.target.value);
+                                                                                                        let cost = parseFloat(this.cost);
+                                                                                                        if (isNaN(price) || isNaN(cost) || cost === 0) return;
+                                                                                                        let margin = ((price / cost - 1) * 100).toFixed(2);
+                                                                                                        document.getElementById(marginId).value = margin;
+                                                                                                    }
+                                                                                                 }">
                         <h2 class="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
                             <span class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

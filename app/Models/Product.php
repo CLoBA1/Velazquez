@@ -54,6 +54,11 @@ class Product extends Model
         return $this->belongsTo(Unit::class);
     }
 
+    public function units()
+    {
+        return $this->hasMany(ProductUnit::class);
+    }
+
     public function inventoryMovements()
     {
         return $this->hasMany(InventoryMovement::class);

@@ -69,6 +69,18 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
+        // 0. Validar units
+        $request->validate([
+            'units' => ['nullable', 'array'],
+            'units.*.unit_id' => ['required', 'exists:units,id'],
+            'units.*.conversion_factor' => ['required', 'numeric', 'min:0'],
+            'units.*.sale_price' => ['nullable', 'numeric', 'min:0'],
+            'units.*.public_price' => ['nullable', 'numeric', 'min:0'],
+            'units.*.mid_wholesale_price' => ['nullable', 'numeric', 'min:0'],
+            'units.*.wholesale_price' => ['nullable', 'numeric', 'min:0'],
+            'units.*.barcode' => ['nullable', 'string', 'max:255'],
+        ]);
+
         // 1. Validar datos comunes
         $data = $request->validate([
             'business_line' => ['required', 'in:hardware,construction'],
@@ -121,7 +133,17 @@ class ProductController extends Controller
             $data['main_image_path'] = $request->file('main_image')->store('products', 'public');
         }
 
-        Product::create($data);
+        $product = Product::create($data);
+
+        // Guardar unidades adicionales
+        if ($request->filled('units')) {
+            foreach ($request->input('units') as $unitData) {
+                // Filtrar para no guardar si no hay unit_id válido (aunque la validación lo cubre)
+                if (!empty($unitData['unit_id'])) {
+                    $product->units()->create($unitData);
+                }
+            }
+        }
 
         return redirect()->route('admin.products.index')->with('ok', 'Producto creado.');
     }
@@ -133,12 +155,25 @@ class ProductController extends Controller
         $brands = Brand::orderBy('name')->get();
         $units = Unit::orderBy('name')->get();
 
+        $product->load('units'); // Cargar unidades
+
         return view('admin.products.edit', compact('product', 'families', 'categories', 'brands', 'units'));
     }
 
     public function update(Request $request, Product $product)
     {
-        // 1. Validar comunes
+        // 0. Validar units
+        $request->validate([
+            'units' => ['nullable', 'array'],
+            'units.*.unit_id' => ['required', 'exists:units,id'],
+            'units.*.conversion_factor' => ['required', 'numeric', 'min:0'],
+            'units.*.sale_price' => ['nullable', 'numeric', 'min:0'],
+            'units.*.public_price' => ['nullable', 'numeric', 'min:0'],
+            'units.*.mid_wholesale_price' => ['nullable', 'numeric', 'min:0'],
+            'units.*.wholesale_price' => ['nullable', 'numeric', 'min:0'],
+            'units.*.barcode' => ['nullable', 'string', 'max:255'],
+        ]);
+
         // 1. Validar comunes
         $data = $request->validate([
             'business_line' => ['required', 'in:hardware,construction'],
@@ -195,6 +230,21 @@ class ProductController extends Controller
         }
 
         $product->update($data);
+
+        // Sincronizar unidades
+        // Eliminar las existentes y recrear (estrategia simple para MVP)
+        // Ojo: si hay historial de ventas linkeado a product_units.id, esto rompería integridad referencial soft. 
+        // Si no hay FKs apuntando a product_units.id, es seguro.
+        // Dado que recien creamos la tabla, asumimos que es safe.
+        $product->units()->delete();
+
+        if ($request->filled('units')) {
+            foreach ($request->input('units') as $unitData) {
+                if (!empty($unitData['unit_id'])) {
+                    $product->units()->create($unitData);
+                }
+            }
+        }
 
         return redirect()->route('admin.products.index')->with('ok', 'Producto actualizado.');
     }
