@@ -40,9 +40,9 @@
     @endif
 
     <form method="POST" action="{{ route('admin.products.update', $product) }}" enctype="multipart/form-data" x-data="{ 
-                business_line: '{{ old('business_line', $product->business_line) }}',
-                barcode: '{{ old('barcode', $product->barcode) }}'
-            }" @scan-completed.window="barcode = $event.detail.code">
+                    business_line: '{{ old('business_line', $product->business_line) }}',
+                    barcode: '{{ old('barcode', $product->barcode) }}'
+                }" @scan-completed.window="barcode = $event.detail.code">
         @csrf
         @method('PUT')
 
@@ -180,40 +180,47 @@
                 {{-- Card: Precios --}}
                 @if(auth()->user()->isAdmin())
                     <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" x-data="{
-                                                                                    cost: '{{ old('cost_price', $product->cost_price) }}',
-                                                                                    tax_percent: '{{ old('taxes_percent', $product->taxes_percent) }}',
-                                                                                    net_cost: '', 
-                                                                                    init() {
-                                                                                        let c = parseFloat(this.cost);
-                                                                                        let t = parseFloat(this.tax_percent);
-                                                                                        if(!isNaN(c) && !isNaN(t)) {
-                                                                                            if (t === 0) {
-                                                                                                this.net_cost = c;
-                                                                                            } else {
-                                                                                                this.net_cost = (c / (1 + (t / 100))).toFixed(2);
-                                                                                            }
-                                                                                        }
-                                                                                    },
-                                                                                    updateGrossCost() {
-                                                                                        let n = parseFloat(this.net_cost);
-                                                                                        let t = parseFloat(this.tax_percent);
-                                                                                        if(isNaN(n)) n = 0;
-                                                                                        if(isNaN(t)) t = 0;
+                                                                                            cost: '{{ old('cost_price', $product->cost_price) }}',
+                                                                                            tax_percent: '{{ old('taxes_percent', $product->taxes_percent) }}',
+                                                                                            net_cost: '', 
+                                                                                            init() {
+                                                                                                let c = parseFloat(this.cost);
+                                                                                                let t = parseFloat(this.tax_percent);
+                                                                                                if(!isNaN(c) && !isNaN(t)) {
+                                                                                                    if (t === 0) {
+                                                                                                        this.net_cost = c;
+                                                                                                    } else {
+                                                                                                        this.net_cost = (c / (1 + (t / 100))).toFixed(2);
+                                                                                                    }
+                                                                                                }
+                                                                                            },
+                                                                                            updateGrossCost() {
+                                                                                                let n = parseFloat(this.net_cost);
+                                                                                                let t = parseFloat(this.tax_percent);
+                                                                                                if(isNaN(n)) n = 0;
+                                                                                                if(isNaN(t)) t = 0;
 
-                                                                                        this.cost = (n * (1 + (t / 100))).toFixed(2);
-                                                                                        // update prices logic if needed
-                                                                                    },
-                                                                                    calculatePrice(percent) {
-                                                                                        let c = parseFloat(this.cost);
-                                                                                        let p = parseFloat(percent);
-                                                                                        if(isNaN(c) || isNaN(p)) return '';
-                                                                                        return (c * (1 + (p / 100))).toFixed(2);
-                                                                                    },
-                                                                                    updatePrice(e, targetId) {
-                                                                                        let val = this.calculatePrice(e.target.value);
-                                                                                        if(val) document.getElementById(targetId).value = val;
-                                                                                    }
-                                                                                 }">
+                                                                                                this.cost = (n * (1 + (t / 100))).toFixed(2);
+                                                                                                // update prices logic if needed
+                                                                                            },
+                                                                                            calculatePrice(percent) {
+                                                                                                let c = parseFloat(this.cost);
+                                                                                                let p = parseFloat(percent);
+                                                                                                if(isNaN(c) || isNaN(p)) return '';
+                                                                                                return (c * (1 + (p / 100))).toFixed(2);
+                                                                                            },
+                                                                                            updatePrice(e, targetId) {
+                                                                                                let val = this.calculatePrice(e.target.value);
+                                                                                                if(val) document.getElementById(targetId).value = val;
+                                                                                            },
+                                                                                            updateMargin(e, marginId) {
+                                                                                                let price = parseFloat(e.target.value);
+                                                                                                let cost = parseFloat(this.cost);
+                                                                                                if (isNaN(price) || isNaN(cost) || cost === 0) return;
+                                                                                                let margin = ((price / cost - 1) * 100).toFixed(2);
+                                                                                                document.getElementById(marginId).value = margin;
+                                                                                            }
+                                                                                         }">
                         <h2 class="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
                             <span class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -269,6 +276,7 @@
                                         <span class="absolute left-3 top-2.5 text-slate-400">$</span>
                                         <input id="sale_price" type="number" step="0.01" min="0" name="sale_price"
                                             value="{{ old('sale_price', $product->sale_price) }}" required
+                                            @input="updateMargin($event, 'sale_margin')"
                                             class="w-full rounded-xl border-slate-200 pl-8 pr-3 py-2.5 text-sm font-semibold text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all">
                                     </div>
                                 </div>
@@ -276,7 +284,8 @@
                                     <label
                                         class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 text-center">Margen
                                         %</label>
-                                    <input type="number" step="any" placeholder="%" @input="updatePrice($event, 'sale_price')"
+                                    <input id="sale_margin" type="number" step="any" placeholder="%"
+                                        @input="updatePrice($event, 'sale_price')"
                                         class="w-full rounded-xl border-slate-200 py-2.5 px-2 text-center text-sm font-bold text-blue-600 bg-blue-50/50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all placeholder:text-slate-300">
                                 </div>
                             </div>
@@ -290,6 +299,7 @@
                                         <span class="absolute left-3 top-2.5 text-slate-400">$</span>
                                         <input id="public_price" type="number" step="0.01" min="0" name="public_price"
                                             value="{{ old('public_price', $product->public_price) }}" required
+                                            @input="updateMargin($event, 'public_margin')"
                                             class="w-full rounded-xl border-emerald-200 pl-8 pr-3 py-2.5 text-sm font-bold text-emerald-700 bg-emerald-50/30 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition-all">
                                     </div>
                                 </div>
@@ -297,7 +307,8 @@
                                     <label
                                         class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 text-center">Margen
                                         %</label>
-                                    <input type="number" step="any" placeholder="%" @input="updatePrice($event, 'public_price')"
+                                    <input id="public_margin" type="number" step="any" placeholder="%"
+                                        @input="updatePrice($event, 'public_price')"
                                         class="w-full rounded-xl border-slate-200 py-2.5 px-2 text-center text-sm font-bold text-emerald-600 bg-blue-50/50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all placeholder:text-slate-300">
                                 </div>
                             </div>
@@ -312,6 +323,7 @@
                                         <input id="mid_wholesale_price" type="number" step="0.01" min="0"
                                             name="mid_wholesale_price"
                                             value="{{ old('mid_wholesale_price', $product->mid_wholesale_price) }}" required
+                                            @input="updateMargin($event, 'mid_wholesale_margin')"
                                             class="w-full rounded-xl border-slate-200 pl-8 pr-3 py-2.5 text-sm font-semibold text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all">
                                     </div>
                                 </div>
@@ -319,7 +331,7 @@
                                     <label
                                         class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 text-center">Margen
                                         %</label>
-                                    <input type="number" step="any" placeholder="%"
+                                    <input id="mid_wholesale_margin" type="number" step="any" placeholder="%"
                                         @input="updatePrice($event, 'mid_wholesale_price')"
                                         class="w-full rounded-xl border-slate-200 py-2.5 px-2 text-center text-sm font-bold text-blue-600 bg-blue-50/50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all placeholder:text-slate-300">
                                 </div>
@@ -334,6 +346,7 @@
                                         <span class="absolute left-3 top-2.5 text-slate-400">$</span>
                                         <input id="wholesale_price" type="number" step="0.01" min="0" name="wholesale_price"
                                             value="{{ old('wholesale_price', $product->wholesale_price) }}" required
+                                            @input="updateMargin($event, 'wholesale_margin')"
                                             class="w-full rounded-xl border-slate-200 pl-8 pr-3 py-2.5 text-sm font-semibold text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all">
                                     </div>
                                 </div>
@@ -341,7 +354,7 @@
                                     <label
                                         class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 text-center">Margen
                                         %</label>
-                                    <input type="number" step="any" placeholder="%"
+                                    <input id="wholesale_margin" type="number" step="any" placeholder="%"
                                         @input="updatePrice($event, 'wholesale_price')"
                                         class="w-full rounded-xl border-slate-200 py-2.5 px-2 text-center text-sm font-bold text-blue-600 bg-blue-50/50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all placeholder:text-slate-300">
                                 </div>

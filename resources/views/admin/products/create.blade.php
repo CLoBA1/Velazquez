@@ -200,7 +200,7 @@
             <div class="space-y-6">
 
                 {{-- Card: Precios --}}
-                @if(auth()->user()->isAdmin())
+                        @if(auth()->user()->isAdmin())
                 <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
                      x-data="{
                         net_cost: '',
@@ -223,7 +223,7 @@
                             if(isNaN(t)) t = 0;
                             
                             this.cost = (n * (1 + (t / 100))).toFixed(2);
-                            this.updateAll();
+                            this.updateAllMargins();
                         },
                         calculate(margin) {
                             let c = parseFloat(this.cost);
@@ -235,9 +235,25 @@
                             let price = this.calculate(this.margins[type]);
                             if(price) document.getElementById(type + '_price').value = price;
                         },
+                        updateMargin(type) {
+                            let price = parseFloat(document.getElementById(type + '_price').value);
+                            let cost = parseFloat(this.cost);
+                            if (isNaN(price) || isNaN(cost) || cost === 0) return;
+                            this.margins[type] = ((price / cost - 1) * 100).toFixed(2);
+                        },
                         updateAll() {
                             ['sale', 'public', 'mid_wholesale', 'wholesale'].forEach(type => {
                                 if(this.margins[type]) this.updatePrice(type);
+                            });
+                        },
+                        updateAllMargins() {
+                             ['sale', 'public', 'mid_wholesale', 'wholesale'].forEach(type => {
+                                let priceVal = document.getElementById(type + '_price').value;
+                                if(priceVal) {
+                                    this.updateMargin(type);
+                                } else if(this.margins[type]) {
+                                    this.updatePrice(type);
+                                }
                             });
                         }
                      }">
@@ -290,7 +306,7 @@
                                 <div class="relative">
                                     <span class="absolute left-3 top-2.5 text-slate-400">$</span>
                                     <input id="sale_price" type="number" step="0.01" min="0" name="sale_price" value="{{ old('sale_price') }}"
-                                        required
+                                        required @input="updateMargin('sale')"
                                         class="w-full rounded-xl border-slate-200 pl-8 pr-3 py-2.5 text-sm font-semibold text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all">
                                 </div>
                             </div>
@@ -308,7 +324,7 @@
                                 <div class="relative">
                                     <span class="absolute left-3 top-2.5 text-slate-400">$</span>
                                     <input id="public_price" type="number" step="0.01" min="0" name="public_price" value="{{ old('public_price') }}"
-                                        required
+                                        required @input="updateMargin('public')"
                                         class="w-full rounded-xl border-emerald-200 pl-8 pr-3 py-2.5 text-sm font-bold text-emerald-700 bg-emerald-50/30 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition-all">
                                 </div>
                             </div>
@@ -326,7 +342,7 @@
                                 <div class="relative">
                                     <span class="absolute left-3 top-2.5 text-slate-400">$</span>
                                     <input id="mid_wholesale_price" type="number" step="0.01" min="0" name="mid_wholesale_price" value="{{ old('mid_wholesale_price') }}"
-                                        required
+                                        required @input="updateMargin('mid_wholesale')"
                                         class="w-full rounded-xl border-slate-200 pl-8 pr-3 py-2.5 text-sm font-semibold text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all">
                                 </div>
                             </div>
@@ -344,7 +360,7 @@
                                 <div class="relative">
                                     <span class="absolute left-3 top-2.5 text-slate-400">$</span>
                                     <input id="wholesale_price" type="number" step="0.01" min="0" name="wholesale_price" value="{{ old('wholesale_price') }}"
-                                        required
+                                        required @input="updateMargin('wholesale')"
                                         class="w-full rounded-xl border-slate-200 pl-8 pr-3 py-2.5 text-sm font-semibold text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all">
                                 </div>
                             </div>
