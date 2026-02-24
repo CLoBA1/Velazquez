@@ -40,24 +40,24 @@
     @endif
 
     <form method="POST" action="{{ route('admin.products.update', $product) }}" enctype="multipart/form-data" x-data="{ 
-                                    business_line: '{{ old('business_line', $product->business_line) }}',
-                                    barcode: '{{ old('barcode', $product->barcode) }}',
-                                    units: {{ Js::from($product->units) }},
-                                    addUnit() {
-                                        this.units.push({
-                                            unit_id: '',
-                                            conversion_factor: 1,
-                                            sale_price: '',
-                                            public_price: '',
-                                            mid_wholesale_price: '',
-                                            wholesale_price: '',
-                                            barcode: ''
-                                        });
-                                    },
-                                    removeUnit(index) {
-                                        this.units.splice(index, 1);
-                                    }
-                                }" @scan-completed.window="barcode = $event.detail.code">
+                        business_line: '{{ old('business_line', $product->business_line) }}',
+                        barcode: '{{ old('barcode', $product->barcode) }}',
+                        units: {{ Js::from($product->units) }},
+                        addUnit() {
+                            this.units.push({
+                                unit_id: '',
+                                conversion_factor: 1,
+                                sale_price: '',
+                                public_price: '',
+                                mid_wholesale_price: '',
+                                wholesale_price: '',
+                                barcode: ''
+                            });
+                        },
+                        removeUnit(index) {
+                            this.units.splice(index, 1);
+                        }
+                    }" @scan-completed.window="barcode = $event.detail.code">
         @csrf
         @method('PUT')
 
@@ -187,358 +187,322 @@
 
                     </div>
                 </div>
+                {{-- Card: Unidades Adicionales --}}
+                <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm mt-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                             <span class="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center text-orange-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                                </svg>
+                            </span>
+                            Presentaciones Adicionales
+                        </h2>
+                        <button type="button" @click="addUnit()" class="text-sm text-blue-600 font-bold hover:text-blue-700">
+                            + Agregar Presentación
+                        </button>
+                    </div>
 
-                {{-- Card: Control de Precios Unificado (MOVED HERE) --}}
-                @if(auth()->user()->isAdmin())
-                    <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden" x-data="{
-                                cost: '{{ old('cost_price', $product->cost_price) }}',
-                                tax_percent: '{{ old('taxes_percent', $product->taxes_percent) }}',
-                                net_cost: 0,
+                    <p class="text-sm text-slate-600 mb-4" x-show="units.length === 0">
+                        No hay presentaciones adicionales. Agrega una si vendes este producto en otras unidades (ej: Rollo 100m, Caja 12pzs).
+                    </p>
 
-                                // Base Unit Prices
-                                base_public_price: '{{ old('public_price', $product->public_price) }}',
-                                base_margin: '',
-
-                                // Calculation Logic
-                                updateGrossCost() {
-                                    let c = parseFloat(this.cost) || 0;
-                                    let t = parseFloat(this.tax_percent) || 0;
-                                    this.net_cost = c * (1 + (t / 100));
-
-                                    // Update Base Unit Calculation
-                                    this.updateBaseMargin();
-
-                                    // Update Additional Units
-                                    this.units.forEach(u => this.updateUnitCost(u));
-                                },
-
-                                updateBaseMargin() {
-                                    let p = parseFloat(this.base_public_price);
-                                    if (this.net_cost > 0 && !isNaN(p)) {
-                                        this.base_margin = (((p / this.net_cost) - 1) * 100).toFixed(2);
-                                    } else {
-                                        this.base_margin = '';
-                                    }
-                                },
-
-                                updateBasePrice() {
-                                    let m = parseFloat(this.base_margin);
-                                    if (this.net_cost > 0 && !isNaN(m)) {
-                                        this.base_public_price = (this.net_cost * (1 + (m / 100))).toFixed(2);
-                                    }
-                                },
-
-                                // Helper for extra units
-                                updateUnitCost(unit) {
-                                    let factor = parseFloat(unit.conversion_factor) || 0;
-                                    unit.calculated_cost = (this.net_cost * factor).toFixed(2);
-                                },
-
-                                updateUnitMargin(unit) {
-                                     let cost = parseFloat(unit.calculated_cost) || 0;
-                                     let price = parseFloat(unit.public_price) || 0;
-                                     if(cost > 0 && price > 0) {
-                                         unit.margin = (((price / cost) - 1) * 100).toFixed(2);
-                                     } else {
-                                         unit.margin = '';
-                                     }
-                                },
-
-                                updateUnitPrice(unit) {
-                                    let cost = parseFloat(unit.calculated_cost) || 0;
-                                    let margin = parseFloat(unit.margin) || 0;
-                                    if(cost > 0 && !isNaN(margin)) {
-                                        unit.public_price = (cost * (1 + (margin / 100))).toFixed(2);
-                                    }
-                                },
-
-                                init() {
-                                    // Initial Calculations
-                                    this.updateGrossCost();
-
-                                    // Initialize units
-                                    this.units.forEach(u => {
-                                        this.updateUnitCost(u);
-                                        this.updateUnitMargin(u);
-                                    });
-
-                                    this.$watch('cost', () => this.updateGrossCost());
-                                    this.$watch('tax_percent', () => this.updateGrossCost());
-                                }
-                            }">
-                        <div class="px-8 py-6 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
-                            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-3">
-                                <span
-                                    class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600 shadow-sm">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
-                                        </path>
-                                    </svg>
-                                </span>
-                                Control de Precios
-                            </h2>
-                            <div class="flex items-center gap-2">
-                                <span class="text-sm font-medium text-slate-500">Costo Neto Calculado:</span>
-                                <span class="text-xl font-black text-slate-800 tracking-tight"
-                                    x-text="'$' + net_cost.toFixed(2)">$0.00</span>
-                            </div>
-                        </div>
-
-                        <div class="p-8 space-y-8">
-                            {{-- Section 1: Cost Definition & Base Price --}}
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
-                                <div class="bg-blue-50/50 p-5 rounded-2xl border border-blue-100/50 space-y-4">
-                                    <h3 class="text-sm font-bold text-blue-900 uppercase tracking-wide opacity-80">1. Definir
-                                        Costos</h3>
+                    <div class="space-y-4">
+                        <template x-for="(unit, index) in units" :key="index">
+                            <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 relative">
+                                <button type="button" @click="removeUnit(index)" class="absolute top-2 right-2 text-slate-400 hover:text-red-500">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </button>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                     <div>
-                                        <label class="block text-xs font-bold text-blue-700 mb-1.5">Costo de Compra</label>
-                                        <div class="relative">
-                                            <span class="absolute left-3 top-3 text-blue-400 font-bold">$</span>
-                                            <input type="number" step="0.01" min="0" name="cost_price" x-model="cost"
-                                                class="w-full pl-8 rounded-xl border-blue-200 py-2.5 text-base font-bold text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all shadow-sm">
-                                        </div>
+                                        <label class="block text-xs font-bold text-slate-500 mb-1">Unidad</label>
+                                        <select :name="'units['+index+'][unit_id]'" x-model="unit.unit_id" required class="w-full rounded-lg border-slate-300 text-sm">
+                                            <option value="">Seleccionar...</option>
+                                            @foreach($units as $u)
+                                                <option value="{{ $u->id }}">{{ $u->name }} ({{ $u->symbol }})</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-bold text-blue-700 mb-1.5">IVA %</label>
-                                        <div class="relative">
-                                            <input type="number" step="0.01" min="0" name="taxes_percent" x-model="tax_percent"
-                                                class="w-full rounded-xl border-blue-200 py-2.5 px-3 text-base font-bold text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all shadow-sm">
-                                            <span class="absolute right-3 top-3 text-blue-400 font-bold">%</span>
+                                        <label class="block text-xs font-bold text-slate-500 mb-1">Factor (Equivalencia)</label>
+                                        <input type="number" step="0.0001" :name="'units['+index+'][conversion_factor]'" x-model="unit.conversion_factor" required placeholder="Ej: 100" class="w-full rounded-lg border-slate-300 text-sm">
+                                        <p class="text-[10px] text-slate-400 mt-1">Cuántas unidades base contiene.</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-500 mb-1">Código Barras (Opcional)</label>
+                                        <input type="text" :name="'units['+index+'][barcode]'" x-model="unit.barcode" class="w-full rounded-lg border-slate-300 text-sm">
+                                    </div>
+
+                                    {{-- Precios Específicos --}}
+                                    <div class="md:col-span-3 lg:col-span-3 grid grid-cols-2 md:grid-cols-4 gap-4 pt-2 border-t border-slate-200">
+                                        <div>
+                                            <label class="block text-xs font-bold text-slate-500 mb-1">Precio Venta</label>
+                                            <input type="number" step="0.01" :name="'units['+index+'][sale_price]'" x-model="unit.sale_price" class="w-full rounded-lg border-slate-300 text-sm">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-bold text-slate-500 mb-1">Precio Público</label>
+                                            <input type="number" step="0.01" :name="'units['+index+'][public_price]'" x-model="unit.public_price" class="w-full rounded-lg border-slate-300 text-sm">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-bold text-slate-500 mb-1">Medio Mayoreo</label>
+                                            <input type="number" step="0.01" :name="'units['+index+'][mid_wholesale_price]'" x-model="unit.mid_wholesale_price" class="w-full rounded-lg border-slate-300 text-sm">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-bold text-slate-500 mb-1">Mayoreo</label>
+                                            <input type="number" step="0.01" :name="'units['+index+'][wholesale_price]'" x-model="unit.wholesale_price" class="w-full rounded-lg border-slate-300 text-sm">
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="md:col-span-2 space-y-6">
-                                    <div class="flex justify-between items-end">
-                                        <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wide opacity-80">2. Lista
-                                            de Precios y Presentaciones</h3>
-                                        <button type="button" @click="addUnit()"
-                                            class="inline-flex items-center gap-1.5 text-sm font-bold text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-3 py-1.5 rounded-lg transition-colors">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M12 4v16m8-8H4"></path>
-                                            </svg>
-                                            Nueva Presentación
-                                        </button>
-                                    </div>
-
-                                    <div class="border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
-                                        <table class="w-full text-left">
-                                            <thead class="bg-slate-50 border-b border-slate-200">
-                                                <tr>
-                                                    <th
-                                                        class="px-5 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider w-[25%]">
-                                                        Unidad / Presentación</th>
-                                                    <th
-                                                        class="px-5 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-center w-[15%]">
-                                                        Factor</th>
-                                                    <th
-                                                        class="px-5 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right w-[20%]">
-                                                        Costo Calc.</th>
-                                                    <th
-                                                        class="px-5 py-4 text-xs font-bold text-emerald-600 uppercase tracking-wider w-[25%] pl-8">
-                                                        Precio Público</th>
-                                                    <th
-                                                        class="px-5 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-center w-[15%]">
-                                                        Margen</th>
-                                                    <th class="w-10"></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="divide-y divide-slate-100 bg-white">
-                                                {{-- Base Unit Row --}}
-                                                <tr class="group hover:bg-slate-50/50 transition-colors">
-                                                    <td class="px-5 py-4">
-                                                        <div class="flex items-center gap-3">
-                                                            <span
-                                                                class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500">
-                                                                <svg class="w-4 h-4" fill="none" stroke="currentColor"
-                                                                    viewBox="0 0 24 24">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                                        stroke-width="2"
-                                                                        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4">
-                                                                    </path>
-                                                                </svg>
-                                                            </span>
-                                                            <div>
-                                                                <p class="text-sm font-bold text-slate-700">Unidad Base</p>
-                                                                <p class="text-[10px] text-slate-400 uppercase">Principal</p>
-                                                            </div>
-                                                        </div>
-                                                        <input type="hidden" name="sale_price" :value="base_public_price">
-                                                    </td>
-                                                    <td class="px-5 py-4 text-center">
-                                                        <span
-                                                            class="inline-block px-2 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-md">1.00</span>
-                                                    </td>
-                                                    <td class="px-5 py-4 text-right">
-                                                        <span class="text-sm font-mono font-bold text-slate-600"
-                                                            x-text="'$' + net_cost.toFixed(2)"></span>
-                                                    </td>
-                                                    <td class="px-5 py-4 pl-8 relative">
-                                                        {{-- Decoration line connecting Cost to Price --}}
-                                                        <div
-                                                            class="absolute left-0 top-1/2 -translate-y-1/2 w-8 h-px bg-slate-200">
-                                                        </div>
-                                                        <div
-                                                            class="absolute left-8 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-emerald-400">
-                                                        </div>
-
-                                                        <div class="relative">
-                                                            <span
-                                                                class="absolute left-3 top-2.5 text-emerald-500 font-bold">$</span>
-                                                            <input type="number" step="0.01" name="public_price"
-                                                                x-model="base_public_price" @input="updateBaseMargin()"
-                                                                class="w-full pl-7 py-2 rounded-lg border-emerald-200 bg-emerald-50/10 text-sm font-bold text-emerald-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition-all placeholder:text-emerald-300 shadow-sm">
-                                                        </div>
-                                                        {{-- Hidden fields for backend --}}
-                                                        <input type="hidden" name="mid_wholesale_price"
-                                                            :value="base_public_price">
-                                                        <input type="hidden" name="wholesale_price" :value="base_public_price">
-                                                    </td>
-                                                    <td class="px-5 py-4">
-                                                        <div class="relative">
-                                                            <input type="number" step="0.01" x-model="base_margin"
-                                                                @input="updateBasePrice()"
-                                                                class="w-20 mx-auto block text-center py-1.5 rounded-lg border-slate-200 text-xs font-bold text-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-100"
-                                                                placeholder="%">
-                                                        </div>
-                                                    </td>
-                                                    <td></td>
-                                                </tr>
-
-                                                {{-- Additional Units --}}
-                                                <template x-for="(unit, index) in units" :key="index">
-                                                    <tr class="group hover:bg-slate-50/80 transition-colors">
-                                                        <td class="px-5 py-3">
-                                                            <select :name="'units['+index+'][unit_id]'" x-model="unit.unit_id"
-                                                                required
-                                                                class="w-full py-2 px-3 rounded-lg border-slate-200 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-100 bg-white">
-                                                                <option value="">Seleccionar...</option>
-                                                                @foreach($units as $u)
-                                                                    <option value="{{ $u->id }}">{{ $u->name }} ({{ $u->symbol }})
-                                                                    </option>
-                                                                @endforeach
-                                                            </select>
-                                                        </td>
-                                                        <td class="px-5 py-3 text-center">
-                                                            <input type="number" step="0.0001"
-                                                                :name="'units['+index+'][conversion_factor]'"
-                                                                x-model="unit.conversion_factor" @input="updateUnitCost(unit)"
-                                                                class="w-20 mx-auto text-center py-2 rounded-lg border-slate-200 text-sm font-medium focus:border-blue-500 focus:ring-1 focus:ring-blue-100"
-                                                                placeholder="Factor">
-                                                            <p class="text-[10px] text-slate-400 mt-1">Equivale</p>
-                                                        </td>
-                                                        <td class="px-5 py-3 text-right">
-                                                            <span class="text-sm font-mono font-medium text-slate-600"
-                                                                x-text="'$' + (unit.calculated_cost || '0.00')"></span>
-                                                        </td>
-                                                        <td class="px-5 py-3 pl-8 relative">
-                                                            <div
-                                                                class="absolute left-0 top-1/2 -translate-y-1/2 w-8 h-px bg-slate-200">
-                                                            </div>
-                                                            <div
-                                                                class="absolute left-8 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-slate-300 group-hover:bg-blue-400 transition-colors">
-                                                            </div>
-
-                                                            <div class="relative">
-                                                                <span class="absolute left-3 top-2.5 text-slate-400">$</span>
-                                                                <input type="number" step="0.01"
-                                                                    :name="'units['+index+'][public_price]'"
-                                                                    x-model="unit.public_price" @input="updateUnitMargin(unit)"
-                                                                    class="w-full pl-7 py-2 rounded-lg border-slate-200 text-sm font-bold text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all shadow-sm">
-                                                            </div>
-                                                        </td>
-                                                        <td class="px-5 py-3">
-                                                            <input type="number" step="0.01" x-model="unit.margin"
-                                                                @input="updateUnitPrice(unit)"
-                                                                class="w-20 mx-auto block text-center py-1.5 rounded-lg border-slate-200 text-xs font-bold text-slate-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-100"
-                                                                placeholder="%">
-                                                        </td>
-                                                        <td class="px-2 py-3 text-center">
-                                                            <button type="button" @click="removeUnit(index)"
-                                                                class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-300 hover:text-red-500 hover:bg-red-50 transition-all"
-                                                                title="Eliminar">
-                                                                <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                                    viewBox="0 0 24 24">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                                        stroke-width="2"
-                                                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                                                                    </path>
-                                                                </svg>
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                </template>
-
-                                                {{-- Empty State --}}
-                                                <tr x-show="units.length === 0">
-                                                    <td colspan="6"
-                                                        class="px-5 py-8 text-center text-slate-400 text-sm border-t border-slate-50 border-dashed">
-                                                        No hay presentaciones extra. <button type="button" @click="addUnit()"
-                                                            class="text-blue-500 font-bold hover:underline">Agregar una</button>
-                                                        si vendes por caja, rollo, etc.
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
                             </div>
-                        </div>
+                        </template>
                     </div>
-                @else
-                    <div class="p-4 bg-yellow-50 text-yellow-700 rounded-lg text-sm">
-                        Permisos insuficientes.
-                    </div>
-                @endif
-                </path>
-                </svg>
-                </span>
-                Fotografía
-                </h2>
-
-                <div class="flex items-center justify-center w-full mb-4">
-                    <label for="dropzone-file"
-                        class="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-300 border-dashed rounded-xl cursor-pointer bg-slate-50 hover:bg-slate-100 transition-all">
-                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                            <svg class="w-8 h-8 mb-2 text-slate-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                fill="none" viewBox="0 0 20 16">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
-                            </svg>
-                            <p class="text-xs text-slate-500 font-semibold">Clic para cambiar imagen</p>
-                            <p class="text-[10px] text-slate-400">SVG, PNG, JPG (MAX. 2MB)</p>
-                        </div>
-                        <input id="dropzone-file" type="file" name="main_image" accept="image/*" class="hidden" />
-                    </label>
                 </div>
 
-                @if($product->main_image_path)
-                    <div class="flex items-center gap-4 bg-slate-50 p-2 rounded-xl">
-                        <img src="{{ asset('storage/' . $product->main_image_path) }}" class="h-16 w-16 rounded-lg object-cover"
-                            alt="">
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" name="remove_image" value="1"
-                                class="w-4 h-4 rounded border-slate-300 text-red-600 focus:ring-red-500">
-                            <span class="text-sm font-medium text-slate-700">Eliminar imagen actual</span>
-                        </label>
-                    </div>
-                @endif
             </div>
 
-            {{-- Acciones --}}
-            <div class="pt-4 flex flex-col gap-3">
-                <button type="submit"
-                    class="w-full rounded-xl bg-slate-900 py-3.5 text-sm font-bold text-white shadow-xl shadow-slate-900/10 hover:bg-slate-800 transition-all hover:scale-[1.02]">
-                    Actualizar Producto
-                </button>
-                <a href="{{ route('admin.products.index') }}"
-                    class="w-full rounded-xl border border-slate-200 bg-white py-3.5 text-center text-sm font-bold text-slate-700 hover:bg-slate-50 transition-all">
-                    Cancelar
-                </a>
+            {{-- Columna Derecha: Precios y Foto --}}
+            <div class="space-y-6">
+
+                {{-- Card: Precios --}}
+                @if(auth()->user()->isAdmin())
+                    <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" x-data="{
+                                                                                                    cost: '{{ old('cost_price', $product->cost_price) }}',
+                                                                                                    tax_percent: '{{ old('taxes_percent', $product->taxes_percent) }}',
+                                                                                                    net_cost: '', 
+                                                                                                    init() {
+                                                                                                        let c = parseFloat(this.cost);
+                                                                                                        let t = parseFloat(this.tax_percent);
+                                                                                                        if(!isNaN(c) && !isNaN(t)) {
+                                                                                                            if (t === 0) {
+                                                                                                                this.net_cost = c;
+                                                                                                            } else {
+                                                                                                                this.net_cost = (c / (1 + (t / 100))).toFixed(2);
+                                                                                                            }
+                                                                                                        }
+                                                                                                    },
+                                                                                                    updateGrossCost() {
+                                                                                                        let n = parseFloat(this.net_cost);
+                                                                                                        let t = parseFloat(this.tax_percent);
+                                                                                                        if(isNaN(n)) n = 0;
+                                                                                                        if(isNaN(t)) t = 0;
+
+                                                                                                        this.cost = (n * (1 + (t / 100))).toFixed(2);
+                                                                                                        // update prices logic if needed
+                                                                                                    },
+                                                                                                    calculatePrice(percent) {
+                                                                                                        let c = parseFloat(this.cost);
+                                                                                                        let p = parseFloat(percent);
+                                                                                                        if(isNaN(c) || isNaN(p)) return '';
+                                                                                                        return (c * (1 + (p / 100))).toFixed(2);
+                                                                                                    },
+                                                                                                    updatePrice(e, targetId) {
+                                                                                                        let val = this.calculatePrice(e.target.value);
+                                                                                                        if(val) document.getElementById(targetId).value = val;
+                                                                                                    },
+                                                                                                    updateMargin(e, marginId) {
+                                                                                                        let price = parseFloat(e.target.value);
+                                                                                                        let cost = parseFloat(this.cost);
+                                                                                                        if (isNaN(price) || isNaN(cost) || cost === 0) return;
+                                                                                                        let margin = ((price / cost - 1) * 100).toFixed(2);
+                                                                                                        document.getElementById(marginId).value = margin;
+                                                                                                    }
+                                                                                                 }">
+                        <h2 class="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
+                            <span class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                                    </path>
+                                </svg>
+                            </span>
+                            Precios
+                        </h2>
+
+                        <div class="space-y-6">
+                            <div class="grid grid-cols-12 gap-4">
+                                <div class="col-span-12 md:col-span-6">
+                                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Costo
+                                        de Compra</label>
+                                    <div class="relative">
+                                        <span class="absolute left-3 top-2.5 text-slate-400">$</span>
+                                        <input type="number" step="0.01" min="0" x-model="net_cost" @input="updateGrossCost()"
+                                            class="w-full rounded-xl border-slate-200 pl-8 pr-3 py-2.5 text-sm font-semibold text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all">
+                                    </div>
+                                </div>
+                                <div class="col-span-12 md:col-span-6">
+                                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">IVA
+                                        %</label>
+                                    <div class="relative">
+                                        <input type="number" step="0.01" min="0" name="taxes_percent" x-model="tax_percent"
+                                            @input="updateGrossCost()"
+                                            class="w-full rounded-xl border-slate-200 pl-3 pr-3 py-2.5 text-sm font-semibold text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Costo
+                                    Neto</label>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-2.5 text-slate-400">$</span>
+                                    <input type="number" step="0.01" min="0" name="cost_price" x-model="cost" readonly
+                                        class="w-full rounded-xl border-slate-200 bg-slate-50 pl-8 pr-3 py-2.5 text-sm font-semibold text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all">
+                                </div>
+                                <p class="text-xs text-slate-400 mt-1">Calculado: Costo de Compra + IVA.</p>
+                            </div>
+
+                            <hr class="border-slate-100">
+
+                            {{-- Precio Venta --}}
+                            <div class="grid grid-cols-12 gap-4 items-end">
+                                <div class="col-span-8">
+                                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Precio
+                                        de Venta (Base)</label>
+                                    <div class="relative">
+                                        <span class="absolute left-3 top-2.5 text-slate-400">$</span>
+                                        <input id="sale_price" type="number" step="0.01" min="0" name="sale_price"
+                                            value="{{ old('sale_price', $product->sale_price) }}" required
+                                            @input="updateMargin($event, 'sale_margin')"
+                                            class="w-full rounded-xl border-slate-200 pl-8 pr-3 py-2.5 text-sm font-semibold text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all">
+                                    </div>
+                                </div>
+                                <div class="col-span-4">
+                                    <label
+                                        class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 text-center">Margen
+                                        %</label>
+                                    <input id="sale_margin" type="number" step="any" placeholder="%"
+                                        @input="updatePrice($event, 'sale_price')"
+                                        class="w-full rounded-xl border-slate-200 py-2.5 px-2 text-center text-sm font-bold text-blue-600 bg-blue-50/50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all placeholder:text-slate-300">
+                                </div>
+                            </div>
+
+                            {{-- Precio Público --}}
+                            <div class="grid grid-cols-12 gap-4 items-end">
+                                <div class="col-span-8">
+                                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Precio
+                                        Público</label>
+                                    <div class="relative">
+                                        <span class="absolute left-3 top-2.5 text-slate-400">$</span>
+                                        <input id="public_price" type="number" step="0.01" min="0" name="public_price"
+                                            value="{{ old('public_price', $product->public_price) }}" required
+                                            @input="updateMargin($event, 'public_margin')"
+                                            class="w-full rounded-xl border-emerald-200 pl-8 pr-3 py-2.5 text-sm font-bold text-emerald-700 bg-emerald-50/30 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition-all">
+                                    </div>
+                                </div>
+                                <div class="col-span-4">
+                                    <label
+                                        class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 text-center">Margen
+                                        %</label>
+                                    <input id="public_margin" type="number" step="any" placeholder="%"
+                                        @input="updatePrice($event, 'public_price')"
+                                        class="w-full rounded-xl border-slate-200 py-2.5 px-2 text-center text-sm font-bold text-emerald-600 bg-blue-50/50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all placeholder:text-slate-300">
+                                </div>
+                            </div>
+
+                            {{-- Medio Mayoreo --}}
+                            <div class="grid grid-cols-12 gap-4 items-end">
+                                <div class="col-span-8">
+                                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Medio
+                                        Mayoreo</label>
+                                    <div class="relative">
+                                        <span class="absolute left-3 top-2.5 text-slate-400">$</span>
+                                        <input id="mid_wholesale_price" type="number" step="0.01" min="0"
+                                            name="mid_wholesale_price"
+                                            value="{{ old('mid_wholesale_price', $product->mid_wholesale_price) }}" required
+                                            @input="updateMargin($event, 'mid_wholesale_margin')"
+                                            class="w-full rounded-xl border-slate-200 pl-8 pr-3 py-2.5 text-sm font-semibold text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all">
+                                    </div>
+                                </div>
+                                <div class="col-span-4">
+                                    <label
+                                        class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 text-center">Margen
+                                        %</label>
+                                    <input id="mid_wholesale_margin" type="number" step="any" placeholder="%"
+                                        @input="updatePrice($event, 'mid_wholesale_price')"
+                                        class="w-full rounded-xl border-slate-200 py-2.5 px-2 text-center text-sm font-bold text-blue-600 bg-blue-50/50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all placeholder:text-slate-300">
+                                </div>
+                            </div>
+
+                            {{-- Mayoreo --}}
+                            <div class="grid grid-cols-12 gap-4 items-end">
+                                <div class="col-span-8">
+                                    <label
+                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Mayoreo</label>
+                                    <div class="relative">
+                                        <span class="absolute left-3 top-2.5 text-slate-400">$</span>
+                                        <input id="wholesale_price" type="number" step="0.01" min="0" name="wholesale_price"
+                                            value="{{ old('wholesale_price', $product->wholesale_price) }}" required
+                                            @input="updateMargin($event, 'wholesale_margin')"
+                                            class="w-full rounded-xl border-slate-200 pl-8 pr-3 py-2.5 text-sm font-semibold text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all">
+                                    </div>
+                                </div>
+                                <div class="col-span-4">
+                                    <label
+                                        class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 text-center">Margen
+                                        %</label>
+                                    <input id="wholesale_margin" type="number" step="any" placeholder="%"
+                                        @input="updatePrice($event, 'wholesale_price')"
+                                        class="w-full rounded-xl border-slate-200 py-2.5 px-2 text-center text-sm font-bold text-blue-600 bg-blue-50/50 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all placeholder:text-slate-300">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif {{-- Card: Imagen --}}
+                <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                    <h2 class="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
+                        <span class="w-8 h-8 rounded-lg bg-pink-100 flex items-center justify-center text-pink-600">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                        </span>
+                        Fotografía
+                    </h2>
+
+                    <div class="flex items-center justify-center w-full mb-4">
+                        <label for="dropzone-file"
+                            class="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-300 border-dashed rounded-xl cursor-pointer bg-slate-50 hover:bg-slate-100 transition-all">
+                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                <svg class="w-8 h-8 mb-2 text-slate-400" aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+                                </svg>
+                                <p class="text-xs text-slate-500 font-semibold">Clic para cambiar imagen</p>
+                                <p class="text-[10px] text-slate-400">SVG, PNG, JPG (MAX. 2MB)</p>
+                            </div>
+                            <input id="dropzone-file" type="file" name="main_image" accept="image/*" class="hidden" />
+                        </label>
+                    </div>
+
+                    @if($product->main_image_path)
+                        <div class="flex items-center gap-4 bg-slate-50 p-2 rounded-xl">
+                            <img src="{{ asset('storage/' . $product->main_image_path) }}"
+                                class="h-16 w-16 rounded-lg object-cover" alt="">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" name="remove_image" value="1"
+                                    class="w-4 h-4 rounded border-slate-300 text-red-600 focus:ring-red-500">
+                                <span class="text-sm font-medium text-slate-700">Eliminar imagen actual</span>
+                            </label>
+                        </div>
+                    @endif
+                </div>
+
+                {{-- Acciones --}}
+                <div class="pt-4 flex flex-col gap-3">
+                    <button type="submit"
+                        class="w-full rounded-xl bg-slate-900 py-3.5 text-sm font-bold text-white shadow-xl shadow-slate-900/10 hover:bg-slate-800 transition-all hover:scale-[1.02]">
+                        Actualizar Producto
+                    </button>
+                    <a href="{{ route('admin.products.index') }}"
+                        class="w-full rounded-xl border border-slate-200 bg-white py-3.5 text-center text-sm font-bold text-slate-700 hover:bg-slate-50 transition-all">
+                        Cancelar
+                    </a>
+                </div>
             </div>
-        </div>
         </div>
     </form>
 
