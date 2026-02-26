@@ -35,6 +35,10 @@ class QuickAdjustment extends Component
 
     public function open($productId)
     {
+        if (is_array($productId)) {
+            $productId = $productId['productId'] ?? null;
+        }
+
         $this->product = Product::find($productId);
         $this->amount = '';
         $this->isOpen = true;

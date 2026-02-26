@@ -283,6 +283,7 @@
     </div>
 
     <x-scanner-modal />
+    <livewire:admin.inventory.quick-adjustment />
 
     <script>
         window.addEventListener('global-scan-completed', event => {
