@@ -35,14 +35,15 @@
                                     <div class="mt-4 space-y-4">
                                         <div>
                                             <label class="block text-sm font-medium text-gray-700">Cantidad a
-                                                Agregar/Restar</label>
+                                                Agregar/Restar (en {{ $product->unit->name ?? 'Unidad Base' }})</label>
                                             <div class="mt-1 relative rounded-md shadow-sm">
                                                 <input type="number" step="any" wire:model="amount" placeholder="+10 o -5"
                                                     class="focus:ring-orange-500 focus:border-orange-500 block w-full pl-4 sm:text-lg border-gray-300 rounded-xl"
                                                     autofocus>
                                             </div>
                                             @error('amount') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                                            <p class="text-xs text-gray-400 mt-1">Usa números negativos para restar.</p>
+                                            <p class="text-xs text-orange-600 font-medium mt-1">Nota: Ingresa la cantidad
+                                                calculada en tu Unidad Base. Usa números negativos para restar.</p>
                                         </div>
 
                                         <div>
