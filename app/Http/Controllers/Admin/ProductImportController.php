@@ -15,6 +15,51 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class ProductImportController extends Controller
 {
+    private function fuzzyMatch($modelsArr, $targetName, $threshold = 0.8)
+    {
+        $targetStr = $this->superNorm($targetName);
+        if ($targetStr === '')
+            return null;
+
+        $bestScore = 0;
+        $bestMatch = null;
+
+        foreach ($modelsArr as $model) {
+            $modelStr = $this->superNorm($model->name);
+            if ($modelStr === '')
+                continue;
+
+            if ($targetStr === $modelStr)
+                return $model; // Exact normalized match
+
+            $maxLen = max(strlen($targetStr), strlen($modelStr));
+            if ($maxLen == 0)
+                continue;
+
+            $lev = levenshtein($targetStr, $modelStr);
+            $score = 1 - ($lev / $maxLen);
+
+            if ($score >= $threshold && $score > $bestScore) {
+                $bestScore = $score;
+                $bestMatch = $model;
+            }
+        }
+        return $bestMatch;
+    }
+
+    private function superNorm(string $v): string
+    {
+        $v = mb_strtolower(trim($v));
+        $v = preg_replace('/[^a-z0-9]/', '', str_replace(
+            ['á', 'é', 'í', 'ó', 'ú', 'ñ', 'ü'],
+            ['a', 'e', 'i', 'o', 'u', 'n', 'u'],
+            $v
+        ));
+        if (str_ends_with($v, 's'))
+            $v = substr($v, 0, -1);
+        return $v;
+    }
+
     public function create()
     {
         return view('admin.products.import');
@@ -68,11 +113,11 @@ class ProductImportController extends Controller
         $errorCount = 0;
         $errors = [];
 
-        // caches
-        $familyByCode = [];
-        $brandByName = [];
-        $unitByKey = [];
-        $categoryByKey = [];
+        // caches - preload all taxonomy to avoid DB hits in loop and allow fuzzy matching
+        $allFamilies = Family::all();
+        $allBrands = Brand::all();
+        $allUnits = Unit::all();
+        $allCategoriesByFamily = Category::all()->groupBy('family_id');
 
         DB::beginTransaction();
         try {
@@ -143,97 +188,79 @@ class ProductImportController extends Controller
                     if ($familyName === '')
                         throw new \RuntimeException("El nombre de familia es obligatorio.");
 
-                    $familyCode = $p['family_code'];
-                    // Generate code attempt if missing
-                    if ($familyCode === '') {
-                        $familyCode = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $familyName), 0, 3));
-                        if (strlen($familyCode) < 3)
-                            $familyCode = str_pad($familyCode, 3, 'X');
-                    }
+                    $family = $this->fuzzyMatch($allFamilies, $familyName, 0.85);
 
-                    $famKey = $familyCode . '|' . mb_strtolower($familyName);
-                    if (!isset($familyByCode[$famKey])) {
-                        // Look up strictly case-insensitive
-                        $existingFam = Family::whereRaw('LOWER(name) = ?', [mb_strtolower($familyName)])
-                            ->orWhere('code', $familyCode)
-                            ->first();
-
-                        if ($existingFam) {
-                            $familyByCode[$famKey] = $existingFam;
-                        } else {
-                            $familyByCode[$famKey] = Family::create([
-                                'name' => ucfirst(mb_strtolower($familyName)), // Normalize casing
-                                'code' => $this->uniqueCode('families', 'code', $familyCode),
-                                'slug' => $this->uniqueSlug('families', $familyName),
-                            ]);
+                    if (!$family) {
+                        $familyCode = $p['family_code'];
+                        if ($familyCode === '') {
+                            $familyCode = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $familyName), 0, 3));
+                            if (strlen($familyCode) < 3)
+                                $familyCode = str_pad($familyCode, 3, 'X');
                         }
+
+                        $family = Family::create([
+                            'name' => ucfirst(mb_strtolower($familyName)),
+                            'code' => $this->uniqueCode('families', 'code', $familyCode),
+                            'slug' => $this->uniqueSlug('families', $familyName),
+                        ]);
+                        $allFamilies->push($family); // Refresh cache
                     }
-                    $family = $familyByCode[$famKey];
 
                     // Category
                     $catName = trim($p['category']);
                     if ($catName === '')
                         throw new \RuntimeException("La categoría es obligatoria.");
 
-                    $catKey = $family->id . '|' . mb_strtolower($catName);
-                    if (!isset($categoryByKey[$catKey])) {
-                        // Check existing in this family
-                        $existingCat = Category::where('family_id', $family->id)
-                            ->whereRaw('LOWER(name) = ?', [mb_strtolower($catName)])
-                            ->first();
+                    $familyCategories = $allCategoriesByFamily->get($family->id) ?? collect();
+                    $category = $this->fuzzyMatch($familyCategories, $catName, 0.85);
 
-                        if ($existingCat) {
-                            $categoryByKey[$catKey] = $existingCat;
-                        } else {
-                            $categoryByKey[$catKey] = Category::create([
-                                'family_id' => $family->id,
-                                'name' => ucfirst(mb_strtolower($catName)),
-                                'slug' => $this->uniqueSlug('categories', $catName . ' ' . $family->code)
-                            ]);
+                    if (!$category) {
+                        $category = Category::create([
+                            'family_id' => $family->id,
+                            'name' => ucfirst(mb_strtolower($catName)),
+                            'slug' => $this->uniqueSlug('categories', $catName . ' ' . $family->code)
+                        ]);
+                        if (!isset($allCategoriesByFamily[$family->id])) {
+                            $allCategoriesByFamily[$family->id] = collect();
                         }
+                        $allCategoriesByFamily[$family->id]->push($category);
                     }
-                    $category = $categoryByKey[$catKey];
 
                     // Brand
                     $brandName = trim($p['brand']);
                     if ($brandName === '')
                         $brandName = 'Genérica';
 
-                    $brandKey = mb_strtolower($brandName);
-                    if (!isset($brandByName[$brandKey])) {
-                        $existingBrand = Brand::whereRaw('LOWER(name) = ?', [mb_strtolower($brandName)])->first();
+                    $brand = $this->fuzzyMatch($allBrands, $brandName, 0.85);
 
-                        if ($existingBrand) {
-                            $brandByName[$brandKey] = $existingBrand;
-                        } else {
-                            $brandByName[$brandKey] = Brand::create([
-                                'name' => ucfirst(mb_strtolower($brandName)),
-                                'slug' => $this->uniqueSlug('brands', $brandName)
-                            ]);
-                        }
+                    if (!$brand) {
+                        $brand = Brand::create([
+                            'name' => ucfirst(mb_strtolower($brandName)),
+                            'slug' => $this->uniqueSlug('brands', $brandName)
+                        ]);
+                        $allBrands->push($brand);
                     }
-                    $brand = $brandByName[$brandKey];
 
                     // Unit
-                    $unitName = $p['unit_name'];
+                    $unitName = trim($p['unit_name']);
                     if ($unitName === '')
                         throw new \RuntimeException("El nombre de la unidad es obligatorio.");
+
                     $unitSymbol = $p['unit_symbol'];
                     if ($unitSymbol === '')
                         $unitSymbol = strtoupper(substr($unitName, 0, 3));
 
-                    $unitKey = mb_strtolower($unitName);
-                    if (!isset($unitByKey[$unitKey])) {
-                        $unitByKey[$unitKey] = Unit::firstOrCreate(
-                            ['name' => $unitName],
-                            [
-                                'symbol' => $unitSymbol,
-                                'slug' => $this->uniqueSlug('units', $unitName),
-                                'allows_decimal' => (bool) $p['unit_allows_decimal'],
-                            ]
-                        );
+                    $unit = $this->fuzzyMatch($allUnits, $unitName, 0.85);
+
+                    if (!$unit) {
+                        $unit = Unit::create([
+                            'name' => $unitName,
+                            'symbol' => $unitSymbol,
+                            'slug' => $this->uniqueSlug('units', $unitName),
+                            'allows_decimal' => (bool) $p['unit_allows_decimal'],
+                        ]);
+                        $allUnits->push($unit);
                     }
-                    $unit = $unitByKey[$unitKey];
 
                     // CREATE PRODUCT
                     Product::create([
