@@ -1,5 +1,54 @@
 <div>
+    <!-- Pricing Display updated via Livewire -->
+    <div class="mb-4">
+        @if($product->sale_price > 0 && $product->sale_price < $product->public_price && empty($selectedUnitId))
+            <div class="flex flex-col">
+                <span class="text-sm text-gray-500 line-through">USD
+                    ${{ number_format($product->public_price * 1.1, 2) }}</span>
+                <span class="text-4xl font-extrabold text-accent">${{ number_format($currentPrice, 2) }}</span>
+            </div>
+            <span class="bg-red-100 text-red-600 text-xs font-bold px-2 py-1 rounded-lg mt-1 inline-block">-10% OFF</span>
+        @else
+            <span class="text-4xl font-extrabold text-dark">${{ number_format($currentPrice, 2) }}</span>
+        @endif
+        <p class="text-sm text-gray-500 mt-2">Impuestos incluidos. Envío calculado al finalizar compra.</p>
+    </div>
+
     @if($stock > 0)
+        <!-- Presentations Selector -->
+        @if(count($variants) > 0)
+            <div class="mb-6 space-y-3">
+                <span class="text-sm font-bold text-slate-700 block mb-2">Selecciona la Presentación:</span>
+
+                {{-- Base Option --}}
+                <label class="cursor-pointer">
+                    <input type="radio" wire:model.live="selectedUnitId" value="" class="peer sr-only">
+                    <div
+                        class="rounded-xl border border-gray-200 bg-white p-4 hover:border-primary peer-checked:border-primary peer-checked:ring-1 peer-checked:ring-primary transition-all flex items-center justify-between">
+                        <div>
+                            <span class="font-bold text-slate-800">{{ $product->unit->name ?? 'Pieza' }}</span>
+                            <span class="block text-xs text-slate-500 mt-0.5">Presentación Base</span>
+                        </div>
+                    </div>
+                </label>
+
+                {{-- Variant Options --}}
+                @foreach($variants as $variant)
+                    <label class="cursor-pointer">
+                        <input type="radio" wire:model.live="selectedUnitId" value="{{ $variant['id'] }}" class="peer sr-only">
+                        <div
+                            class="rounded-xl border border-gray-200 bg-white p-4 hover:border-primary peer-checked:border-primary peer-checked:ring-1 peer-checked:ring-primary transition-all flex items-center justify-between">
+                            <div>
+                                <span class="font-bold text-slate-800">{{ $variant['unit']['name'] ?? 'Variedad' }}</span>
+                                <span class="block text-xs text-slate-500 mt-0.5">Equivale a
+                                    {{ (float) $variant['conversion_factor'] }} {{ $product->unit->name ?? 'Piezas' }}</span>
+                            </div>
+                        </div>
+                    </label>
+                @endforeach
+            </div>
+        @endif
+
         <div class="space-y-4">
             <!-- Qty & Add -->
             <div class="flex gap-4">

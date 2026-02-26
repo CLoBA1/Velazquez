@@ -73,7 +73,9 @@ class ProductController extends Controller
         $request->validate([
             'units' => ['nullable', 'array'],
             'units.*.unit_id' => ['required', 'exists:units,id'],
-            'units.*.conversion_factor' => ['required', 'numeric', 'min:0'],
+            'units.*.conversion_factor' => ['nullable', 'numeric', 'min:0'],
+            'units.*.cost_price' => ['required', 'numeric', 'min:0'],
+            'units.*.taxes_percent' => ['nullable', 'numeric', 'min:0'],
             'units.*.sale_price' => ['nullable', 'numeric', 'min:0'],
             'units.*.public_price' => ['nullable', 'numeric', 'min:0'],
             'units.*.mid_wholesale_price' => ['nullable', 'numeric', 'min:0'],
@@ -166,7 +168,9 @@ class ProductController extends Controller
         $request->validate([
             'units' => ['nullable', 'array'],
             'units.*.unit_id' => ['required', 'exists:units,id'],
-            'units.*.conversion_factor' => ['required', 'numeric', 'min:0'],
+            'units.*.conversion_factor' => ['nullable', 'numeric', 'min:0'],
+            'units.*.cost_price' => ['required', 'numeric', 'min:0'],
+            'units.*.taxes_percent' => ['nullable', 'numeric', 'min:0'],
             'units.*.sale_price' => ['nullable', 'numeric', 'min:0'],
             'units.*.public_price' => ['nullable', 'numeric', 'min:0'],
             'units.*.mid_wholesale_price' => ['nullable', 'numeric', 'min:0'],

@@ -47,7 +47,7 @@ class StoreController extends Controller
         // For now, accept ID directly or Slug if model binding works
         // If route defines {product}, Laravel tries ID default.
 
-        $product = Product::with(['inventoryMovements', 'category', 'brand'])->findOrFail($product);
+        $product = Product::with(['inventoryMovements', 'category', 'brand', 'units.unit'])->findOrFail($product);
 
         return view('store.show', compact('product'));
     }

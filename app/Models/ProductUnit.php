@@ -13,6 +13,8 @@ class ProductUnit extends Model
         'product_id',
         'unit_id',
         'conversion_factor',
+        'cost_price',
+        'taxes_percent',
         'sale_price',
         'public_price',
         'mid_wholesale_price',

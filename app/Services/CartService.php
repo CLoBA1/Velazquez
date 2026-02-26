@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Product;
+use App\Models\ProductUnit;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Session;
 
@@ -22,32 +23,53 @@ class CartService
     /**
      * Add item to cart
      */
-    public function add(Product $product, int $quantity = 1): void
+    public function add(Product $product, int $quantity = 1, ?int $productUnitId = null): void
     {
         $cart = $this->getContent();
 
-        if ($cart->has($product->id)) {
-            $item = $cart->get($product->id);
+        $cartItemId = $product->id;
+        $price = $product->public_price;
+        $name = $product->name;
+
+        $stockLimit = $product->stock; // Base stock. Ideally, check unit conversion_factor for strict checks.
+
+        if ($productUnitId) {
+            $productUnit = ProductUnit::with('unit')->find($productUnitId);
+            if ($productUnit && $productUnit->product_id === $product->id) {
+                $cartItemId = $product->id . '_' . $productUnit->id;
+                $price = $productUnit->public_price;
+                $name = $product->name . ' (' . ($productUnit->unit->name ?? 'Variante') . ')';
+                // Adjust stock checking logically (e.g. 1 Caja of 10 items)
+                if ($productUnit->conversion_factor > 0) {
+                    $stockLimit = floor($product->stock / $productUnit->conversion_factor);
+                }
+            }
+        }
+
+        if ($cart->has($cartItemId)) {
+            $item = $cart->get($cartItemId);
             $newQuantity = $item['quantity'] + $quantity;
 
-            if ($newQuantity > $product->stock) {
-                throw new \Exception("Stock insuficiente. Solo quedan {$product->stock} unidades disponibles.");
+            if ($newQuantity > $stockLimit) {
+                throw new \Exception("Stock insuficiente. Solo quedan {$stockLimit} disponibles en esta presentación.");
             }
 
             $item['quantity'] = $newQuantity;
-            $cart->put($product->id, $item);
+            $cart->put($cartItemId, $item);
         } else {
-            if ($quantity > $product->stock) {
-                throw new \Exception("Stock insuficiente. Solo quedan {$product->stock} unidades disponibles.");
+            if ($quantity > $stockLimit) {
+                throw new \Exception("Stock insuficiente. Solo quedan {$stockLimit} disponibles en esta presentación.");
             }
 
-            $cart->put($product->id, [
-                'id' => $product->id,
-                'name' => $product->name,
-                'price' => $product->public_price,
+            $cart->put($cartItemId, [
+                'id' => $cartItemId,
+                'real_product_id' => $product->id, // Store base product ID for checkout
+                'product_unit_id' => $productUnitId,
+                'name' => $name,
+                'price' => $price,
                 'image' => $product->image_url,
                 'quantity' => $quantity,
-                'max_stock' => $product->stock
+                'max_stock' => $stockLimit
             ]);
         }
 
@@ -57,33 +79,46 @@ class CartService
     /**
      * Remove item from cart
      */
-    public function remove(int $productId): void
+    public function remove(string $cartItemId): void
     {
         $cart = $this->getContent();
-        $cart->forget($productId);
+        $cart->forget($cartItemId);
+        $cart->forget((int) $cartItemId); // backwards compatibility if an old pure-int exists
         session()->put(self::CART_SESSION_KEY, $cart);
     }
 
     /**
      * Update item quantity
      */
-    public function update(int $productId, int $quantity): void
+    public function update(string $cartItemId, int $quantity): void
     {
         $cart = $this->getContent();
 
-        if ($cart->has($productId)) {
-            $item = $cart->get($productId);
+        if ($cart->has($cartItemId)) {
+            $item = $cart->get($cartItemId);
             if ($quantity > 0) {
-                // Ensure we don't exceed stock
-                $product = Product::find($productId);
-                if ($product && $quantity > $product->stock) {
-                    throw new \Exception("Stock insuficiente. Solo quedan {$product->stock} unidades disponibles.");
+                // Determine max stock
+                $baseProductId = $item['real_product_id'] ?? $cartItemId;
+                $productUnitId = $item['product_unit_id'] ?? null;
+                $product = Product::find($baseProductId);
+
+                $stockLimit = $product ? $product->stock : 0;
+
+                if ($product && $productUnitId) {
+                    $pUnit = ProductUnit::find($productUnitId);
+                    if ($pUnit && $pUnit->conversion_factor > 0) {
+                        $stockLimit = floor($product->stock / $pUnit->conversion_factor);
+                    }
+                }
+
+                if ($product && $quantity > $stockLimit) {
+                    throw new \Exception("Stock insuficiente. Solo quedan {$stockLimit} disponibles en esta presentación.");
                 }
 
                 $item['quantity'] = $quantity;
-                $cart->put($productId, $item);
+                $cart->put($cartItemId, $item);
             } else {
-                $this->remove($productId);
+                $this->remove($cartItemId);
                 return;
             }
         }

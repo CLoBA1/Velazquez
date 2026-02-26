@@ -4,10 +4,10 @@
 
 @section('content')
     <div class="bg-white min-h-screen pb-20" x-data="{ 
-                                    activeImage: '{{ $product->image_url }}', 
-                                    qty: 1,
-                                    zoom: false
-                                }">
+                                                activeImage: '{{ $product->image_url }}', 
+                                                qty: 1,
+                                                zoom: false
+                                            }">
 
         <!-- Breadcrumb (Modern) -->
         <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -135,28 +135,8 @@
                         </div>
                     </div>
 
-                    <!-- Price Block -->
+                    <!-- Price & Actions Component -->
                     <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100">
-                        <div class="flex items-end gap-3 mb-2">
-                            @if($product->sale_price > 0 && $product->sale_price < $product->public_price)
-                                <div class="flex flex-col">
-                                    <span class="text-sm text-gray-500 line-through">USD
-                                        ${{ number_format($product->public_price * 1.1, 2) }}</span>
-                                    <span
-                                        class="text-4xl font-extrabold text-accent">${{ number_format($product->public_price, 2) }}</span>
-                                </div>
-                                <span class="bg-red-100 text-red-600 text-xs font-bold px-2 py-1 rounded-lg mb-2">-10%
-                                    OFF</span>
-                            @else
-                                <span
-                                    class="text-4xl font-extrabold text-dark">${{ number_format($product->public_price, 2) }}</span>
-                            @endif
-                        </div>
-                        <p class="text-sm text-gray-500 mb-6">Impuestos incluidos. Envío calculado al finalizar compra.</p>
-
-                        <!-- Actions -->
-                        <!-- Actions Component (Livewire) -->
-                        <!-- Actions Component (Livewire) -->
                         <livewire:store.product-page-actions :product="$product" />
                     </div>
 
@@ -186,10 +166,9 @@
                                 @endif
                             </div>
                         </div>
-                    </div>
 
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 @endsection
