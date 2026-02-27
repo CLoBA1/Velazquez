@@ -16,7 +16,14 @@ class ProductActivityController extends Controller
     {
         $q = Activity::query()
             ->whereIn('subject_type', ['App\Models\Product', 'App\Models\ProductUnit'])
-            ->with(['causer', 'subject.product', 'subject.unit']);
+            ->with([
+                'causer',
+                'subject' => function ($morphTo) {
+                    $morphTo->morphWith([
+                        \App\Models\ProductUnit::class => ['product', 'unit']
+                    ]);
+                }
+            ]);
 
         // Filtro por Usuario Responsable
         if ($userId = $request->input('user_id')) {
