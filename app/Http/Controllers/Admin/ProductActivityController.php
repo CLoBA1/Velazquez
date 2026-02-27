@@ -13,7 +13,7 @@ class ProductActivityController extends Controller
      */
     public function index(Request $request)
     {
-        $activities = Activity::where('subject_type', 'App\Models\Product')
+        $activities = Activity::whereIn('subject_type', ['App\Models\Product', 'App\Models\ProductUnit'])
             ->with(['causer', 'subject'])
             ->orderByDesc('created_at')
             ->paginate(30);

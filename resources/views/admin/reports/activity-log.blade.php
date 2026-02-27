@@ -51,10 +51,16 @@
                                         <span
                                             class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
                                             ID: {{ $activity->subject_id }}
+                                            @if($activity->subject_type === 'App\Models\ProductUnit')
+                                                (Presentación)
+                                            @endif
                                         </span>
-                                        <p class="text-sm text-gray-900 mt-1 font-semibold max-w-xs truncate"
-                                            title="{{ $activity->subject->name ?? 'Producto Eliminado' }}">
-                                            {{ $activity->subject->name ?? 'Producto Eliminado' }}
+                                        <p class="text-sm text-gray-900 mt-1 font-semibold max-w-xs truncate">
+                                            @if($activity->subject_type === 'App\Models\ProductUnit')
+                                                {{ $activity->subject->product->name ?? 'Producto Eliminado' }} - <span class="text-xs text-orange-600 font-bold uppercase">{{ $activity->subject->unit->name ?? '?' }}</span>
+                                            @else
+                                                {{ $activity->subject->name ?? 'Producto Eliminado' }}
+                                            @endif
                                         </p>
                                     </td>
                                     <td class="px-6 py-4 text-sm text-gray-500">
@@ -63,23 +69,29 @@
                                                 $changes = $activity->changes;
                                                 $old = $changes['old'] ?? [];
                                                 $attributes = $changes['attributes'] ?? [];
+                                                
+                                                // Definimos cuáles campos queremos mostrar con su respectiva etiqueta en español
+                                                $allowedFields = [
+                                                    'cost_price' => 'Precio de Compra',
+                                                    'public_price' => 'Precio Público'
+                                                ];
                                             @endphp
                                             <ul class="space-y-2">
                                                 @foreach($attributes as $key => $newValue)
-                                                    @if(array_key_exists($key, $old))
+                                                    @if(array_key_exists($key, $allowedFields) && array_key_exists($key, $old))
                                                         <li
                                                             class="bg-gray-50 p-2 rounded border border-gray-100 flex flex-col gap-1 text-xs">
-                                                            <strong class="uppercase text-gray-700">{{ $key }}</strong>
+                                                            <strong class="uppercase text-gray-700 font-bold text-orange-600">{{ $allowedFields[$key] }}</strong>
                                                             <div class="flex items-center gap-2">
                                                                 <span class="text-red-600 bg-red-50 px-1 rounded line-through"
-                                                                    title="Antes">{{ $old[$key] ?? 'N/D' }}</span>
+                                                                    title="Antes">${{ $old[$key] ?? '0.00' }}</span>
                                                                 <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor"
                                                                     viewBox="0 0 24 24">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                                         d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                                                                 </svg>
                                                                 <span class="text-green-700 bg-green-50 px-1 rounded font-bold"
-                                                                    title="Nuevo">{{ $newValue ?? 'N/D' }}</span>
+                                                                    title="Nuevo">${{ $newValue ?? '0.00' }}</span>
                                                             </div>
                                                         </li>
                                                     @endif
