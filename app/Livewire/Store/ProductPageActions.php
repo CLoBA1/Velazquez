@@ -86,7 +86,8 @@ class ProductPageActions extends Component
 
         if ($product) {
             try {
-                $cart->add($product, $this->quantity, $this->selectedUnitId);
+                $unitIdInt = $this->selectedUnitId ? (int) $this->selectedUnitId : null;
+                $cart->add($product, $this->quantity, $unitIdInt);
                 $this->dispatch('cart-updated'); // Update Navbar Cart
                 $this->dispatch('notify', message: '¡Agregado al carrito!', type: 'success');
             } catch (\Exception $e) {
@@ -105,7 +106,8 @@ class ProductPageActions extends Component
 
         if ($product) {
             try {
-                $cart->add($product, $this->quantity, $this->selectedUnitId);
+                $unitIdInt = $this->selectedUnitId ? (int) $this->selectedUnitId : null;
+                $cart->add($product, $this->quantity, $unitIdInt);
                 $this->dispatch('cart-updated');
                 return redirect()->route('store.checkout');
             } catch (\Exception $e) {
