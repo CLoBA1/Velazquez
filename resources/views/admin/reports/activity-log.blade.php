@@ -11,6 +11,49 @@
             <p class="text-sm text-gray-600 mb-6">Revisa qué cambios se han hecho a los productos, quién los hizo y a qué
                 hora exacta.</p>
 
+            <!-- Filtros Avanzados -->
+            <div class="bg-white p-4 shadow-sm sm:rounded-lg border border-gray-200 mb-6">
+                <form method="GET" action="{{ route('admin.reports.activity-log') }}" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+                    
+                    <!-- Búsqueda por Producto -->
+                    <div class="md:col-span-2">
+                        <label for="search" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Buscar Producto</label>
+                        <input type="text" name="search" id="search" value="{{ request('search') }}" placeholder="Nombre o Código Interno..." 
+                               class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
+                    </div>
+
+                    <!-- Filtro por Usuario -->
+                    <div>
+                        <label for="user_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Usuario</label>
+                        <select name="user_id" id="user_id" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
+                            <option value="">Todos los Usuarios</option>
+                            @foreach($users as $user)
+                                <option value="{{ $user->id }}" @selected(request('user_id') == $user->id)>{{ $user->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Fechas -->
+                    <div class="grid grid-cols-2 gap-2 md:col-span-2">
+                        <div>
+                            <label for="date_start" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Desde</label>
+                            <input type="date" name="date_start" id="date_start" value="{{ request('date_start') }}" 
+                                   class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
+                        </div>
+                        <div class="flex items-end gap-2">
+                            <div class="flex-1">
+                                <label for="date_end" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Hasta</label>
+                                <input type="date" name="date_end" id="date_end" value="{{ request('date_end') }}" 
+                                       class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
+                            </div>
+                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded shadow-sm text-sm h-[38px] flex items-center justify-center">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border border-gray-200">
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
