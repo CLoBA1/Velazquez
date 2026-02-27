@@ -15,9 +15,10 @@ class BulkActionController extends Controller
      */
     public function index()
     {
-        // Fetch brands for the dropdown
+        // Fetch brands and units for the dropdowns
         $brands = Brand::orderBy('name')->get();
-        return view('admin.products.bulk-actions', compact('brands'));
+        $units = \App\Models\Unit::orderBy('name')->get();
+        return view('admin.products.bulk-actions', compact('brands', 'units'));
     }
 
     /**
@@ -50,9 +51,10 @@ class BulkActionController extends Controller
     {
         $request->validate([
             'search_term' => 'required|min:3',
-            'action_type' => 'required|in:assign_image,assign_brand,remove_image',
+            'action_type' => 'required|in:assign_image,assign_brand,remove_image,assign_unit',
             'image' => 'required_if:action_type,assign_image|image|max:4096',
             'brand_id' => 'required_if:action_type,assign_brand|exists:brands,id',
+            'unit_id' => 'required_if:action_type,assign_unit|exists:units,id',
         ]);
 
         $search = trim($request->input('search_term'));
@@ -71,6 +73,9 @@ class BulkActionController extends Controller
         } elseif ($action === 'assign_brand') {
             $brandId = $request->input('brand_id');
             $affected = $query->update(['brand_id' => $brandId]);
+        } elseif ($action === 'assign_unit') {
+            $unitId = $request->input('unit_id');
+            $affected = $query->update(['unit_id' => $unitId]);
         } elseif ($action === 'remove_image') {
             // Note: This doesn't delete the file from storage, only the reference.
             // Ideally we would delete files, but for bulk updates checking each one is expensive.

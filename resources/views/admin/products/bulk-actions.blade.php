@@ -48,7 +48,7 @@
 
                     <h3 class="text-lg font-medium text-gray-900 mb-4">Paso 3: Seleccionar Acción</h3>
 
-                    <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="mb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         <label class="cursor-pointer border p-4 rounded-lg hover:bg-gray-50 flex items-center gap-3">
                             <input type="radio" name="action_type" value="assign_image" checked
                                 class="text-indigo-600 focus:ring-indigo-500">
@@ -75,6 +75,15 @@
                                 <span class="text-xs text-gray-500">Quita la foto actual.</span>
                             </div>
                         </label>
+
+                        <label class="cursor-pointer border p-4 rounded-lg hover:bg-gray-50 flex items-center gap-3">
+                            <input type="radio" name="action_type" value="assign_unit"
+                                class="text-indigo-600 focus:ring-indigo-500">
+                            <div>
+                                <span class="block font-bold text-indigo-600">Cambiar Unidad</span>
+                                <span class="text-xs text-gray-500">Cambia la unidad de medida (Ej. Piezas).</span>
+                            </div>
+                        </label>
                     </div>
 
                     <!-- INPUT: Image Upload -->
@@ -97,6 +106,19 @@
                             @endforeach
                         </select>
                         <x-input-error :messages="$errors->get('brand_id')" class="mt-2" />
+                    </div>
+
+                    <!-- INPUT: Unit Select -->
+                    <div id="input_unit" class="mb-4 action-input hidden">
+                        <x-input-label for="unit_id" :value="__('Seleccionar Nueva Unidad')" />
+                        <select id="unit_id" name="unit_id"
+                            class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                            <option value="">Seleccione una unidad...</option>
+                            @foreach($units as $unit)
+                                <option value="{{ $unit->id }}">{{ $unit->name }} ({{ $unit->symbol }})</option>
+                            @endforeach
+                        </select>
+                        <x-input-error :messages="$errors->get('unit_id')" class="mt-2" />
                     </div>
 
                     <div class="flex items-center justify-end mt-4">
@@ -124,6 +146,7 @@
             const actionRadios = document.querySelectorAll('input[name="action_type"]');
             const inputImage = document.getElementById('input_image');
             const inputBrand = document.getElementById('input_brand');
+            const inputUnit = document.getElementById('input_unit');
 
             // Handle Action Switch
             actionRadios.forEach(radio => {
@@ -131,10 +154,12 @@
                     // Hide all first
                     inputImage.classList.add('hidden');
                     inputBrand.classList.add('hidden');
+                    inputUnit.classList.add('hidden');
 
                     // Reset required attributes to avoid browser validation errors on hidden fields
                     document.getElementById('image').removeAttribute('required');
                     document.getElementById('brand_id').removeAttribute('required');
+                    document.getElementById('unit_id').removeAttribute('required');
 
                     if (this.value === 'assign_image') {
                         inputImage.classList.remove('hidden');
@@ -142,6 +167,9 @@
                     } else if (this.value === 'assign_brand') {
                         inputBrand.classList.remove('hidden');
                         document.getElementById('brand_id').setAttribute('required', 'required');
+                    } else if (this.value === 'assign_unit') {
+                        inputUnit.classList.remove('hidden');
+                        document.getElementById('unit_id').setAttribute('required', 'required');
                     } else if (this.value === 'remove_image') {
                         // No extra input needed
                     }
