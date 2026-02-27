@@ -1,4 +1,49 @@
-<div class="relative w-full max-w-2xl mx-auto" x-data="{ open: false }" @click.away="open = false">
+<div class="relative w-full max-w-2xl mx-auto" 
+    x-data="{ 
+        open: false,
+        isListening: false,
+        startSpeech() {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                alert('Lo sentimos, la búsqueda por voz no está soportada en este navegador.');
+                return;
+            }
+            
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+            
+            recognition.lang = 'es-MX';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+            
+            recognition.onstart = () => {
+                this.isListening = true;
+            };
+            
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                
+                // Update the input for visual feedback
+                const input = document.getElementById('storeSearchInput');
+                if (input) input.value = transcript;
+                
+                // Trigger Livewire
+                $wire.set('query', transcript);
+                this.open = true;
+            };
+            
+            recognition.onerror = (event) => {
+                console.error('Error de reconocimiento de voz:', event.error);
+                this.isListening = false;
+            };
+            
+            recognition.onend = () => {
+                this.isListening = false;
+            };
+            
+            recognition.start();
+        }
+    }" 
+    @click.away="open = false">
     <div class="relative">
         <input 
             id="storeSearchInput"
@@ -11,6 +56,21 @@
             autocomplete="off"
         >
         <div class="absolute right-2 top-2 flex items-center gap-1">
+            <!-- Botón de Micrófono (Búsqueda por Voz) -->
+            <button type="button" 
+                    @click="startSpeech" 
+                    class="p-1.5 rounded-full transition-colors relative"
+                    :class="isListening ? 'bg-red-100 text-red-600 animate-pulse' : 'bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-primary'"
+                    :title="isListening ? 'Escuchando...' : 'Búsqueda por voz'">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 10v2a7 7 0 01-14 0v-2m7 6v4m-3-4h6M12 4a3 3 0 00-3 3v5a3 3 0 006 0V7a3 3 0 00-3-3z"></path>
+                </svg>
+                <!-- Indicador de grabando -->
+                <span x-show="isListening" class="absolute top-0 right-0 flex h-2 w-2">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                </span>
+            </button>
             <button type="button" @click="$dispatch('open-scanner')" class="p-1.5 bg-gray-100 text-gray-500 rounded-full hover:bg-gray-200 hover:text-primary transition-colors" title="Escanear">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
             </button>
