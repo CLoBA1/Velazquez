@@ -28,9 +28,31 @@
             </div>
 
             <!-- Results -->
+            @if(session('success'))
+                <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                    <span class="block sm:inline">{{ session('success') }}</span>
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                    <span class="block sm:inline">{{ session('error') }}</span>
+                </div>
+            @endif
+
             @if(count($duplicates) > 0)
                 <div class="space-y-4">
-                    <p class="text-sm text-gray-600 mb-2">Se encontraron <strong>{{ count($duplicates) }}</strong> grupos de duplicados.</p>
+                    <div class="flex justify-between items-center bg-white p-4 shadow-sm sm:rounded-lg mb-4">
+                        <p class="text-sm text-gray-600">Se encontraron <strong>{{ count($duplicates) }}</strong> grupos de duplicados.</p>
+                        
+                        <form action="{{ route('admin.duplicates.destroyAll') }}" method="POST" onsubmit="return confirm('⚠️ ATENCIÓN: Esta acción NO se puede deshacer.\n\nEl sistema conservará 1 original de cada producto y BORRARÁ DIRECTAMENTE todas las copias repetidas de tu base de datos.\n\n¿Estás completamente seguro de continuar?');">
+                            @csrf
+                            <input type="hidden" name="criteria" value="{{ $criteria }}">
+                            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded shadow">
+                                Eliminar Todos los Duplicados al Instante
+                            </button>
+                        </form>
+                    </div>
                     
                     @foreach($duplicates as $key => $group)
                         <div x-data="{ open: false }" class="bg-white overflow-hidden shadow-sm sm:rounded-lg border border-gray-200">

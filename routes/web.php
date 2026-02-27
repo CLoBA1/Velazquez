@@ -183,6 +183,9 @@ Route::prefix('admin')->group(function () {
         // Duplicate Finder
         Route::get('/duplicados', [\App\Http\Controllers\Admin\DuplicateController::class, 'index'])
             ->name('admin.duplicates.index');
+
+        Route::post('/duplicados/eliminar-masivo', [\App\Http\Controllers\Admin\DuplicateController::class, 'destroyAll'])
+            ->name('admin.duplicates.destroyAll');
     });
 });
 

@@ -54,4 +54,66 @@ class DuplicateController extends Controller
 
         return view('admin.products.duplicates', compact('duplicates', 'criteria'));
     }
+
+    /**
+     * Delete all duplicates (keeping the oldest original record per group).
+     */
+    public function destroyAll(Request $request)
+    {
+        $criteria = $request->input('criteria', 'name');
+        $deletedCount = 0;
+
+        if ($criteria === 'name') {
+            $duplicateNames = Product::select('name', DB::raw('count(*) as total'))
+                ->groupBy('name')
+                ->having('total', '>', 1)
+                ->pluck('name');
+
+            if ($duplicateNames->isNotEmpty()) {
+                $duplicates = Product::whereIn('name', $duplicateNames)
+                    ->orderBy('created_at', 'asc')
+                    ->get()
+                    ->groupBy('name');
+
+                foreach ($duplicates as $group) {
+                    // Skip the first one (oldest)
+                    $toDelete = $group->slice(1);
+                    foreach ($toDelete as $copy) {
+                        $copy->delete();
+                        $deletedCount++;
+                    }
+                }
+            }
+        } elseif ($criteria === 'code') {
+            $duplicateCodes = Product::select('internal_code', DB::raw('count(*) as total'))
+                ->whereNotNull('internal_code')
+                ->where('internal_code', '!=', '')
+                ->groupBy('internal_code')
+                ->having('total', '>', 1)
+                ->pluck('internal_code');
+
+            if ($duplicateCodes->isNotEmpty()) {
+                $duplicates = Product::whereIn('internal_code', $duplicateCodes)
+                    ->orderBy('created_at', 'asc')
+                    ->get()
+                    ->groupBy('internal_code');
+
+                foreach ($duplicates as $group) {
+                    $toDelete = $group->slice(1);
+                    foreach ($toDelete as $copy) {
+                        $copy->delete();
+                        $deletedCount++;
+                    }
+                }
+            }
+        }
+
+        if ($deletedCount > 0) {
+            return redirect()->route('admin.duplicates.index', ['criteria' => $criteria])
+                ->with('success', "¡Excelente! Se eliminaron automáticamente {$deletedCount} productos duplicados.");
+        } else {
+            return redirect()->route('admin.duplicates.index', ['criteria' => $criteria])
+                ->with('error', "No se encontraron duplicados para eliminar con los filtros actuales.");
+        }
+    }
 }
