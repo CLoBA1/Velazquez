@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Product extends Model
 {
+    use LogsActivity;
     protected $fillable = [
         'internal_code',
         'supplier_sku',
@@ -28,6 +31,26 @@ class Product extends Model
         'sale_deadline',
         'business_line',
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'name',
+                'internal_code',
+                'cost_price',
+                'sale_price',
+                'public_price',
+                'mid_wholesale_price',
+                'wholesale_price',
+                'stock',
+                'min_stock',
+                'category_id',
+                'brand_id'
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
     protected $casts = [
         'cost_price' => 'decimal:2',

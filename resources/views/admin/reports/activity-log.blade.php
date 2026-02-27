@@ -1,0 +1,127 @@
+@extends('admin.layouts.app')
+
+@section('title', 'Historial de Modificaciones')
+
+@section('content')
+    <div class="py-12">
+        <div class="max-w-screen-2xl mx-auto sm:px-6 lg:px-8">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-2">
+                {{ __('Historial de Modificaciones (Auditoría)') }}
+            </h2>
+            <p class="text-sm text-gray-600 mb-6">Revisa qué cambios se han hecho a los productos, quién los hizo y a qué
+                hora exacta.</p>
+
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border border-gray-200">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Fecha / Hora</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Usuario Responsable</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Producto (ID)</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Detalles del Cambio</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @forelse($activities as $activity)
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900 font-medium">
+                                            {{ $activity->created_at->format('d/m/Y') }}</div>
+                                        <div class="text-xs text-gray-500">{{ $activity->created_at->format('h:i:s A') }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div
+                                                class="flex-shrink-0 h-8 w-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 font-bold text-xs uppercase">
+                                                {{ substr($activity->causer->name ?? '?', 0, 2) }}
+                                            </div>
+                                            <div class="ml-3">
+                                                <p class="text-sm font-medium text-gray-900">
+                                                    {{ $activity->causer->name ?? 'Sistema / Externo' }}</p>
+                                                <p class="text-xs text-gray-500">{{ $activity->causer->email ?? 'N/A' }}</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                            ID: {{ $activity->subject_id }}
+                                        </span>
+                                        <p class="text-sm text-gray-900 mt-1 font-semibold max-w-xs truncate"
+                                            title="{{ $activity->subject->name ?? 'Producto Eliminado' }}">
+                                            {{ $activity->subject->name ?? 'Producto Eliminado' }}
+                                        </p>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">
+                                        @if($activity->description === 'updated')
+                                            @php
+                                                $changes = $activity->changes;
+                                                $old = $changes['old'] ?? [];
+                                                $attributes = $changes['attributes'] ?? [];
+                                            @endphp
+                                            <ul class="space-y-2">
+                                                @foreach($attributes as $key => $newValue)
+                                                    @if(array_key_exists($key, $old))
+                                                        <li
+                                                            class="bg-gray-50 p-2 rounded border border-gray-100 flex flex-col gap-1 text-xs">
+                                                            <strong class="uppercase text-gray-700">{{ $key }}</strong>
+                                                            <div class="flex items-center gap-2">
+                                                                <span class="text-red-600 bg-red-50 px-1 rounded line-through"
+                                                                    title="Antes">{{ $old[$key] ?? 'N/D' }}</span>
+                                                                <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor"
+                                                                    viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                                        d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                                                                </svg>
+                                                                <span class="text-green-700 bg-green-50 px-1 rounded font-bold"
+                                                                    title="Nuevo">{{ $newValue ?? 'N/D' }}</span>
+                                                            </div>
+                                                        </li>
+                                                    @endif
+                                                @endforeach
+                                            </ul>
+                                        @elseif($activity->description === 'created')
+                                            <span
+                                                class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-800">
+                                                Producto Creado
+                                            </span>
+                                        @elseif($activity->description === 'deleted')
+                                            <span
+                                                class="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
+                                                Producto Eliminado
+                                            </span>
+                                        @else
+                                            {{ $activity->description }}
+                                        @endif
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="px-6 py-12 whitespace-nowrap text-center">
+                                        <svg class="mx-auto h-12 w-12 text-gray-300" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
+                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                            </path>
+                                        </svg>
+                                        <p class="mt-4 text-sm text-gray-500">Aún no hay modificaciones registradas en el
+                                            catálogo.</p>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                {{ $activities->links() }}
+            </div>
+        </div>
+    </div>
+@endsection

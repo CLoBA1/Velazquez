@@ -167,6 +167,9 @@ Route::prefix('admin')->group(function () {
         Route::get('/reportes/movimientos', [\App\Http\Controllers\Admin\ReportController::class, 'movements'])
             ->name('admin.reports.movements');
 
+        Route::get('/reportes/historial-cambios', [\App\Http\Controllers\Admin\ProductActivityController::class, 'index'])
+            ->name('admin.reports.activity-log');
+
         Route::get('/importacion', fn() => 'Importación (en construcción)')
             ->name('admin.import.index');
 
