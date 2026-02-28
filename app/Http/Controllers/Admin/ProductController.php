@@ -16,6 +16,9 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
+        // Guardar la URL exacta con todos sus filtros y páginación
+        session()->put('admin_products_url', $request->fullUrl());
+
         $q = Product::query()
             ->with(['category.family', 'brand', 'unit'])
             ->orderByDesc('id');
@@ -147,7 +150,7 @@ class ProductController extends Controller
             }
         }
 
-        return redirect()->route('admin.products.index')->with('ok', 'Producto creado.');
+        return redirect(session('admin_products_url', route('admin.products.index')))->with('ok', 'Producto creado.');
     }
 
     public function edit(Product $product)
@@ -250,7 +253,7 @@ class ProductController extends Controller
             }
         }
 
-        return redirect()->route('admin.products.index')->with('ok', 'Producto actualizado.');
+        return redirect(session('admin_products_url', route('admin.products.index')))->with('ok', 'Producto actualizado.');
     }
 
     public function destroy(Product $product)
@@ -261,6 +264,6 @@ class ProductController extends Controller
         }
 
         $product->delete();
-        return redirect()->route('admin.products.index')->with('ok', 'Producto eliminado.');
+        return redirect(session('admin_products_url', route('admin.products.index')))->with('ok', 'Producto eliminado.');
     }
 }

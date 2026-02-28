@@ -10,7 +10,7 @@
                     class="font-bold text-slate-700">{{ $product->name }}</span>.</p>
         </div>
 
-        <a href="{{ route('admin.products.index') }}"
+        <a href="{{ session('admin_products_url', route('admin.products.index')) }}"
             class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm">
             <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
@@ -40,9 +40,9 @@
     @endif
 
     <form method="POST" action="{{ route('admin.products.update', $product) }}" enctype="multipart/form-data" x-data="{ 
-                            business_line: '{{ old('business_line', $product->business_line) }}',
-                            barcode: '{{ old('barcode', $product->barcode) }}'
-                        }" @scan-completed.window="barcode = $event.detail.code">
+                                business_line: '{{ old('business_line', $product->business_line) }}',
+                                barcode: '{{ old('barcode', $product->barcode) }}'
+                            }" @scan-completed.window="barcode = $event.detail.code">
         @csrf
         @method('PUT')
 
@@ -174,11 +174,11 @@
                 </div>
                 {{-- Card: Gestión de Precios Unificado --}}
                 <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden" x-data="priceControl({
-                                    cost: {{ Js::from(old('cost_price', $product->cost_price)) }},
-                                    tax_percent: {{ Js::from(old('taxes_percent', $product->taxes_percent)) }},
-                                    base_public_price: {{ Js::from(old('public_price', $product->public_price)) }},
-                                    units: {{ Js::from(old('units', $product->units->toArray())) }}
-                                })">
+                                        cost: {{ Js::from(old('cost_price', $product->cost_price)) }},
+                                        tax_percent: {{ Js::from(old('taxes_percent', $product->taxes_percent)) }},
+                                        base_public_price: {{ Js::from(old('public_price', $product->public_price)) }},
+                                        units: {{ Js::from(old('units', $product->units->toArray())) }}
+                                    })">
 
                     {{-- Header de la Tarjeta --}}
                     <div class="px-8 py-5 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
