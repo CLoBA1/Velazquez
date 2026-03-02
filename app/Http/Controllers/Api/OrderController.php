@@ -54,12 +54,13 @@ class OrderController extends Controller
 
             $total += $lineTotal;
 
-            $saleItems[] = new \App\Models\SaleItem([
-                'product_id' => $product->id,
-                'quantity' => $quantity,
-                'price' => $price,
-                'total' => $lineTotal,
-            ]);
+            $saleItem = new \App\Models\SaleItem();
+            $saleItem->product_id = $product->id;
+            $saleItem->quantity = $quantity;
+            $saleItem->price = $price;
+            $saleItem->total = $lineTotal;
+
+            $saleItems[] = $saleItem;
 
             // Optional: Reduce stock
             // $product->decrement('stock', $quantity);
@@ -68,7 +69,7 @@ class OrderController extends Controller
         // 2. Create the Sale record
         $sale = \App\Models\Sale::create([
             'user_id' => $user->id,
-            'client_id' => null, // Assuming App users aren't explicitly linked to wholesale Clients here
+            'client_id' => 1, // Default General Public ID to prevent SQL null constraint failure
             'type' => 'App Sales',
             'status' => 'Pendiente', // or processing
             'payment_method' => 'Efectivo', // Adjust as needed
