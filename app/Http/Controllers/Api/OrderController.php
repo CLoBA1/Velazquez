@@ -70,8 +70,8 @@ class OrderController extends Controller
         $sale = \App\Models\Sale::create([
             'user_id' => $user->id,
             'client_id' => 1, // Default General Public ID to prevent SQL null constraint failure
-            'type' => 'App Sales',
-            'status' => 'Pendiente', // or processing
+            'type' => 'ticket', // Must match ENUM: 'ticket' or 'invoice'
+            'status' => 'pending', // Must match ENUM: 'paid', 'pending', 'cancelled'
             'payment_method' => 'Efectivo', // Adjust as needed
             'total' => $total,
             'source' => 'Android App',
