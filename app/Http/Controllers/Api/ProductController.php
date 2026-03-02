@@ -36,7 +36,9 @@ class ProductController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $product = Product::with(['brand', 'category.family', 'unit', 'units'])->findOrFail($id);
+
+        return response()->json($product);
     }
 
     /**
