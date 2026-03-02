@@ -19,4 +19,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/products', [ProductController::class, 'index']);
     Route::get('/products/{id}', [ProductController::class, 'show']);
+
+    Route::apiResource('orders', \App\Http\Controllers\Api\OrderController::class)->only(['index', 'store']);
 });
