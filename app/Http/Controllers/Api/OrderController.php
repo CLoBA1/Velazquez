@@ -67,7 +67,7 @@ class OrderController extends Controller
             // 2. Create the Sale record
             $sale = \App\Models\Sale::create([
                 'user_id' => $user->id,
-                'client_id' => 1, // Default General Public ID to prevent SQL null constraint failure
+                'client_id' => null, // Set to null since App users aren't always Wholesale Clients
                 'type' => 'ticket', // Must match ENUM: 'ticket' or 'invoice'
                 'status' => 'pending', // Must match ENUM: 'paid', 'pending', 'cancelled'
                 'payment_method' => 'Efectivo', // Adjust as needed
