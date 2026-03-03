@@ -32,6 +32,9 @@ class Product extends Model
         'business_line',
     ];
 
+    // Append computed attributes so they appear in API JSON
+    protected $appends = ['image_url'];
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
