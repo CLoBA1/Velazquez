@@ -13,13 +13,34 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $products = Product::with(['brand', 'category.family', 'unit', 'units'])
-            ->orderBy('name')
-            ->paginate(50);
+        $query = Product::with(['brand', 'category', 'unit'])
+            ->orderBy('name');
+
+        // Server-side search by name, barcode or internal code
+        if ($request->filled('search')) {
+            $term = $request->search;
+            $query->where(function ($q) use ($term) {
+                $q->where('name', 'like', "%{$term}%")
+                  ->orWhere('barcode', 'like', "%{$term}%")
+                  ->orWhere('internal_code', 'like', "%{$term}%");
+            });
+        }
+
+        // Filter by category
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        // Filter by brand
+        if ($request->filled('brand_id')) {
+            $query->where('brand_id', $request->brand_id);
+        }
+
+        $products = $query->paginate(20);
 
         return response()->json([
             'success' => true,
-            'data' => $products
+            'data'    => $products
         ]);
     }
 
