@@ -146,4 +146,48 @@ class Product extends Model
     {
         return $query->where('business_line', 'construction');
     }
+
+    public function scopeSearchFuzzy($query, $term)
+    {
+        if (empty(trim($term))) {
+            return $query;
+        }
+
+        // Clean term to avoid SQL injection issues with special regex matching if we ever use regex, 
+        // and normalize spaces
+        $cleanedTerm = trim(preg_replace('/[^a-zA-Z0-9\s]/', '', $term));
+        $words = explode(' ', $cleanedTerm);
+
+        $query->where(function ($q) use ($words, $term) {
+            // 1. Exact substring matches for accuracy
+            $q->where('barcode', 'like', '%' . $term . '%')
+                ->orWhere('internal_code', 'like', '%' . $term . '%')
+                ->orWhere('name', 'like', '%' . $term . '%')
+                ->orWhere('description', 'like', '%' . $term . '%');
+
+            // 2. Word by word fuzzy matching
+            foreach ($words as $word) {
+                if (strlen($word) < 2)
+                    continue;
+
+                // Remove consecutive duplicate characters (e.g. motosssierra -> motosiera)
+                $simplifiedWord = preg_replace('/(.)\1+/', '$1', $word);
+
+                // Insert % between each character for partial matching (e.g. m250 -> %m%2%5%0%)
+                $fuzzyPattern = '%' . implode('%', str_split($simplifiedWord)) . '%';
+
+                $q->orWhere(function ($subQ) use ($word, $fuzzyPattern) {
+                    $subQ->where('name', 'like', '%' . $word . '%')
+                        ->orWhere('name', 'like', $fuzzyPattern)
+                        ->orWhere('internal_code', 'like', $fuzzyPattern)
+                        ->orWhereHas('brand', function ($brandQ) use ($word, $fuzzyPattern) {
+                            $brandQ->where('name', 'like', '%' . $word . '%')
+                                ->orWhere('name', 'like', $fuzzyPattern);
+                        });
+                });
+            }
+        });
+
+        return $query;
+    }
 }

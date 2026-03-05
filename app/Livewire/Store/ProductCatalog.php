@@ -69,10 +69,7 @@ class ProductCatalog extends Component
         }
 
         if ($this->search) {
-            $query->where(function ($q) {
-                $q->where('name', 'like', "%{$this->search}%")
-                    ->orWhere('description', 'like', "%{$this->search}%");
-            });
+            $query->searchFuzzy($this->search);
         }
 
         if ($this->category) {
