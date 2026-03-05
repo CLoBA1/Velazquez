@@ -156,7 +156,12 @@ class Product extends Model
         // Clean term to avoid SQL injection issues with special regex matching if we ever use regex, 
         // and normalize spaces
         $cleanedTerm = trim(preg_replace('/[^a-zA-Z0-9\s]/', '', $term));
-        $words = explode(' ', $cleanedTerm);
+        $allWords = explode(' ', $cleanedTerm);
+
+        $stopWords = ['de', 'la', 'el', 'en', 'para', 'y', 'con', 'sin', 'por', 'las', 'los', 'un', 'una'];
+        $words = array_filter($allWords, function ($w) use ($stopWords) {
+            return strlen($w) >= 2 && !in_array(strtolower($w), $stopWords);
+        });
 
         $query->where(function ($q) use ($words, $term) {
             // 1. Exact substring matches for accuracy
@@ -165,25 +170,27 @@ class Product extends Model
                 ->orWhere('name', 'like', '%' . $term . '%')
                 ->orWhere('description', 'like', '%' . $term . '%');
 
-            // 2. Word by word fuzzy matching
-            foreach ($words as $word) {
-                if (strlen($word) < 2)
-                    continue;
+            // 2. Word by word fuzzy matching (ALL non-stop words must match)
+            if (!empty($words)) {
+                $q->orWhere(function ($subQ) use ($words) {
+                    foreach ($words as $word) {
+                        // Remove consecutive duplicate characters (e.g. motosssierra -> motosiera)
+                        $simplifiedWord = preg_replace('/(.)\1+/', '$1', $word);
 
-                // Remove consecutive duplicate characters (e.g. motosssierra -> motosiera)
-                $simplifiedWord = preg_replace('/(.)\1+/', '$1', $word);
+                        // Insert % between each character for partial matching (e.g. m250 -> %m%2%5%0%)
+                        $fuzzyPattern = '%' . implode('%', str_split($simplifiedWord)) . '%';
 
-                // Insert % between each character for partial matching (e.g. m250 -> %m%2%5%0%)
-                $fuzzyPattern = '%' . implode('%', str_split($simplifiedWord)) . '%';
-
-                $q->orWhere(function ($subQ) use ($word, $fuzzyPattern) {
-                    $subQ->where('name', 'like', '%' . $word . '%')
-                        ->orWhere('name', 'like', $fuzzyPattern)
-                        ->orWhere('internal_code', 'like', $fuzzyPattern)
-                        ->orWhereHas('brand', function ($brandQ) use ($word, $fuzzyPattern) {
-                            $brandQ->where('name', 'like', '%' . $word . '%')
-                                ->orWhere('name', 'like', $fuzzyPattern);
+                        // MUST match this word somewhere
+                        $subQ->where(function ($wordQ) use ($word, $fuzzyPattern) {
+                            $wordQ->where('name', 'like', '%' . $word . '%')
+                                ->orWhere('name', 'like', $fuzzyPattern)
+                                ->orWhere('internal_code', 'like', $fuzzyPattern)
+                                ->orWhereHas('brand', function ($brandQ) use ($word, $fuzzyPattern) {
+                                    $brandQ->where('name', 'like', '%' . $word . '%')
+                                        ->orWhere('name', 'like', $fuzzyPattern);
+                                });
                         });
+                    }
                 });
             }
         });
