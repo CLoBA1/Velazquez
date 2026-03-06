@@ -118,6 +118,7 @@ class ProductImportController extends Controller
         $allBrands = Brand::all();
         $allUnits = Unit::all();
         $allCategoriesByFamily = Category::all()->groupBy('family_id');
+        $allProducts = Product::select('id', 'name', 'internal_code', 'barcode')->get();
 
         DB::beginTransaction();
         try {
@@ -132,26 +133,53 @@ class ProductImportController extends Controller
                 try {
                     $p = $this->rowToPayload($row, $idx);
 
+                    // --- SANITIZE CODES ---
+                    if (!empty($p['internal_code'])) {
+                        // Remove single quotes, spaces, etc.
+                        $p['internal_code'] = preg_replace('/[^a-zA-Z0-9_-]/', '', $p['internal_code']);
+                    }
+                    if (!empty($p['barcode'])) {
+                        $p['barcode'] = preg_replace('/[^a-zA-Z0-9]/', '', $p['barcode']);
+                    }
+
                     // --- VALIDATIONS ---
 
                     // 1. Name Empty
                     if ($p['name'] === '')
                         throw new \RuntimeException("El nombre del producto está vacío.");
 
-                    // 2. Barcode Duplicate
-                    if (!empty($p['barcode']) && Product::where('barcode', $p['barcode'])->exists()) {
-                        throw new \RuntimeException("Código de Barras '{$p['barcode']}' ya existe en el sistema.");
+                    // Pre-check duplicates using the memory cache
+                    $cleanedInternalCode = $p['internal_code'];
+                    $cleanedBarcode = $p['barcode'];
+                    $targetName = $p['name'];
+
+                    $existingMatch = $allProducts->first(function ($prod) use ($cleanedInternalCode, $cleanedBarcode, $targetName) {
+                        // Match by internal code
+                        if (!empty($cleanedInternalCode) && $prod->internal_code === $cleanedInternalCode) {
+                            return true;
+                        }
+                        // Match by barcode
+                        if (!empty($cleanedBarcode) && $prod->barcode === $cleanedBarcode) {
+                            return true;
+                        }
+                        // Match exact name (case-insensitive)
+                        if (mb_strtolower($prod->name) === mb_strtolower($targetName)) {
+                            return true;
+                        }
+
+                        return false;
+                    });
+
+                    // Match fuzzy name if no exact code match
+                    if (!$existingMatch) {
+                        $fuzzyExisting = $this->fuzzyMatch($allProducts, $targetName, 0.90);
+                        if ($fuzzyExisting) {
+                            $existingMatch = $fuzzyExisting;
+                        }
                     }
 
-                    // 3. Internal Code Duplicate (If provided)
-                    if (!empty($p['internal_code']) && Product::where('internal_code', $p['internal_code'])->exists()) {
-                        throw new \RuntimeException("OMITIDO: El Código Interno '{$p['internal_code']}' ya existe.");
-                    }
-
-                    // 4. Name Duplicate (Strict Check enabled by user request)
-                    // Case-insensitive check to avoid variations like "Martillo" vs "MARTILLO"
-                    if (Product::whereRaw('LOWER(name) = ?', [mb_strtolower($p['name'])])->exists()) {
-                        throw new \RuntimeException("OMITIDO: El producto '{$p['name']}' ya existe (por nombre).");
+                    if ($existingMatch) {
+                        throw new \RuntimeException("OMITIDO: El producto '{$p['name']}' posiblemente ya existe en el sistema (Coin. con: {$existingMatch->name} o código).");
                     }
 
                     // Fill defaults
