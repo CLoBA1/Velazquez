@@ -42,7 +42,8 @@ class TaxonomyMerge extends Component
             $this->categories = Category::with('family')->withCount('products')
                 ->get()
                 ->sortBy(function ($cat) {
-                    return $cat->family->name . ' - ' . $cat->name; });
+                    return $cat->family->name . ' - ' . $cat->name;
+                });
         }
     }
 
@@ -100,6 +101,7 @@ class TaxonomyMerge extends Component
 
     public function render()
     {
-        return view('livewire.admin.taxonomy-merge');
+        return view('livewire.admin.taxonomy-merge')
+            ->layout('admin.layouts.app');
     }
 }
