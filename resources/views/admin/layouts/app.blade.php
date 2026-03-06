@@ -90,7 +90,6 @@
 
                 <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2 mt-6">Catálogo</p>
 
-                @foreach([
                         ['route' => 'admin.products.index', 'label' => 'Ferretería', 'icon' => 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4'],
                         ['route' => 'admin.construction.index', 'label' => 'Materiales', 'icon' => 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10'],
                         ['route' => 'admin.machines.index', 'label' => 'Maquinaria', 'icon' => 'M13 10V3L4 14h7v7l9-11h-7z'],
@@ -101,6 +100,7 @@
                         ['route' => 'admin.units.index', 'label' => 'Unidades', 'icon' => 'M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3'],
                         ['route' => 'admin.bulk-actions.index', 'label' => 'Operaciones Masivas', 'icon' => 'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z'],
                         ['route' => 'admin.duplicates.index', 'label' => 'Detectar Duplicados', 'icon' => 'M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z'],
+                        ['route' => 'admin.taxonomy-merge', 'label' => 'Depurar Categorías', 'icon' => 'M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16'],
                     ] as $item)
                     <a href="{{ route($item['route']) }}" 
                        class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colo

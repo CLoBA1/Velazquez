@@ -189,6 +189,9 @@ Route::prefix('admin')->group(function () {
 
         Route::post('/duplicados/eliminar-masivo', [\App\Http\Controllers\Admin\DuplicateController::class, 'destroyAll'])
             ->name('admin.duplicates.destroyAll');
+        // Taxonomy Merge Tool
+        Route::get('/depurar-categorias', \App\Livewire\Admin\TaxonomyMerge::class)
+            ->name('admin.taxonomy-merge');
     });
 });
 
