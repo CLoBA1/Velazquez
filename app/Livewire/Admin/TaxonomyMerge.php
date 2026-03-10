@@ -73,7 +73,22 @@ class TaxonomyMerge extends Component
                 $target = Family::findOrFail($this->targetId);
 
                 // Move all categories to new family
-                Category::where('family_id', $source->id)->update(['family_id' => $target->id]);
+                $sourceCategories = Category::where('family_id', $source->id)->get();
+                foreach ($sourceCategories as $sourceCategory) {
+                    $targetCategoryExists = Category::where('family_id', $target->id)
+                        ->where('name', $sourceCategory->name)
+                        ->first();
+
+                    if ($targetCategoryExists) {
+                        // Collision: Move products to the existing category in target family and delete the duplicate
+                        Product::where('category_id', $sourceCategory->id)
+                            ->update(['category_id' => $targetCategoryExists->id]);
+                        $sourceCategory->delete();
+                    } else {
+                        // No collision: safe to just change the family of the category
+                        $sourceCategory->update(['family_id' => $target->id]);
+                    }
+                }
 
                 $source->delete();
                 session()->flash('message', "Familia '{$source->name}' fusionada en '{$target->name}' correctamente.");
