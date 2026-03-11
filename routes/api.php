@@ -126,5 +126,129 @@ Route::middleware('auth:sanctum')->group(function () {
             $users = User::orderBy('name')->paginate(30);
             return response()->json(['success' => true, 'data' => $users]);
         });
+
+        // ── Dashboard KPIs ─────────────────────────────────────────────────────
+        Route::get('/dashboard', function () {
+            $totalProducts = Product::count();
+            $lowStock      = Product::whereColumn('stock', '<=', 'min_stock')->where('min_stock', '>', 0)->count();
+            $inventoryValue = Product::sum(\Illuminate\Support\Facades\DB::raw('stock * cost_price'));
+            $movementsToday = \App\Models\InventoryMovement::whereDate('created_at', today())->count();
+            $salesToday     = \App\Models\Sale::whereDate('created_at', today())->sum('total');
+            $salesWeek      = \App\Models\Sale::whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->sum('total');
+            $pendingOrders  = \App\Models\Sale::where('status', 'pending')->count();
+            // Recent products added this week
+            $recentProducts = Product::with(['category:id,name', 'brand:id,name'])
+                ->latest()->take(5)->get(['id','name','stock','public_price','category_id','brand_id']);
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'total_products'  => $totalProducts,
+                    'low_stock'       => $lowStock,
+                    'inventory_value' => (float) $inventoryValue,
+                    'movements_today' => $movementsToday,
+                    'sales_today'     => (float) $salesToday,
+                    'sales_week'      => (float) $salesWeek,
+                    'pending_orders'  => $pendingOrders,
+                    'recent_products' => $recentProducts,
+                ],
+            ]);
+        });
+
+        // ── Inventory Movements ────────────────────────────────────────────────
+        Route::get('/inventory/movements', function (Request $request) {
+            $query = \App\Models\InventoryMovement::with(['product:id,name', 'user:id,name'])->latest();
+            if ($request->filled('product_id')) $query->where('product_id', $request->product_id);
+            if ($request->filled('type')) $query->where('type', $request->type);
+            return response()->json(['success' => true, 'data' => $query->paginate(30)]);
+        });
+
+        Route::post('/inventory/movement', function (Request $request) {
+            $data = $request->validate([
+                'product_id' => 'required|exists:products,id',
+                'type'       => 'required|in:purchase,adjustment_add,adjustment_sub',
+                'quantity'   => 'required|numeric|min:0.01',
+                'notes'      => 'nullable|string|max:500',
+            ]);
+            $product = Product::findOrFail($data['product_id']);
+            $previous = $product->stock;
+            $new = in_array($data['type'], ['purchase', 'adjustment_add'])
+                ? $previous + $data['quantity']
+                : max(0, $previous - $data['quantity']);
+            $product->update(['stock' => $new]);
+            $movement = \App\Models\InventoryMovement::create([
+                'product_id'     => $data['product_id'],
+                'user_id'        => $request->user()->id,
+                'type'           => $data['type'],
+                'quantity'       => $data['quantity'],
+                'previous_stock' => $previous,
+                'new_stock'      => $new,
+                'notes'          => $data['notes'] ?? null,
+            ]);
+            return response()->json(['success' => true, 'data' => $movement->load('product:id,name')], 201);
+        });
+
+        // ── Categories CRUD ────────────────────────────────────────────────────
+        Route::get('/categories', function () {
+            return response()->json(['success' => true, 'data' => Category::withCount('products')->orderBy('name')->get()]);
+        });
+        Route::post('/categories', function (Request $request) {
+            $data = $request->validate(['name' => 'required|string|max:255']);
+            return response()->json(['success' => true, 'data' => Category::create($data)], 201);
+        });
+        Route::put('/categories/{id}', function (Request $request, $id) {
+            $cat = Category::findOrFail($id);
+            $cat->update($request->validate(['name' => 'required|string|max:255']));
+            return response()->json(['success' => true, 'data' => $cat->fresh()]);
+        });
+        Route::delete('/categories/{id}', function ($id) {
+            Category::findOrFail($id)->delete();
+            return response()->json(['success' => true, 'data' => null]);
+        });
+
+        // ── Brands CRUD ────────────────────────────────────────────────────────
+        Route::get('/brands', function () {
+            return response()->json(['success' => true, 'data' => Brand::withCount('products')->orderBy('name')->get()]);
+        });
+        Route::post('/brands', function (Request $request) {
+            $data = $request->validate(['name' => 'required|string|max:255']);
+            return response()->json(['success' => true, 'data' => Brand::create($data)], 201);
+        });
+        Route::put('/brands/{id}', function (Request $request, $id) {
+            $brand = Brand::findOrFail($id);
+            $brand->update($request->validate(['name' => 'required|string|max:255']));
+            return response()->json(['success' => true, 'data' => $brand->fresh()]);
+        });
+        Route::delete('/brands/{id}', function ($id) {
+            Brand::findOrFail($id)->delete();
+            return response()->json(['success' => true, 'data' => null]);
+        });
+
+        // ── Reports Summary ────────────────────────────────────────────────────
+        Route::get('/reports/summary', function () {
+            // Top 10 critical stock
+            $criticalStock = Product::with(['category:id,name'])
+                ->whereColumn('stock', '<=', 'min_stock')->where('min_stock', '>', 0)
+                ->orderBy('stock')->take(10)->get(['id','name','stock','min_stock','public_price','category_id']);
+            // Sales last 7 days
+            $last7 = collect(range(6, 0))->map(function ($daysAgo) {
+                $date = now()->subDays($daysAgo)->format('Y-m-d');
+                return [
+                    'date'  => now()->subDays($daysAgo)->format('d/m'),
+                    'total' => (float) \App\Models\Sale::whereDate('created_at', $date)->sum('total'),
+                    'count' => \App\Models\Sale::whereDate('created_at', $date)->count(),
+                ];
+            });
+            // Top 5 sold products (by sale items quantity)
+            $topProducts = \App\Models\SaleItem::selectRaw('product_id, SUM(quantity) as sold')
+                ->with('product:id,name,public_price')
+                ->groupBy('product_id')->orderByDesc('sold')->take(5)->get();
+
+            return response()->json(['success' => true, 'data' => [
+                'critical_stock' => $criticalStock,
+                'sales_last7'    => $last7,
+                'top_products'   => $topProducts,
+            ]]);
+        });
     });
 });
