@@ -199,7 +199,8 @@ class TaxonomyMerge extends Component
                     Product::where('category_id', $catId)->update(['category_id' => $keepId]);
                     $source->delete();
                     $mergedCount++;
-                    $this->autoCompressResults[] = "✓ Fusionado: '{$source->name}' ({$source->family?->name ?? '?'}) → Categoría ID {$keepId}. Productos movidos: {$moved}";
+                    $sourceFamilyName = $source->family ? $source->family->name : '?';
+                    $this->autoCompressResults[] = "✓ Fusionado: '{$source->name}' ({$sourceFamilyName}) → Categoría ID {$keepId}. Productos movidos: {$moved}";
                 }
             }
 
