@@ -124,8 +124,15 @@
                 showActions();
             });
 
-        // After print dialog closes → show actions
-        window.addEventListener('afterprint', showActions);
+        // After print dialog closes → show buttons briefly, then redirect to POS
+        window.addEventListener('afterprint', function () {
+            showActions();
+            title.textContent = 'Impreso correctamente';
+            msg.textContent   = 'Regresando al POS...';
+            setTimeout(function () {
+                window.location.href = posUrl;
+            }, 1500);
+        });
     </script>
 </body>
 </html>
