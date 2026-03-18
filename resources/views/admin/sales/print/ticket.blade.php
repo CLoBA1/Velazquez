@@ -8,10 +8,17 @@
         @media print {
             @page {
                 size: 80mm auto;
-                margin: 2mm 0mm; /* no side margins — printer has its own hardware margin */
+                margin: 2mm 0mm;
             }
             body { margin: 0; padding: 0 3mm; }
             .no-print { display: none !important; }
+
+            /* Force PURE BLACK on everything — no gray, no color = less ink */
+            * {
+                color: #000 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
         }
 
         * { box-sizing: border-box; }
