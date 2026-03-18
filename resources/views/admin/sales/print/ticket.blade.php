@@ -4,39 +4,38 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Ticket #{{ str_pad($sale->id, 6, '0', STR_PAD_LEFT) }}</title>
     <style>
-        /* ── PRINT SETTINGS ─────────────────────────────── */
+        /* ── PRINT ─────────────────────────────────────── */
         @media print {
             @page {
-                /* Standard 80mm thermal roll, auto height */
                 size: 80mm auto;
-                margin: 3mm 2mm;
+                margin: 2mm 0mm; /* no side margins — printer has its own hardware margin */
             }
-            body  { margin: 0; padding: 0; }
+            body { margin: 0; padding: 0 3mm; }
             .no-print { display: none !important; }
         }
 
-        /* ── BASE ────────────────────────────────────────── */
         * { box-sizing: border-box; }
 
         body {
-            /* Use pt for crisp scaling on thermal printers */
             font-family: 'Courier New', Courier, monospace;
             font-size: 9pt;
             color: #000;
             margin: 0;
-            padding: 6pt 7pt;
+            padding: 5pt 6pt;
             background: #fff;
             width: 80mm;
+            max-width: 80mm;
+            overflow: hidden; /* prevent content from spilling */
         }
 
-        /* ── SCREEN-ONLY TOOLBAR ─────────────────────────── */
+        /* ── SCREEN TOOLBAR ─────────────────────────────── */
         .no-print {
             font-family: Arial, sans-serif;
             background: #1a3a5c;
             color: #fff;
             padding: 8px 14px;
             text-align: center;
-            margin: -6pt -7pt 10pt -7pt;
+            margin: -5pt -6pt 10pt -6pt;
             font-size: 13px;
         }
         .no-print button {
@@ -57,27 +56,21 @@
             text-decoration: none;
         }
 
-        /* ── HEADER ──────────────────────────────────────── */
+        /* ── HEADER ─────────────────────────────────────── */
         .header {
             text-align: center;
             border-bottom: 0.5pt solid #000;
             padding-bottom: 5pt;
             margin-bottom: 5pt;
         }
-        .header img {
-            width: 45pt;
-            margin-bottom: 2pt;
-        }
+        .header img { width: 42pt; margin-bottom: 2pt; }
         .biz-name {
             font-size: 8pt;
             font-weight: bold;
             text-transform: uppercase;
             margin: 2pt 0;
         }
-        .biz-info {
-            font-size: 7pt;
-            margin: 1pt 0;
-        }
+        .biz-info { font-size: 7pt; margin: 1pt 0; }
 
         /* ── FOLIO ───────────────────────────────────────── */
         .folio-line {
@@ -102,11 +95,12 @@
         }
         .section p { margin: 1pt 0; font-size: 8pt; }
 
-        /* ── TABLE ───────────────────────────────────────── */
+        /* ── TABLE — 3 cols only: Producto | Cant | Total ─ */
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 3pt;
+            table-layout: fixed; /* prevents overflow */
         }
         th {
             font-size: 7pt;
@@ -116,24 +110,40 @@
             padding: 2pt 1pt;
             text-align: left;
             font-weight: bold;
+            overflow: hidden;
         }
         td {
             font-size: 8pt;
             padding: 2pt 1pt;
             border-bottom: 0.3pt dotted #888;
             vertical-align: top;
+            overflow: hidden;
+            word-break: break-word;
         }
         .text-right  { text-align: right; }
         .text-center { text-align: center; }
 
         /* ── TOTALS ──────────────────────────────────────── */
-        .totals { margin-top: 4pt; border-top: 0.5pt solid #000; font-size: 8pt; }
+        .totals {
+            margin-top: 4pt;
+            border-top: 0.5pt solid #000;
+            font-size: 8pt;
+        }
         .totals-row { display: table; width: 100%; margin-top: 1pt; }
-        .totals-row .lbl { display: table-cell; text-align: right; padding-right: 4pt; }
-        .totals-row .val { display: table-cell; text-align: right; width: 60pt; }
-
+        .totals-row .lbl {
+            display: table-cell;
+            text-align: right;
+            color: #333;
+            padding-right: 4pt;
+        }
+        .totals-row .val {
+            display: table-cell;
+            text-align: right;
+            width: 55pt;
+        }
         .total-final {
-            display: table; width: 100%;
+            display: table;
+            width: 100%;
             margin-top: 3pt;
             border-top: 1pt solid #000;
             padding-top: 2pt;
@@ -150,7 +160,7 @@
             text-align: right;
             font-size: 12pt;
             font-weight: bold;
-            width: 60pt;
+            width: 55pt;
         }
 
         /* ── FOOTER ──────────────────────────────────────── */
@@ -165,7 +175,7 @@
 </head>
 <body>
 
-    {{-- Screen-only toolbar --}}
+    {{-- Screen toolbar --}}
     <div class="no-print">
         Ticket listo —
         <button onclick="window.print()">🖨 Imprimir</button>
@@ -200,14 +210,13 @@
         @if($sale->user)<p>Atendio: {{ $sale->user->name }}</p>@endif
     </div>
 
-    {{-- PRODUCTOS --}}
+    {{-- PRODUCTOS — 3 columns: Producto | Cant | Total (no P.Unit) --}}
     <table>
         <thead>
             <tr>
-                <th style="width:48%">Producto</th>
-                <th class="text-center" style="width:10%">Cant</th>
-                <th class="text-right" style="width:20%">P.Unit</th>
-                <th class="text-right" style="width:22%">Total</th>
+                <th style="width:62%">Producto</th>
+                <th class="text-center" style="width:12%">Cant</th>
+                <th class="text-right" style="width:26%">Total</th>
             </tr>
         </thead>
         <tbody>
@@ -215,14 +224,13 @@
                 @php
                     $name    = optional($item->product)->name ?? 'N/A';
                     $code    = optional($item->product)->internal_code ?? '';
-                    $display = strlen($name) > 26
-                        ? ($code ? $code . ' ' . substr($name, 0, 16) . '..' : substr($name, 0, 26) . '..')
+                    $display = strlen($name) > 30
+                        ? ($code ? $code . ' ' . substr($name, 0, 20) . '..' : substr($name, 0, 30) . '..')
                         : $name;
                 @endphp
                 <tr>
                     <td>{{ $display }}</td>
                     <td class="text-center">{{ $item->quantity }}</td>
-                    <td class="text-right">${{ number_format($item->price, 2) }}</td>
                     <td class="text-right">${{ number_format($item->total, 2) }}</td>
                 </tr>
             @endforeach
@@ -275,12 +283,7 @@
         <p>Gracias por su compra — Conserve su ticket</p>
     </div>
 
-    {{--
-        AUTO-PRINT:
-        - Waits for the logo image to fully load before triggering.
-        - Uses matchMedia to detect if the browser is currently printing
-          to avoid double-triggering on some browsers.
-    --}}
+    {{-- AUTO-PRINT --}}
     <script>
         var printed = false;
         function doPrint() {
@@ -288,17 +291,13 @@
             printed = true;
             window.print();
         }
-
         var logo = document.querySelector('img');
         if (logo && !logo.complete) {
-            logo.addEventListener('load', function () { setTimeout(doPrint, 300); });
+            logo.addEventListener('load',  function () { setTimeout(doPrint, 300); });
             logo.addEventListener('error', function () { setTimeout(doPrint, 300); });
         } else {
             setTimeout(doPrint, 400);
         }
-
-        // After the print dialog closes, focus the "Nueva Venta" link so user
-        // can press Enter to go back to the POS immediately.
         window.addEventListener('afterprint', function () {
             var link = document.querySelector('.no-print a');
             if (link) link.focus();
