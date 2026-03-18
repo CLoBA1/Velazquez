@@ -28,4 +28,14 @@ class SaleController extends Controller
 
         return $pdf->stream('venta_' . $sale->id . '.pdf');
     }
+
+    /**
+     * Renders an HTML printable ticket page.
+     * The view fires window.print() automatically on load.
+     */
+    public function printTicket(Sale $sale)
+    {
+        $sale->load(['items.product', 'client', 'user', 'payments']);
+        return view('admin.sales.print.ticket', compact('sale'));
+    }
 }

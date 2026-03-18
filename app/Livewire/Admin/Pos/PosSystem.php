@@ -333,7 +333,7 @@ class PosSystem extends Component
             $this->selected_client_id = null;
             $this->showPaymentModal = false;
 
-            return redirect()->route('admin.sales.pdf', $saleId);
+            return redirect()->route('admin.sales.print', $saleId);
 
         } catch (\Exception $e) {
             session()->flash('error', 'Error al procesar venta: ' . $e->getMessage());

@@ -151,6 +151,9 @@ Route::prefix('admin')->group(function () {
         Route::get('/ventas/{sale}/pdf', [\App\Http\Controllers\Admin\SaleController::class, 'downloadPdf'])
             ->name('admin.sales.pdf');
 
+        Route::get('/ventas/{sale}/imprimir', [\App\Http\Controllers\Admin\SaleController::class, 'printTicket'])
+            ->name('admin.sales.print');
+
         Route::get('/ventas', \App\Livewire\Admin\Sales\SaleIndex::class)
             ->name('admin.sales.index');
 
