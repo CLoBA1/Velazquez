@@ -131,35 +131,52 @@
                         x-transition:leave-start="opacity-100 translate-y-0"
                         x-transition:leave-end="opacity-0 -translate-y-8">
 
-                        <span
-                            class="inline-block py-1 px-3 rounded-full border text-sm font-bold tracking-wide mb-6 backdrop-blur-sm"
-                            :class="slide.badge_style" x-text="slide.badge">
-                        </span>
+                        <!-- Badge - solo si tiene texto -->
+                        <template x-if="slide.badge">
+                            <span
+                                class="inline-flex items-center py-1 px-4 rounded-full border text-xs font-bold tracking-widest mb-5 uppercase backdrop-blur-sm shadow-sm"
+                                :class="slide.badge_style" x-text="slide.badge">
+                            </span>
+                        </template>
 
-                        <h1 class="text-3xl sm:text-4xl lg:text-6xl font-black text-white tracking-tight leading-none mb-6">
-                            <span x-text="slide.title_prefix"></span> <br>
-                            <span class="text-transparent bg-clip-text bg-gradient-to-r" :class="slide.title_gradient"
-                                x-text="slide.title_highlight"></span>
+                        <!-- Título: usa gradiente solo si hay prefix (slides auto), blanco puro si no -->
+                        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight mb-5 drop-shadow-lg"
+                            :class="slide.title_prefix ? 'text-white' : 'text-white'">
+                            <template x-if="slide.title_prefix">
+                                <span>
+                                    <span class="text-white" x-text="slide.title_prefix"></span><br>
+                                    <span class="text-transparent bg-clip-text bg-gradient-to-r" :class="slide.title_gradient" x-text="slide.title_highlight"></span>
+                                </span>
+                            </template>
+                            <template x-if="!slide.title_prefix">
+                                <span class="text-white leading-tight" x-text="slide.title_highlight"></span>
+                            </template>
                         </h1>
 
-                        <p class="text-lg sm:text-xl text-slate-300 mb-10 leading-relaxed max-w-xl font-light mx-auto sm:mx-0"
-                            x-text="slide.description">
-                        </p>
+                        <template x-if="slide.description">
+                            <p class="text-base sm:text-lg text-white/80 mb-8 leading-relaxed max-w-lg font-normal mx-auto sm:mx-0 drop-shadow"
+                                x-text="slide.description">
+                            </p>
+                        </template>
 
-                        <div class="flex flex-wrap gap-4 justify-center sm:justify-start">
-                            <a :href="slide.link_primary"
-                                class="text-white font-bold py-4 px-8 rounded-2xl transition-all hover:shadow-xl hover:-translate-y-1 transform flex items-center gap-2"
-                                :class="slide.btn_primary_style">
-                                <span x-text="slide.cta_primary"></span>
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                                </svg>
-                            </a>
-                            <a :href="slide.link_secondary"
-                                class="bg-white/5 hover:bg-white/10 text-white backdrop-blur-md font-semibold py-4 px-8 rounded-2xl transition-all border border-white/10 hover:border-white/20">
-                                <span x-text="slide.cta_secondary"></span>
-                            </a>
+                        <div class="flex flex-wrap gap-3 justify-center sm:justify-start">
+                            <template x-if="slide.cta_primary">
+                                <a :href="slide.link_primary"
+                                    class="text-white font-bold py-3 px-7 rounded-xl transition-all hover:shadow-xl hover:-translate-y-0.5 transform flex items-center gap-2 text-sm shadow-lg"
+                                    :class="slide.btn_primary_style">
+                                    <span x-text="slide.cta_primary"></span>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                                    </svg>
+                                </a>
+                            </template>
+                            <template x-if="slide.cta_secondary">
+                                <a :href="slide.link_secondary"
+                                    class="bg-white/10 hover:bg-white/20 text-white backdrop-blur-md font-semibold py-3 px-7 rounded-xl transition-all border border-white/30 hover:border-white/50 text-sm">
+                                    <span x-text="slide.cta_secondary"></span>
+                                </a>
+                            </template>
                         </div>
                     </div>
                 </template>
