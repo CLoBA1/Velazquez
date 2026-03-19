@@ -105,20 +105,18 @@
                 }
              }">
 
-        <!-- Dynamic Background with Image (reacts to active slide) -->
+        <!-- Background con imagen reactiva - gradiente solo a la izquierda -->
         <div class="absolute inset-0 z-0">
-            <!-- Capa 1: Imagen de fondo reactiva (sin filtro para que Alpine no lo pise) -->
-            <div class="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105"
+            <!-- Imagen de fondo - sin oscurecer, se ve completa -->
+            <div class="absolute inset-0 bg-cover bg-center bg-no-repeat"
                 :style="`background-image: url('${slides[activeSlide]?.image ?? '{{ asset('img/hero-bg.png') }}'}')`">
             </div>
-            <!-- Capa 2: Filtro de oscurecimiento (separado para que no lo pise Alpine) -->
-            <div class="absolute inset-0" style="backdrop-filter: brightness(0.3); background: rgba(10,12,20,0.55);"></div>
-            <!-- Capa 3: Overlay gradiente adicional para legibilidad del texto -->
-            <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent z-10"></div>
+            <!-- Gradiente solo del lado izquierdo: texto legible, imagen luce a la derecha -->
+            <div class="absolute inset-0" style="background: linear-gradient(to right, rgba(5,8,18,0.88) 0%, rgba(5,8,18,0.75) 35%, rgba(5,8,18,0.30) 60%, rgba(5,8,18,0.05) 100%);"></div>
         </div>
 
         <!-- Slides Content -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 min-h-[420px] flex items-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 min-h-[480px] flex items-center">
             <!-- Using grid to stack slides on top of each other while maintaining height -->
             <div class="grid grid-cols-1 grid-rows-1 w-full">
                 <template x-for="(slide, index) in slides" :key="index">
