@@ -101,6 +101,11 @@
                         <h1 class="text-4xl sm:text-5xl font-extrabold text-dark tracking-tight leading-tight mb-4">
                             {{ $product->name }}
                         </h1>
+                        @if($product->internal_code)
+                            <p class="text-sm text-gray-400 mb-2">
+                                Cód. Interno: <span class="font-semibold text-slate-600 tracking-wide">{{ $product->internal_code }}</span>
+                            </p>
+                        @endif
 
                         <div class="flex items-center gap-4">
                             <div class="flex text-yellow-400">
@@ -151,8 +156,8 @@
                             <h3 class="font-bold text-slate-900 mb-4">Especificaciones Técnicas</h3>
                             <div class="grid grid-cols-2 gap-4 text-sm">
                                 <div class="p-4 bg-gray-50 rounded-lg">
-                                    <span class="block text-gray-500 mb-1">Modelo</span>
-                                    <span class="font-semibold text-slate-900">{{ $product->code ?? 'N/A' }}</span>
+                                    <span class="block text-gray-500 mb-1">Cód. Interno</span>
+                                    <span class="font-semibold text-slate-900">{{ $product->internal_code ?? 'N/A' }}</span>
                                 </div>
                                 <div class="p-4 bg-gray-50 rounded-lg">
                                     <span class="block text-gray-500 mb-1">Unidad</span>
