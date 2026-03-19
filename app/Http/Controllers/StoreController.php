@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Banner;
 
 class StoreController extends Controller
 {
@@ -34,7 +35,10 @@ class StoreController extends Controller
             $q->hardware()->where('stock', '>', 0);
         })->inRandomOrder()->first();
 
-        return view('store.index', compact('featured_offers', 'new_arrivals', 'category_highlight'));
+        // 4. Custom Banners (from admin - take priority if any active)
+        $banners = Banner::active()->get();
+
+        return view('store.index', compact('featured_offers', 'new_arrivals', 'category_highlight', 'banners'));
     }
 
     public function cart()

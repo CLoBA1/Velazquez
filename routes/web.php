@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\ProductCodeController;
 
 use App\Http\Controllers\Admin\ProductImportController;
 use App\Http\Controllers\Admin\MachineController;
+use App\Http\Controllers\Admin\BannerController;
 
 Route::get('/admin/ping', fn() => response('PING', 200));
 
@@ -132,6 +133,11 @@ Route::prefix('admin')->group(function () {
         Route::resource('ofertas', \App\Http\Controllers\Admin\OfferController::class)
             ->only(['index', 'update', 'destroy'])
             ->names('admin.offers');
+
+        Route::resource('banners', BannerController::class)
+            ->except(['show'])
+            ->parameters(['banners' => 'banner'])
+            ->names('admin.banners');
 
         // Rutas exclusivas de Admin (Gestión de Usuarios)
         Route::middleware('role:admin')->group(function () {

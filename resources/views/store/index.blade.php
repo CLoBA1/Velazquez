@@ -9,72 +9,93 @@
     <div class="relative bg-dark border-b border-gray-100 overflow-hidden group" x-data="{
                 activeSlide: 0,
                 slides: [
-                    @if($featured_offers->count() > 0)
-                        @foreach($featured_offers as $offer)
+                    @if($banners->count() > 0)
+                        {{-- ✅ Opcion 2: Banners personalizados desde el admin --}}
+                        @foreach($banners as $banner)
                             {
-                                badge: 'OFERTA DESTACADA',
-                                title_prefix: 'Ahorra en',
-                                title_highlight: '{{ Str::limit($offer->name, 20) }}',
-                                title_gradient: 'from-accent to-red-600',
-                                description: '{{ Str::limit($offer->description ?? "Aprovecha nuestros precios especiales en herramientas de alta calidad.", 100) }}',
-                                cta_primary: 'Comprar Ahora',
-                                cta_secondary: 'Ver Ofertas',
-                                link_primary: '{{ route("store.show", $offer->id) }}',
-                                link_secondary: '{{ route("store.offers.index") }}',
-                                bg_accent: 'bg-accent/20',
-                                badge_style: 'bg-accent/10 border-accent/20 text-accent',
-                                btn_primary_style: 'bg-accent hover:bg-red-700 shadow-red-500/30'
+                                badge: '{{ $banner->subtitle ?? "BANNER" }}',
+                                title_prefix: '',
+                                title_highlight: '{{ $banner->title }}',
+                                title_gradient: 'from-secondary to-yellow-400',
+                                description: '{{ Str::limit($banner->description ?? "", 150) }}',
+                                cta_primary: '{{ $banner->label_primary }}',
+                                cta_secondary: '{{ $banner->label_secondary ?? "" }}',
+                                link_primary: '{{ $banner->link_primary ?? "#" }}',
+                                link_secondary: '{{ $banner->link_secondary ?? "#catalogo" }}',
+                                badge_style: 'bg-white/10 border-white/20 text-white',
+                                btn_primary_style: 'bg-accent hover:bg-red-700 shadow-red-500/30',
+                                image: '{{ $banner->image_url ?? asset("img/hero-bg.png") }}'
                             },
                         @endforeach
                     @else
-                        {
-                            badge: 'NUEVA COLECCIÓN 2024',
-                            title_prefix: 'Maestría en',
-                            title_highlight: 'Herramientas',
-                            title_gradient: 'from-secondary to-yellow-500',
-                            description: 'Equípate con precisión. Catálogo curado para profesionales que exigen durabilidad, rendimiento y confianza en cada trabajo.',
-                            cta_primary: 'Comprar Ahora',
-                            cta_secondary: 'Ver Marcas',
-                            link_primary: '#catalogo',
-                            link_secondary: '{{ route("store.brands.index") }}',
-                            bg_accent: 'bg-secondary/20',
-                            badge_style: 'bg-secondary/10 border-secondary/20 text-secondary',
-                            btn_primary_style: 'bg-primary hover:bg-blue-700 shadow-blue-500/30'
-                        },
-                    @endif
+                        {{-- Opcion 1: Slides automaticos desde ofertas/nuevos ingresos --}}
+                        @if($featured_offers->count() > 0)
+                            @foreach($featured_offers as $offer)
+                                {
+                                    badge: 'OFERTA DESTACADA',
+                                    title_prefix: 'Ahorra en',
+                                    title_highlight: '{{ Str::limit($offer->name, 20) }}',
+                                    title_gradient: 'from-accent to-red-600',
+                                    description: '{{ Str::limit($offer->description ?? "Aprovecha nuestros precios especiales en herramientas de alta calidad.", 100) }}',
+                                    cta_primary: 'Comprar Ahora',
+                                    cta_secondary: 'Ver Ofertas',
+                                    link_primary: '{{ route("store.show", $offer->id) }}',
+                                    link_secondary: '{{ route("store.offers.index") }}',
+                                    badge_style: 'bg-accent/10 border-accent/20 text-accent',
+                                    btn_primary_style: 'bg-accent hover:bg-red-700 shadow-red-500/30',
+                                    image: '{{ $offer->image_url ?? asset("img/hero-bg.png") }}'
+                                },
+                            @endforeach
+                        @else
+                            {
+                                badge: 'NUEVA COLECCIÓN 2024',
+                                title_prefix: 'Maestría en',
+                                title_highlight: 'Herramientas',
+                                title_gradient: 'from-secondary to-yellow-500',
+                                description: 'Equípate con precisión. Catálogo curado para profesionales que exigen durabilidad, rendimiento y confianza en cada trabajo.',
+                                cta_primary: 'Comprar Ahora',
+                                cta_secondary: 'Ver Marcas',
+                                link_primary: '#catalogo',
+                                link_secondary: '{{ route("store.brands.index") }}',
+                                badge_style: 'bg-secondary/10 border-secondary/20 text-secondary',
+                                btn_primary_style: 'bg-primary hover:bg-blue-700 shadow-blue-500/30',
+                                image: '{{ asset("img/hero-bg.png") }}'
+                            },
+                        @endif
 
-                    @foreach($new_arrivals as $arrival)
-                        {
-                            badge: 'NUEVO INGRESO',
-                            title_prefix: 'Descubre',
-                            title_highlight: 'Novedades',
-                            title_gradient: 'from-blue-400 to-primary',
-                            description: 'Llegó {{ Str::limit($arrival->name, 30) }}. Tecnología y calidad superior para tus proyectos más exigentes.',
-                            cta_primary: 'Ver Nuevo',
-                            cta_secondary: 'Catálogo',
-                            link_primary: '{{ route("store.show", $arrival->id) }}',
-                            link_secondary: '#catalogo',
-                            bg_accent: 'bg-primary/20',
-                            badge_style: 'bg-primary/10 border-primary/20 text-primary',
-                            btn_primary_style: 'bg-primary hover:bg-blue-700 shadow-blue-600/30'
-                        },
-                    @endforeach
+                        @foreach($new_arrivals as $arrival)
+                            {
+                                badge: 'NUEVO INGRESO',
+                                title_prefix: 'Descubre',
+                                title_highlight: 'Novedades',
+                                title_gradient: 'from-blue-400 to-primary',
+                                description: 'Llegó {{ Str::limit($arrival->name, 30) }}. Tecnología y calidad superior para tus proyectos más exigentes.',
+                                cta_primary: 'Ver Nuevo',
+                                cta_secondary: 'Catálogo',
+                                link_primary: '{{ route("store.show", $arrival->id) }}',
+                                link_secondary: '#catalogo',
+                                badge_style: 'bg-primary/10 border-primary/20 text-primary',
+                                btn_primary_style: 'bg-primary hover:bg-blue-700 shadow-blue-600/30',
+                                image: '{{ $arrival->image_url ?? asset("img/hero-bg.png") }}'
+                            },
+                        @endforeach
 
-                    @if(isset($category_highlight))
-                        {
-                            badge: 'EXPLORA',
-                            title_prefix: 'Todo en',
-                            title_highlight: '{{ $category_highlight->name }}',
-                            title_gradient: 'from-secondary to-yellow-400',
-                            description: 'Encuentra la mejor selección de productos en nuestra categoría de {{ $category_highlight->name }}.',
-                            cta_primary: 'Explorar',
-                            cta_secondary: 'Marcas',
-                            link_primary: '{{ route("store.index", ["category" => $category_highlight->id]) }}',
-                            link_secondary: '{{ route("store.brands.index") }}',
-                            bg_accent: 'bg-secondary/20',
-                            badge_style: 'bg-secondary/10 border-secondary/20 text-secondary',
-                            btn_primary_style: 'bg-secondary hover:bg-yellow-500 shadow-yellow-500/30 text-dark'
-                        }
+                        @if(isset($category_highlight))
+                            {
+                                badge: 'EXPLORA',
+                                title_prefix: 'Todo en',
+                                title_highlight: '{{ $category_highlight->name }}',
+                                title_gradient: 'from-secondary to-yellow-400',
+                                description: 'Encuentra la mejor selección de productos en nuestra categoría de {{ $category_highlight->name }}.',
+                                cta_primary: 'Explorar',
+                                cta_secondary: 'Marcas',
+                                link_primary: '{{ route("store.index", ["category" => $category_highlight->id]) }}',
+                                link_secondary: '{{ route("store.brands.index") }}',
+                                badge_style: 'bg-secondary/10 border-secondary/20 text-secondary',
+                                btn_primary_style: 'bg-secondary hover:bg-yellow-500 shadow-yellow-500/30 text-dark',
+                                image: '{{ asset("img/hero-bg.png") }}'
+                            }
+                        @endif
                     @endif
                 ],
                 init() {
@@ -85,18 +106,19 @@
              }">
 
         <!-- Dynamic Background -->
-        <!-- Dynamic Background with Image -->
+        <!-- Dynamic Background with Image (reacts to active slide) -->
         <div class="absolute inset-0 z-0">
-            <!-- Background Image -->
-            <div class="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-[10000ms] ease-linear transform hover:scale-105"
-                style="background-image: url('{{ asset('img/hero-bg.png') }}');">
+            <!-- Background Image: changes with each slide, blurred for readability -->
+            <div class="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-1000 ease-in-out scale-105"
+                :style="`background-image: url('${slides[activeSlide]?.image ?? '{{ asset('img/hero-bg.png') }}'}')`"
+                style="filter: blur(3px) brightness(0.4);">
             </div>
 
             <!-- Overlay Gradient -->
-            <div class="absolute inset-0 bg-gradient-to-br from-dark via-gray-900/90 to-black/80 z-10"></div>
+            <div class="absolute inset-0 bg-gradient-to-br from-dark/80 via-gray-900/70 to-black/70 z-10"></div>
 
             <!-- Pattern Overlay -->
-            <div class="absolute inset-0 opacity-20 z-10"
+            <div class="absolute inset-0 opacity-10 z-10"
                 style="background-image: radial-gradient(#FFF5E1 1px, transparent 1px); background-size: 32px 32px;">
             </div>
         </div>
