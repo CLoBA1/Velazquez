@@ -22,7 +22,7 @@
                                 cta_secondary: '{{ $banner->label_secondary ?? "" }}',
                                 link_primary: '{{ $banner->link_primary ?? "#" }}',
                                 link_secondary: '{{ $banner->link_secondary ?? "#catalogo" }}',
-                                badge_style: 'bg-white/10 border-white/20 text-white',
+                                badge_style: 'bg-secondary/20 border-secondary/60 text-secondary',
                                 btn_primary_style: 'bg-accent hover:bg-red-700 shadow-red-500/30',
                                 image: '{{ $banner->image_url ?? asset("img/hero-bg.png") }}'
                             },
@@ -152,7 +152,7 @@
                         </h1>
 
                         <template x-if="slide.description">
-                            <p class="text-sm sm:text-base text-white/75 mb-8 leading-relaxed max-w-sm font-normal drop-shadow"
+                            <p class="text-sm sm:text-base text-white mb-8 leading-relaxed max-w-sm font-medium drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]"
                                 x-text="slide.description">
                             </p>
                         </template>
