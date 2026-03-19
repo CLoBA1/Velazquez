@@ -116,12 +116,12 @@
         </div>
 
         <!-- Slides Content -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 min-h-[480px] flex items-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 min-h-[520px] flex items-center">
             <!-- Using grid to stack slides on top of each other while maintaining height -->
             <div class="grid grid-cols-1 grid-rows-1 w-full">
                 <template x-for="(slide, index) in slides" :key="index">
                     <div x-show="activeSlide === index"
-                        class="col-start-1 row-start-1 w-full max-w-3xl pt-12 pb-16 sm:pt-16 sm:pb-24 text-center sm:text-left"
+                        class="col-start-1 row-start-1 w-full max-w-xl pt-14 pb-20 sm:pt-20 sm:pb-28 text-left"
                         x-transition:enter="transition ease-out duration-700 delay-100"
                         x-transition:enter-start="opacity-0 translate-y-8"
                         x-transition:enter-end="opacity-100 translate-y-0"
@@ -152,26 +152,26 @@
                         </h1>
 
                         <template x-if="slide.description">
-                            <p class="text-base sm:text-lg text-white/80 mb-8 leading-relaxed max-w-lg font-normal mx-auto sm:mx-0 drop-shadow"
+                            <p class="text-sm sm:text-base text-white/75 mb-8 leading-relaxed max-w-sm font-normal drop-shadow"
                                 x-text="slide.description">
                             </p>
                         </template>
 
-                        <div class="flex flex-wrap gap-3 justify-center sm:justify-start">
+                        <div class="flex flex-wrap gap-3">
                             <template x-if="slide.cta_primary">
                                 <a :href="slide.link_primary"
-                                    class="text-white font-bold py-3 px-7 rounded-xl transition-all hover:shadow-xl hover:-translate-y-0.5 transform flex items-center gap-2 text-sm shadow-lg"
+                                    class="text-white font-bold py-3.5 px-8 rounded-xl transition-all hover:shadow-2xl hover:-translate-y-1 transform flex items-center gap-2 shadow-lg text-sm"
                                     :class="slide.btn_primary_style">
                                     <span x-text="slide.cta_primary"></span>
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                                             d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
                                     </svg>
                                 </a>
                             </template>
                             <template x-if="slide.cta_secondary">
                                 <a :href="slide.link_secondary"
-                                    class="bg-white/10 hover:bg-white/20 text-white backdrop-blur-md font-semibold py-3 px-7 rounded-xl transition-all border border-white/30 hover:border-white/50 text-sm">
+                                    class="bg-white/15 hover:bg-white/25 text-white font-semibold py-3.5 px-8 rounded-xl transition-all border border-white/40 hover:border-white/60 text-sm backdrop-blur-sm">
                                     <span x-text="slide.cta_secondary"></span>
                                 </a>
                             </template>
