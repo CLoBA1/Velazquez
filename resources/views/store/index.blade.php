@@ -105,31 +105,25 @@
                 }
              }">
 
-        <!-- Dynamic Background -->
         <!-- Dynamic Background with Image (reacts to active slide) -->
         <div class="absolute inset-0 z-0">
-            <!-- Background Image: changes with each slide, blurred for readability -->
-            <div class="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-1000 ease-in-out scale-105"
-                :style="`background-image: url('${slides[activeSlide]?.image ?? '{{ asset('img/hero-bg.png') }}'}')`"
-                style="filter: blur(3px) brightness(0.4);">
+            <!-- Capa 1: Imagen de fondo reactiva (sin filtro para que Alpine no lo pise) -->
+            <div class="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105"
+                :style="`background-image: url('${slides[activeSlide]?.image ?? '{{ asset('img/hero-bg.png') }}'}')`">
             </div>
-
-            <!-- Overlay Gradient -->
-            <div class="absolute inset-0 bg-gradient-to-br from-dark/80 via-gray-900/70 to-black/70 z-10"></div>
-
-            <!-- Pattern Overlay -->
-            <div class="absolute inset-0 opacity-10 z-10"
-                style="background-image: radial-gradient(#FFF5E1 1px, transparent 1px); background-size: 32px 32px;">
-            </div>
+            <!-- Capa 2: Filtro de oscurecimiento (separado para que no lo pise Alpine) -->
+            <div class="absolute inset-0" style="backdrop-filter: brightness(0.3); background: rgba(10,12,20,0.55);"></div>
+            <!-- Capa 3: Overlay gradiente adicional para legibilidad del texto -->
+            <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent z-10"></div>
         </div>
 
         <!-- Slides Content -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 min-h-[600px] flex items-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 min-h-[420px] flex items-center">
             <!-- Using grid to stack slides on top of each other while maintaining height -->
             <div class="grid grid-cols-1 grid-rows-1 w-full">
                 <template x-for="(slide, index) in slides" :key="index">
                     <div x-show="activeSlide === index"
-                        class="col-start-1 row-start-1 w-full max-w-3xl pt-16 pb-20 sm:pt-24 sm:pb-32 text-center sm:text-left"
+                        class="col-start-1 row-start-1 w-full max-w-3xl pt-12 pb-16 sm:pt-16 sm:pb-24 text-center sm:text-left"
                         x-transition:enter="transition ease-out duration-700 delay-100"
                         x-transition:enter-start="opacity-0 translate-y-8"
                         x-transition:enter-end="opacity-100 translate-y-0"
