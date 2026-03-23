@@ -77,11 +77,11 @@
                                             class="text-indigo-600 hover:text-indigo-800 font-semibold text-xs px-3 py-1.5 rounded-lg hover:bg-indigo-50 transition-colors">
                                             Editar
                                         </a>
-                                        <form action="{{ route('admin.banners.destroy', $banner) }}" method="POST"
-                                            onsubmit="return confirm('¿Eliminar este banner?')">
+                                        <form action="{{ route('admin.banners.destroy', $banner) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit"
+                                            <button type="button"
+                                                onclick="confirmDelete(this.closest('form'), '¿Eliminar el banner {{ $banner->title }}?', 'Eliminar banner')"
                                                 class="text-red-500 hover:text-red-700 font-semibold text-xs px-3 py-1.5 rounded-lg hover:bg-red-50 transition-colors">
                                                 Eliminar
                                             </button>

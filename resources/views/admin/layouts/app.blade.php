@@ -290,5 +290,32 @@
 
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     @livewireScripts
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function confirmDelete(form, message = '¿Estás seguro? Esta acción no se puede deshacer.', title = 'Eliminar registro') {
+            Swal.fire({
+                title: title,
+                text: message,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+                borderRadius: '1rem',
+                customClass: {
+                    popup: 'rounded-2xl shadow-2xl',
+                    confirmButton: 'rounded-xl font-bold',
+                    cancelButton: 'rounded-xl font-bold',
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        }
+    </script>
 </body>
 </html>

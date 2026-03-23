@@ -43,9 +43,8 @@
 
                 <!-- Gallery Section (Left) -->
                 <div class="space-y-6">
-                    <!-- Main Image Stage (Constrained Height) -->
-                    <div class="aspect-square max-h-[500px] w-full mx-auto bg-gray-50 rounded-3xl overflow-hidden relative group border border-gray-100 flex items-center justify-center p-8 bg-white cursor-zoom-in"
-                        @click="zoom = !zoom">
+                    <!-- Main Image Stage — click para GLightbox -->
+                    <div class="aspect-square max-h-[500px] w-full mx-auto bg-gray-50 rounded-3xl overflow-hidden relative group border border-gray-100 flex items-center justify-center p-8 bg-white">
 
                         <template x-if="!activeImage">
                             <div class="text-gray-300 flex flex-col items-center">
@@ -58,14 +57,15 @@
                             </div>
                         </template>
                         <template x-if="activeImage">
-                            <img :src="activeImage"
-                                class="max-w-full max-h-full object-contain transition-transform duration-500"
-                                :class="{'scale-150': zoom}">
+                            <a :href="activeImage" class="glightbox w-full h-full flex items-center justify-center cursor-zoom-in">
+                                <img :src="activeImage"
+                                    class="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105"
+                                    loading="lazy">
+                            </a>
                         </template>
 
-                        <!-- Zoom Hint -->
-                        <div
-                            class="absolute top-4 right-4 bg-white/80 backdrop-blur rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none text-slate-500 shadow-sm">
+                        <!-- Zoom hint -->
+                        <div class="absolute top-4 right-4 bg-white/80 backdrop-blur rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none text-slate-500 shadow-sm">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path>

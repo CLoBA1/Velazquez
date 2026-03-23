@@ -135,6 +135,7 @@
                                 class="block relative aspect-square bg-white rounded-xl overflow-hidden mb-4 p-4 group-hover:bg-gray-50 transition-colors">
                                 @if($product->image_url)
                                     <img src="{{ $product->image_url }}" alt="{{ $product->name }}"
+                                        loading="lazy"
                                         class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500">
                                 @else
                                     <div class="w-full h-full flex items-center justify-center text-gray-200">

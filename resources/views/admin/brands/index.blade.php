@@ -83,7 +83,7 @@
                                     <form method="POST" action="{{ route('admin.brands.destroy', $b) }}" class="inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" onclick="return confirm('¿Eliminar marca?')"
+                                        <button type="button" onclick="confirmDelete(this.closest('form'), '¿Eliminar esta marca?', 'Eliminar marca')"
                                             class="p-2 rounded-xl text-slate-400 hover:text-red-600 hover:bg-red-50 transition-all"
                                             title="Eliminar">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
