@@ -41,9 +41,13 @@ Route::middleware('auth:sanctum')->group(function () {
         return response()->json(['success' => true, 'data' => $products]);
     });
 
-    // Categories
-    Route::get('/categories', function () {
-        $cats = Category::orderBy('name')->get(['id', 'name']);
+    // Categories (optional ?family_id= filter)
+    Route::get('/categories', function (Request $request) {
+        $query = Category::orderBy('name');
+        if ($request->filled('family_id')) {
+            $query->where('family_id', $request->family_id);
+        }
+        $cats = $query->get(['id', 'name', 'family_id']);
         return response()->json(['success' => true, 'data' => $cats]);
     });
 
