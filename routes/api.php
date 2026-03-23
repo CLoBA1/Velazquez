@@ -47,6 +47,23 @@ Route::middleware('auth:sanctum')->group(function () {
         return response()->json(['success' => true, 'data' => $cats]);
     });
 
+    // Families
+    Route::get('/families', function () {
+        $families = \App\Models\Family::withCount('products')
+            ->orderBy('name')
+            ->get(['id', 'name', 'slug', 'code']);
+        return response()->json(['success' => true, 'data' => $families]);
+    });
+
+    // Product Units / Presentations
+    Route::get('/products/{id}/units', function ($id) {
+        $units = \App\Models\ProductUnit::with('unit:id,name,symbol')
+            ->where('product_id', $id)
+            ->get();
+        return response()->json(['success' => true, 'data' => $units]);
+    });
+
+
     // Brands
     Route::get('/brands', function () {
         $brands = Brand::orderBy('name')->get(['id', 'name', 'logo_path']);
