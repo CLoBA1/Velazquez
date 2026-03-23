@@ -15,6 +15,9 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
+    <!-- AOS - Animate on Scroll -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
+
 
     <style>
         body {
@@ -361,7 +364,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
 
                 <!-- Brand -->
-                <div class="space-y-4">
+                <div class="space-y-4" data-aos="fade-up" data-aos-delay="0">
                     <div class="flex items-center gap-2">
                         <div class="bg-white/10 p-2 rounded-lg">
                             <svg class="h-6 w-6 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -378,7 +381,7 @@
                 </div>
 
                 <!-- Links 1 -->
-                <div>
+                <div data-aos="fade-up" data-aos-delay="100">
                     <h3 class="font-bold text-sm uppercase tracking-wider mb-4 opacity-80">Tienda</h3>
                     <ul class="space-y-3 text-sm text-gray-400">
                         <li><a href="{{ route('store.index') }}" class="hover:text-secondary transition-colors">Catálogo
@@ -391,7 +394,7 @@
                 </div>
 
                 <!-- Links 2 -->
-                <div class="space-y-4">
+                <div class="space-y-4" data-aos="fade-up" data-aos-delay="200">
 
                     <h3 class="font-bold text-sm uppercase tracking-wider mb-4 opacity-80">Ayuda</h3>
                     <ul class="space-y-3 text-sm text-gray-400">
@@ -405,7 +408,7 @@
                 </div>
 
                 <!-- Newsletter -->
-                <div>
+                <div data-aos="fade-up" data-aos-delay="300">
                     <h3 class="font-bold text-sm uppercase tracking-wider mb-4 opacity-80">Suscríbete</h3>
                     <form action="{{ route('newsletter.subscribe') }}" method="POST" class="flex flex-col gap-2">
                         @csrf
@@ -675,6 +678,20 @@
             </div>
         </div>
     </div>
+
+    <!-- AOS Init -->
+    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 700,
+            once: true,
+            offset: 80,
+            easing: 'ease-out-cubic',
+        });
+        // Re-init after Livewire updates so new product cards also animate
+        document.addEventListener('livewire:navigated', () => AOS.refresh());
+        document.addEventListener('livewire:update', () => AOS.refresh());
+    </script>
 
 </body>
 

@@ -3,7 +3,8 @@
 
         <!-- Sidebar Navigation (Desktop) -->
         <div class="hidden lg:block w-72 flex-shrink-0">
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-24">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-24"
+             data-aos="fade-right" data-aos-delay="100">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="font-bold text-lg text-slate-900">Departamentos</h3>
                     @if($category)
@@ -90,7 +91,8 @@
 
             <!-- Toolbar -->
             <div
-                class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4 bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4 bg-white p-4 rounded-2xl shadow-sm border border-gray-100"
+                data-aos="fade-down" data-aos-duration="500">
                 <p class="text-slate-500 text-sm font-medium">
                     Mostrando <span class="text-slate-900 font-bold">{{ $products->count() }}</span> de <span
                         class="text-slate-900 font-bold">{{ $totalProducts }}</span> resultados
@@ -112,7 +114,10 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                     @foreach($products as $product)
                         <div class="group bg-white rounded-2xl p-4 transition-all duration-300 hover:shadow-lg border border-gray-100 hover:border-primary/20 flex flex-col relative h-full"
-                            wire:key="product-{{ $product->id }}">
+                             wire:key="product-{{ $product->id }}"
+                             data-aos="fade-up"
+                             data-aos-delay="{{ ($loop->index % 3) * 100 }}"
+                             data-aos-duration="600">
 
                             <!-- Badges -->
                             <div class="absolute top-4 left-4 z-20 flex flex-col gap-1 pointer-events-none">
