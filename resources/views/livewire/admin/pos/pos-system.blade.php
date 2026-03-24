@@ -191,7 +191,7 @@
                     <div class="flex-1 min-w-0 flex flex-col justify-between">
                         <div class="flex justify-between items-start gap-2">
                              <h4 class="font-bold text-slate-700 text-xs leading-tight line-clamp-2" title="{{ $item['name'] }}">{{ $item['name'] }}</h4>
-                             <button wire:click="removeFromCart({{ $id }})" class="text-slate-300 hover:text-red-500 transition-colors">
+                             <button wire:click="removeFromCart('{{ $id }}')" class="text-slate-300 hover:text-red-500 transition-colors">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                              </button>
                         </div>
@@ -200,9 +200,9 @@
                             <span class="font-bold text-slate-800 text-sm">${{ number_format($item['price'] * $item['quantity'], 2) }}</span>
                             
                             <div class="flex items-center bg-slate-100 rounded-lg h-7">
-                                <button wire:click="updateQuantity({{ $id }}, {{ $item['quantity'] - 1 }})" class="w-7 h-full flex items-center justify-center text-slate-500 hover:bg-slate-200 hover:text-red-500 rounded-l-lg transition-colors font-bold text-sm">-</button>
+                                <button wire:click="updateQuantity('{{ $id }}', {{ $item['quantity'] - 1 }})" class="w-7 h-full flex items-center justify-center text-slate-500 hover:bg-slate-200 hover:text-red-500 rounded-l-lg transition-colors font-bold text-sm">-</button>
                                 <span class="text-xs font-bold text-slate-800 w-6 text-center">{{ $item['quantity'] }}</span>
-                                <button wire:click="updateQuantity({{ $id }}, {{ $item['quantity'] + 1 }})" class="w-7 h-full flex items-center justify-center text-slate-500 hover:bg-slate-200 hover:text-green-600 rounded-r-lg transition-colors font-bold text-sm">+</button>
+                                <button wire:click="updateQuantity('{{ $id }}', {{ $item['quantity'] + 1 }})" class="w-7 h-full flex items-center justify-center text-slate-500 hover:bg-slate-200 hover:text-green-600 rounded-r-lg transition-colors font-bold text-sm">+</button>
                             </div>
                         </div>
                     </div>
@@ -449,6 +449,51 @@
                             Guardar
                         </button>
                         <button wire:click="closeCreateClientModal" type="button" class="mt-3 w-full inline-flex justify-center rounded-xl border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+    <!-- Unit Selection Modal (For Weight-based materials) -->
+    @if($showUnitModal && $pendingProduct)
+        <div class="fixed inset-0 z-[60] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div class="flex items-center justify-center min-h-screen px-4 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm transition-opacity" aria-hidden="true" wire:click="cancelUnitSelection"></div>
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-slate-200">
+                    <div class="bg-white px-6 pt-6 pb-6 text-center">
+                        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-orange-100 text-orange-600 mb-4 shadow-inner">
+                            <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl leading-snug font-black text-slate-900 mb-1">
+                            Seleccione Presentación
+                        </h3>
+                        <p class="text-sm font-bold text-slate-500 mb-6">{{ $pendingProduct->name }}</p>
+                        
+                        <div class="grid grid-cols-1 gap-3">
+                            @foreach($pendingUnits as $index => $unit)
+                                <button wire:click="addPendingUnitToCart({{ $index }})" 
+                                        class="group flex items-center justify-between p-4 bg-white border-2 border-slate-100 rounded-xl hover:border-orange-500 hover:bg-orange-50 transition-all text-left w-full shadow-sm relative overflow-hidden">
+                                    <div class="absolute inset-y-0 left-0 w-1.5 bg-{{ strtolower($unit['name']) == 'tonelada' ? 'orange' : (strtolower($unit['name']) == 'bulto' ? 'blue' : 'slate') }}-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                    <div>
+                                        <p class="text-lg font-black text-slate-800 capitalize">{{ $unit['name'] }}</p>
+                                        @if(strtolower($unit['name']) !== 'kilo')
+                                            <p class="text-xs font-bold text-slate-400 mt-0.5">Equivale a {{ $unit['conversion_factor'] }} Kg</p>
+                                        @endif
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-xl font-black text-slate-900">${{ number_format($unit['price'], 2) }}</p>
+                                    </div>
+                                </button>
+                            @endforeach
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 px-6 py-4 border-t border-slate-100 flex flex-row-reverse">
+                        <button wire:click="cancelUnitSelection" type="button" class="w-full inline-flex justify-center rounded-xl border border-slate-300 shadow-sm px-4 py-3 bg-white text-base font-bold text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 sm:w-auto transition-all">
                             Cancelar
                         </button>
                     </div>

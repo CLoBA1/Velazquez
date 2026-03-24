@@ -63,10 +63,28 @@
                             <td class="px-6 py-4 font-bold text-slate-700">${{ number_format($product->public_price, 2) }} /
                                 {{ $product->unit->symbol ?? 'pz' }}</td>
                             <td class="px-6 py-4">
-                                <span
-                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $product->stock > 10 ? 'bg-green-100 text-green-800' : ($product->stock > 0 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
-                                    {{ $product->stock }}
-                                </span>
+                                @if($product->unit && strtolower($product->unit->name) === 'kilo')
+                                    @php
+                                        $tonStock = $product->stock / 1000;
+                                        $bultoUnit = $product->units->firstWhere('unit.name', 'Bulto');
+                                        $bultos = $bultoUnit && $bultoUnit->conversion_factor > 0 
+                                            ? number_format($product->stock / $bultoUnit->conversion_factor, 1) 
+                                            : null;
+                                    @endphp
+                                    <div class="flex flex-col">
+                                        <span class="font-bold text-slate-800">{{ number_format($product->stock, 2) }} Kg</span>
+                                        <span class="text-xs text-slate-500 mt-0.5 font-medium">
+                                            {{ number_format($tonStock, 2) }} Ton
+                                            @if($bultos !== null)
+                                                <span class="mx-1 text-slate-300">|</span> {{ $bultos }} Bultos
+                                            @endif
+                                        </span>
+                                    </div>
+                                @else
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $product->stock > 10 ? 'bg-green-100 text-green-800' : ($product->stock > 0 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
+                                        {{ $product->stock }} {{ $product->unit->symbol ?? 'pz' }}
+                                    </span>
+                                @endif
                             </td>
                             <td class="px-6 py-4 text-right flex items-center justify-end gap-2">
                                 <a href="{{ route('admin.construction.edit', $product) }}"

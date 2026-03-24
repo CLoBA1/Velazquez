@@ -64,7 +64,8 @@ class PosSystem extends Component
             return;
 
         // Try to find exact match by code first, then name
-        $product = Product::where('internal_code', $code)
+        $product = Product::with(['unit', 'units.unit'])
+            ->where('internal_code', $code)
             ->orWhere('barcode', $code) // Assuming you have a barcode field, if not, use internal_code
             ->first();
 
@@ -75,42 +76,120 @@ class PosSystem extends Component
         }
     }
 
+    public $showUnitModal = false;
+    public $pendingProduct = null;
+    public $pendingUnits = [];
+
     public function addToCart($productId)
     {
-        $product = Product::find($productId);
+        $product = Product::with(['unit', 'units.unit'])->find($productId);
 
         if (!$product)
             return;
 
-        if (isset($this->cart[$productId])) {
-            $this->cart[$productId]['quantity']++;
+        $isWeight = $product->unit && strtolower($product->unit->name) === 'kilo';
+        
+        if ($isWeight && count($product->units) > 0) {
+            $this->pendingProduct = $product;
+            $this->pendingUnits = collect($product->units)->map(function($u) {
+                return [
+                    'name' => $u->unit->name,
+                    'price' => $u->public_price,
+                    'conversion_factor' => $u->conversion_factor,
+                ];
+            })->toArray();
+            
+            // Add Base Unit (Kilo)
+            $this->pendingUnits[] = [
+                'name' => 'Kilo',
+                'price' => $product->public_price,
+                'conversion_factor' => 1,
+            ];
+
+            // Sort by conversion factor (Kilo -> Bulto -> Tonelada)
+            usort($this->pendingUnits, fn($a, $b) => $a['conversion_factor'] <=> $b['conversion_factor']);
+
+            $this->showUnitModal = true;
+            return;
+        }
+
+        $this->finalizeAddToCart($product, 'base', $product->public_price, 1, $product->unit?->name ?? 'Pza');
+    }
+
+    public function addPendingUnitToCart($presentationIndex)
+    {
+        if (!$this->pendingProduct) return;
+        
+        $selectedUnit = $this->pendingUnits[$presentationIndex];
+        $presentationId = strtolower($selectedUnit['name']); // e.g. 'kilo', 'bulto', 'tonelada'
+
+        // If it's kilo natively, map it cleanly back to 'base'
+        if ($presentationId === 'kilo' && strtolower($this->pendingProduct->unit->name ?? '') === 'kilo') {
+            $presentationId = 'base';
+        }
+
+        $this->finalizeAddToCart(
+            $this->pendingProduct, 
+            $presentationId, 
+            $selectedUnit['price'], 
+            $selectedUnit['conversion_factor'], 
+            $selectedUnit['name']
+        );
+
+        $this->showUnitModal = false;
+        $this->pendingProduct = null;
+        $this->search = ''; // clear search explicitly after selection
+    }
+
+    public function cancelUnitSelection()
+    {
+        $this->showUnitModal = false;
+        $this->pendingProduct = null;
+    }
+
+    private function finalizeAddToCart($product, $presentationId, $price, $multiplier, $presentationName)
+    {
+        $cartKey = $product->id . '_' . $presentationId;
+
+        if (isset($this->cart[$cartKey])) {
+            $this->cart[$cartKey]['quantity']++;
         } else {
-            $this->cart[$productId] = [
+            $displayName = $product->name;
+            if ($presentationId !== 'base' && $presentationId !== 'kilo') {
+                $displayName .= " (x1 {$presentationName})";
+            }
+
+            $this->cart[$cartKey] = [
                 'id' => $product->id,
-                'name' => $product->name,
-                'price' => $product->public_price, // Default to public price
+                'key' => $cartKey,
+                'name' => $displayName,
+                'price' => $price,
                 'quantity' => 1,
                 'sku' => $product->internal_code,
                 'stock' => $product->stock,
-                'image' => $product->image_url
+                'image' => $product->image_url,
+                'presentation_id' => $presentationId,
+                'multiplier' => $multiplier,
+                'presentation_name' => $presentationName,
+                'original_stock_display' => $product->stock,
             ];
         }
 
         $this->calculateTotals();
     }
 
-    public function removeFromCart($productId)
+    public function removeFromCart($cartKey)
     {
-        unset($this->cart[$productId]);
+        unset($this->cart[$cartKey]);
         $this->calculateTotals();
     }
 
-    public function updateQuantity($productId, $qty)
+    public function updateQuantity($cartKey, $qty)
     {
         if ($qty > 0) {
-            $this->cart[$productId]['quantity'] = $qty;
+            $this->cart[$cartKey]['quantity'] = $qty;
         } else {
-            unset($this->cart[$productId]);
+            unset($this->cart[$cartKey]);
         }
         $this->calculateTotals();
     }
@@ -300,8 +379,9 @@ class PosSystem extends Component
 
                     $product = Product::find($item['id']);
                     if ($product) {
+                        $deductionQuantity = $item['quantity'] * ($item['multiplier'] ?? 1);
                         $product->adjustStock(
-                            $item['quantity'],
+                            $deductionQuantity,
                             'sale',
                             "Venta #{$sale->id}"
                         );
