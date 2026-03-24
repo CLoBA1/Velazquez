@@ -20,6 +20,7 @@ class ProductController extends Controller
         session()->put('admin_products_url', $request->fullUrl());
 
         $q = Product::query()
+            ->where('business_line', 'hardware')
             ->with(['category.family', 'brand', 'unit'])
             ->orderByDesc('id');
 
