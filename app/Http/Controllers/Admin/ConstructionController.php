@@ -65,8 +65,8 @@ class ConstructionController extends Controller
             'stock' => $validated['stock'] ?? 0,
             // Defaults
             // Defaults
-            'category_id' => \App\Models\Category::where('name', 'Materiales de Construcción')->first()?->id ?? \App\Models\Category::first()?->id,
-            'brand_id' => \App\Models\Brand::where('name', 'Genérico')->first()?->id ?? \App\Models\Brand::first()?->id,
+            'category_id' => \App\Models\Category::where('name', 'Materiales de Construcción')->first()?->id ?? null,
+            'brand_id'    => \App\Models\Brand::where('name', 'Genérico')->first()?->id ?? null,
             'slug' => Str::slug($validated['name'] . '-' . Str::random(4)),
             'taxes_percent' => 16, // Default TAX
         ];
