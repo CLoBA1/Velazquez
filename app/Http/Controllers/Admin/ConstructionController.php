@@ -91,9 +91,9 @@ class ConstructionController extends Controller
 
         if ($validated['material_type'] === 'weight') {
             // Peso Configuration (Base Unit: Kilo)
-            $unitKilo = Unit::firstOrCreate(['symbol' => 'kg'], ['name' => 'Kilo']);
-            $unitTonelada = Unit::firstOrCreate(['symbol' => 'ton'], ['name' => 'Tonelada']);
-            $unitBulto = Unit::firstOrCreate(['symbol' => 'bulto'], ['name' => 'Bulto']);
+            $unitKilo = Unit::firstOrCreate(['symbol' => 'kg'], ['name' => 'Kilo', 'slug' => 'kilo']);
+            $unitTonelada = Unit::firstOrCreate(['symbol' => 'ton'], ['name' => 'Tonelada', 'slug' => 'tonelada']);
+            $unitBulto = Unit::firstOrCreate(['symbol' => 'bulto'], ['name' => 'Bulto', 'slug' => 'bulto']);
 
             $data['unit_id'] = $unitKilo->id;
             $data['public_price'] = $validated['public_price']; // price per kg
@@ -123,7 +123,7 @@ class ConstructionController extends Controller
 
         } else {
             // Pieza Configuration (Base Unit: Pieza)
-            $unitPieza = Unit::firstOrCreate(['symbol' => 'pza'], ['name' => 'Pieza']);
+            $unitPieza = Unit::firstOrCreate(['symbol' => 'pza'], ['name' => 'Pieza', 'slug' => 'pieza']);
             
             $data['unit_id'] = $unitPieza->id;
             $data['public_price'] = $validated['public_price_piece'];
@@ -206,9 +206,9 @@ class ConstructionController extends Controller
         }
 
         if ($validated['material_type'] === 'weight') {
-            $unitKilo = Unit::firstOrCreate(['symbol' => 'kg'], ['name' => 'Kilo']);
-            $unitTonelada = Unit::firstOrCreate(['symbol' => 'ton'], ['name' => 'Tonelada']);
-            $unitBulto = Unit::firstOrCreate(['symbol' => 'bulto'], ['name' => 'Bulto']);
+            $unitKilo = Unit::firstOrCreate(['symbol' => 'kg'], ['name' => 'Kilo', 'slug' => 'kilo']);
+            $unitTonelada = Unit::firstOrCreate(['symbol' => 'ton'], ['name' => 'Tonelada', 'slug' => 'tonelada']);
+            $unitBulto = Unit::firstOrCreate(['symbol' => 'bulto'], ['name' => 'Bulto', 'slug' => 'bulto']);
 
             $data['unit_id'] = $unitKilo->id;
             $data['public_price'] = $validated['public_price'];
@@ -237,7 +237,7 @@ class ConstructionController extends Controller
             ]);
 
         } else {
-            $unitPieza = Unit::firstOrCreate(['symbol' => 'pza'], ['name' => 'Pieza']);
+            $unitPieza = Unit::firstOrCreate(['symbol' => 'pza'], ['name' => 'Pieza', 'slug' => 'pieza']);
             
             $data['unit_id'] = $unitPieza->id;
             $data['public_price'] = $validated['public_price_piece'];
