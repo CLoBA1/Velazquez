@@ -200,12 +200,37 @@
                         @php
                             $name = $item->product->name ?? 'N/A';
                             $code = $item->product->internal_code ?? '';
+                            $extraInfo = '';
+                            
+                            // Smart Presentation Detection for Construction Materials
+                            if ($item->product && $item->product->business_line === 'construction' && strtolower($item->product->unit->name ?? '') === 'kilo') {
+                                // Direct match by exact ticket price
+                                if ($item->price == $item->product->public_price) {
+                                    $extraInfo = "<br><span style='font-size:7px; color:#555;'>(Granel / Kilo)</span>";
+                                } else {
+                                    $matchedUnit = $item->product->units->firstWhere('public_price', $item->price);
+                                    if ($matchedUnit) {
+                                        $unitName = $matchedUnit->unit->name ?? '';
+                                        $extraInfo = "<br><span style='font-size:7px; color:#555;'>({$unitName})";
+                                        
+                                        if (strtolower($unitName) === 'tonelada') {
+                                            $bultoUnit = $item->product->units->firstWhere('unit.name', 'Bulto');
+                                            if ($bultoUnit && $bultoUnit->conversion_factor > 0) {
+                                                $bultos = (1000 / $bultoUnit->conversion_factor) * $item->quantity;
+                                                $extraInfo .= " - Equivale a {$bultos} bultos";
+                                            }
+                                        }
+                                        $extraInfo .= "</span>";
+                                    }
+                                }
+                            }
+
                             // If name is very long, show code + truncated name
-                            $display = strlen($name) > 28
+                            $displayName = strlen($name) > 28
                                 ? ($code ? $code . ' - ' . substr($name, 0, 18) . '...' : substr($name, 0, 28) . '...')
                                 : $name;
                         @endphp
-                        {{ $display }}
+                        {!! $displayName . $extraInfo !!}
                     </td>
                     <td class="text-center">{{ $item->quantity }}</td>
                     <td class="text-right">${{ number_format($item->price, 2) }}</td>
