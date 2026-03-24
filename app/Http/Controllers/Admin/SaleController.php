@@ -21,7 +21,7 @@ class SaleController extends Controller
         // Set paper size for ticket printers (e.g., 80mm width) or A4?
         // For "Ticket" type, usually small width. For "Invoice", A4.
         if ($sale->type === 'ticket') {
-            $pdf->setPaper([0, 0, 226.77, 800], 'portrait'); // ~80mm width
+            $pdf->setPaper([0, 0, 260.00, 800], 'portrait'); // ~90mm scale to reduce wrapping
         } else {
             $pdf->setPaper('a4', 'portrait');
         }

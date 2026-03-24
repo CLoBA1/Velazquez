@@ -206,21 +206,28 @@
                             if ($item->product && $item->product->business_line === 'construction' && strtolower($item->product->unit->name ?? '') === 'kilo') {
                                 // Direct match by exact ticket price
                                 if ($item->price == $item->product->public_price) {
-                                    $extraInfo = "<br><span style='font-size:7px; color:#555;'>(Granel / Kilo)</span>";
+                                    $extraInfo = "<br><span style='font-size:7px; color:#555;'>(KG)</span>";
                                 } else {
                                     $matchedUnit = $item->product->units->firstWhere('public_price', $item->price);
                                     if ($matchedUnit) {
-                                        $unitName = $matchedUnit->unit->name ?? '';
-                                        $extraInfo = "<br><span style='font-size:7px; color:#555;'>({$unitName})";
+                                        $unitName = strtolower($matchedUnit->unit->name ?? '');
                                         
-                                        if (strtolower($unitName) === 'tonelada') {
+                                        if ($unitName === 'tonelada' || $unitName === 'toneladas') {
+                                            $abbr = 'TON';
+                                            $extraInfo = "<br><span style='font-size:7px; color:#555;'>({$abbr}";
                                             $bultoUnit = $item->product->units->firstWhere('unit.name', 'Bulto');
                                             if ($bultoUnit && $bultoUnit->conversion_factor > 0) {
                                                 $bultos = (1000 / $bultoUnit->conversion_factor) * $item->quantity;
-                                                $extraInfo .= " - Equivale a {$bultos} bultos";
+                                                $extraInfo .= " = {$bultos} BTO";
                                             }
+                                            $extraInfo .= ")</span>";
+                                        } 
+                                        elseif ($unitName === 'bulto' || $unitName === 'bultos') {
+                                            $extraInfo = "<br><span style='font-size:7px; color:#555;'>(BTO)</span>";
+                                        } 
+                                        else {
+                                            $extraInfo = "<br><span style='font-size:7px; color:#555;'>(" . strtoupper($unitName) . ")</span>";
                                         }
-                                        $extraInfo .= "</span>";
                                     }
                                 }
                             }
