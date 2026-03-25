@@ -70,6 +70,12 @@ class ProductCatalog extends Component
 
         if ($this->search) {
             $query->searchFuzzy($this->search);
+        } else {
+            // Hide products without images on the default catalog view
+            $query->where(function($q) {
+                $q->whereNotNull('main_image_path')
+                  ->where('main_image_path', '!=', '');
+            });
         }
 
         if ($this->category) {
