@@ -68,6 +68,10 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
 
+    // ── Offline POS Sync (Web <-> Desktop) ───────────────────────────────────
+    Route::post('/pos/sync-sales', [\App\Http\Controllers\Api\SyncController::class, 'syncSales']);
+    Route::get('/pos/sync-catalog', [\App\Http\Controllers\Api\SyncController::class, 'getCatalog']);
+
     // Brands
     Route::get('/brands', function () {
         $brands = Brand::orderBy('name')->get(['id', 'name', 'logo_path']);
