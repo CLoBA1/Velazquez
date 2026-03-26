@@ -107,10 +107,19 @@
 
         <!-- Background con imagen reactiva - gradiente solo a la izquierda -->
         <div class="absolute inset-0 z-0">
-            <!-- Imagen de fondo - sin oscurecer, se ve completa -->
-            <div class="absolute inset-0 bg-cover bg-center bg-no-repeat"
-                :style="`background-image: url('${slides[activeSlide]?.image ?? '{{ asset('img/hero-bg.png') }}'}')`">
-            </div>
+            <!-- Capas de imágenes animadas -->
+            <template x-for="(slide, index) in slides" :key="index">
+                <div x-show="activeSlide === index"
+                     x-transition:enter="transition ease-out duration-1000"
+                     x-transition:enter-start="opacity-0 scale-105"
+                     x-transition:enter-end="opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-1000"
+                     x-transition:leave-start="opacity-100 scale-100"
+                     x-transition:leave-end="opacity-0 scale-105"
+                     class="absolute inset-0 bg-cover bg-center bg-no-repeat"
+                     :style="`background-image: url('${slide.image ?? '{{ asset('img/hero-bg.png') }}'}')`">
+                </div>
+            </template>
             <!-- Gradiente solo del lado izquierdo: texto legible, imagen luce a la derecha -->
             <div class="absolute inset-0" style="background: linear-gradient(to right, rgba(5,8,18,0.88) 0%, rgba(5,8,18,0.75) 35%, rgba(5,8,18,0.30) 60%, rgba(5,8,18,0.05) 100%);"></div>
         </div>
