@@ -17,8 +17,16 @@ class SyncController extends Controller
      */
     public function getCatalog()
     {
-        $products = Product::all(['id', 'barcode', 'name', 'public_price as price', 'stock']);
-        
+        $products = Product::with('units')->get([
+            'id', 'category_id', 'brand_id', 'unit_id', 'barcode', 'name', 
+            'sale_price', 'public_price', 'mid_wholesale_price', 'wholesale_price', 
+            'stock', 'min_stock'
+        ]);
+
+        $categories = \App\Models\Category::all(['id', 'name']);
+        $brands = \App\Models\Brand::all(['id', 'name']);
+        $units = \App\Models\Unit::all(['id', 'name', 'abbreviation']);
+
         // Clientes reales del sistema (modelo Client, no User)
         $clients = Client::select(['id','name','email','phone','rfc','address',
                                    'credit_limit','credit_used'])
