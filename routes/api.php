@@ -14,6 +14,10 @@ use App\Models\User;
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 
+// ── Offline POS Sync (Web <-> Desktop) ───────────────────────────────────
+Route::post('/pos/sync-sales', [\App\Http\Controllers\Api\SyncController::class, 'syncSales']);
+Route::get('/pos/sync-catalog', [\App\Http\Controllers\Api\SyncController::class, 'getCatalog']);
+
 // ── Protected (Bearer token via Sanctum) ─────────────────────────────────────
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -68,9 +72,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
 
-    // ── Offline POS Sync (Web <-> Desktop) ───────────────────────────────────
-    Route::post('/pos/sync-sales', [\App\Http\Controllers\Api\SyncController::class, 'syncSales']);
-    Route::get('/pos/sync-catalog', [\App\Http\Controllers\Api\SyncController::class, 'getCatalog']);
+
 
     // Brands
     Route::get('/brands', function () {
