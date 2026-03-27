@@ -25,7 +25,7 @@ class SyncController extends Controller
 
         $categories = \App\Models\Category::all(['id', 'name']);
         $brands = \App\Models\Brand::all(['id', 'name']);
-        $units = \App\Models\Unit::all(['id', 'name', 'abbreviation']);
+        $units = \App\Models\Unit::all(['id', 'name', 'symbol']);
 
         // Clientes reales del sistema (modelo Client, no User)
         $clients = Client::select(['id','name','email','phone','rfc','address',
