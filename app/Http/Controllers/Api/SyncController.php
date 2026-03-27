@@ -35,7 +35,10 @@ class SyncController extends Controller
         
         return response()->json([
             'success' => true, 
-            'data' => $products,
+            'products' => $products,
+            'categories' => $categories,
+            'brands' => $brands,
+            'units' => $units,
             'clients' => $clients
         ]);
     }
