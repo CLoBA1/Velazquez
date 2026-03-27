@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\Client;
 use App\Models\Sale;
 use App\Models\SaleItem;
-use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class SyncController extends Controller
@@ -19,10 +19,11 @@ class SyncController extends Controller
     {
         $products = Product::all(['id', 'barcode', 'name', 'public_price as price', 'stock']);
         
-        // También enviamos los clientes registrados
-        $clients = User::where('role', 'customer')
-            ->select(['id', 'name', 'email'])
-            ->get();
+        // Clientes reales del sistema (modelo Client, no User)
+        $clients = Client::select(['id','name','email','phone','rfc','address',
+                                   'credit_limit','credit_used'])
+                         ->orderBy('name')
+                         ->get();
         
         return response()->json([
             'success' => true, 
