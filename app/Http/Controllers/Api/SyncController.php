@@ -7,17 +7,28 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Sale;
 use App\Models\SaleItem;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class SyncController extends Controller
 {
     /**
-     * Devuelve el catálogo de la nube para que el POS de escritorio lo descargue localmente.
+     * Devuelve el catálogo + Clientes para el POS de escritorio.
      */
     public function getCatalog()
     {
         $products = Product::all(['id', 'barcode', 'name', 'public_price as price', 'stock']);
-        return response()->json(['success' => true, 'data' => $products]);
+        
+        // También enviamos los clientes registrados
+        $clients = User::where('role', 'customer')
+            ->select(['id', 'name', 'email'])
+            ->get();
+        
+        return response()->json([
+            'success' => true, 
+            'data' => $products,
+            'clients' => $clients
+        ]);
     }
 
     /**
@@ -33,31 +44,27 @@ class SyncController extends Controller
         try {
             $syncedIds = [];
             foreach ($sales as $saleData) {
-                // Registrar ticket maestro
                 $sale = Sale::create([
-                    'total' => $saleData['total'],
-                    'status' => 'completed',
+                    'total'      => $saleData['total'],
+                    'status'     => 'completed',
                     'created_at' => $saleData['created_at'] ?? now(),
-                    // Asignamos a un usuario administrador por defecto o terminal virtual
-                    'user_id' => 1 
+                    'user_id'    => 1 
                 ]);
 
-                // Registrar productos vendidos
                 foreach ($saleData['items'] as $item) {
                     SaleItem::create([
-                        'sale_id' => $sale->id,
+                        'sale_id'    => $sale->id,
                         'product_id' => $item['product_id'],
-                        'quantity' => $item['qty'],
-                        'price' => $item['price']
+                        'quantity'   => $item['qty'],
+                        'price'      => $item['price']
                     ]);
 
-                    // Extra: Descontar ese stock físicamente de la nube para evitar sobreventas online
                     $product = Product::find($item['product_id']);
                     if ($product) {
+                        // Descontar la cantidad real (ya viene calculada desde el POS)
                         $product->decrement('stock', $item['qty']);
                     }
                 }
-                // Guardar el ID local (SQLite) para responderle al Python que ya está procesado
                 $syncedIds[] = $saleData['local_id'];
             }
             DB::commit();
