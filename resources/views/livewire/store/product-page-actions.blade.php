@@ -113,17 +113,49 @@
             </a>
         </div>
 
-        <div class="flex items-center gap-2 text-sm text-green-600 font-medium mt-4">
-            <span class="relative flex h-3 w-3">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-            </span>
-            En Stock ({{ $stock }} disponibles)
+        <div class="flex items-center justify-between mt-4">
+            <div class="flex items-center gap-2 text-sm text-green-600 font-medium">
+                <span class="relative flex h-3 w-3">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                </span>
+                En Stock ({{ $stock }} disponibles)
+            </div>
+            
+            <button onclick="shareProduct()" class="text-sm font-bold text-gray-500 hover:text-primary flex items-center gap-1.5 transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                </svg>
+                Compartir
+            </button>
         </div>
     @else
-        <div
-            class="w-full bg-gray-100 text-gray-500 font-bold rounded-xl h-14 flex items-center justify-center gap-2 cursor-not-allowed">
-            Agotado
+        <div class="flex flex-col gap-3 mt-4">
+            <div class="w-full bg-gray-100 text-gray-500 font-bold rounded-xl h-14 flex items-center justify-center gap-2 cursor-not-allowed">
+                Agotado
+            </div>
+            <button onclick="shareProduct()" class="self-end text-sm font-bold text-gray-500 hover:text-primary flex items-center gap-1.5 transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                </svg>
+                Compartir
+            </button>
         </div>
     @endif
+
+    <script>
+        function shareProduct() {
+            if (navigator.share) {
+                navigator.share({
+                    title: '{{ addslashes($product->name) }}',
+                    text: 'Mira este producto en Ferretería Velázquez',
+                    url: window.location.href,
+                }).catch((error) => console.log('Error sharing', error));
+            } else {
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    alert('¡Enlace del producto copiado al portapapeles!');
+                });
+            }
+        }
+    </script>
 </div>
