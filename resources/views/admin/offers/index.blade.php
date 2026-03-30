@@ -42,8 +42,9 @@
                     class="absolute right-0 mt-4 w-96 bg-white rounded-2xl shadow-2xl border border-gray-100 p-4 z-50 origin-top-right transition-all">
                     <livewire:admin.product-search-for-offer />
                 </div>
-            </div>
-        </div>
+            </div> <!-- Closes x-data relative div -->
+        </div> <!-- Closes Top Actions gap-3 flex container -->
+        </div> <!-- Closes Header justify-between flex container -->
 
         <!-- Offers List (Livewire) -->
         <livewire:admin.offer-index />

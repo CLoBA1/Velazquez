@@ -54,7 +54,7 @@ class OfferController extends Controller
     public function destroy(Product $product)
     {
         $product->update([
-            'sale_price' => null, // or 0 depending on DB default. Migration default is usually null or 0.
+            'sale_price' => 0,
             'sale_deadline' => null,
         ]);
 
@@ -67,7 +67,7 @@ class OfferController extends Controller
     public function destroyAll()
     {
         Product::where('sale_price', '>', 0)->update([
-            'sale_price' => null,
+            'sale_price' => 0,
             'sale_deadline' => null,
         ]);
 
