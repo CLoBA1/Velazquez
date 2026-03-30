@@ -60,4 +60,17 @@ class OfferController extends Controller
 
         return back()->with('ok', 'Oferta eliminada.');
     }
+
+    /**
+     * Remove all offers currently active.
+     */
+    public function destroyAll()
+    {
+        Product::where('sale_price', '>', 0)->update([
+            'sale_price' => null,
+            'sale_deadline' => null,
+        ]);
+
+        return back()->with('success', 'Todas las ofertas han sido eliminadas correctamente.');
+    }
 }

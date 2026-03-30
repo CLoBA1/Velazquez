@@ -130,6 +130,9 @@ Route::prefix('admin')->group(function () {
             ->parameters(['materiales' => 'product'])
             ->names('admin.construction');
 
+        Route::delete('ofertas/limpiar-todas', [\App\Http\Controllers\Admin\OfferController::class, 'destroyAll'])
+            ->name('admin.offers.destroyAll');
+
         Route::resource('ofertas', \App\Http\Controllers\Admin\OfferController::class)
             ->only(['index', 'update', 'destroy'])
             ->names('admin.offers');
