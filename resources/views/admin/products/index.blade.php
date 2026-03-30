@@ -87,7 +87,7 @@
     >
 
         <form method="GET" action="{{ route('admin.products.index') }}"
-            class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-6">
+            class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-7 gap-6">
             <div class="md:col-span-2" x-data>
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Buscar</label>
                 <div class="flex gap-2">
@@ -144,13 +144,23 @@
                 </select>
             </div>
 
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Revisión Rápida</label>
+                <select name="alert_filter"
+                    class="w-full rounded-xl border-slate-200 bg-slate-50 py-3 px-3 text-sm text-slate-700 focus:border-orange-500 focus:bg-white focus:ring-2 focus:ring-orange-100 transition-all font-medium">
+                    <option value="">Todos los Prod.</option>
+                    <option value="no_image" @selected(request('alert_filter') === 'no_image')>Sin Imagen</option>
+                    <option value="price_1" @selected(request('alert_filter') === 'price_1')>Precio $1 o $0</option>
+                </select>
+            </div>
+
             <div class="flex items-end gap-2">
                 <button
                     class="flex-1 rounded-xl bg-slate-900 py-3 text-sm font-bold text-white hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/20 hover:-translate-y-0.5"
                     type="submit">
                     Filtrar
                 </button>
-                @if(request()->anyFilled(['search', 'family_id', 'category_id', 'brand_id']))
+                @if(request()->anyFilled(['search', 'family_id', 'category_id', 'brand_id', 'alert_filter']))
                     <a class="flex items-center justify-center w-11 h-11 rounded-xl border border-dashed border-red-200 bg-red-50 text-red-500 hover:bg-red-100 hover:border-red-300 transition-all"
                         href="{{ route('admin.products.index') }}" title="Limpiar filtros">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

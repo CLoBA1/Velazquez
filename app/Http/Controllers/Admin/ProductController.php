@@ -28,6 +28,7 @@ class ProductController extends Controller
         $familyId = $request->integer('family_id');
         $categoryId = $request->integer('category_id');
         $brandId = $request->integer('brand_id');
+        $alertFilter = $request->get('alert_filter');
         $search = trim((string) $request->get('search', ''));
 
         if ($familyId) {
@@ -40,6 +41,14 @@ class ProductController extends Controller
 
         if ($brandId) {
             $q->where('brand_id', $brandId);
+        }
+
+        if ($alertFilter === 'no_image') {
+            $q->where(function ($qq) {
+                $qq->whereNull('main_image_path')->orWhere('main_image_path', '');
+            });
+        } elseif ($alertFilter === 'price_1') {
+            $q->where('public_price', '<=', 1);
         }
 
         if ($search !== '') {
