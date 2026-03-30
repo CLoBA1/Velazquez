@@ -17,6 +17,7 @@ class StoreController extends Controller
         $featured_offers = Product::hardware()
             ->with('category')
             ->where('stock', '>', 0)
+            ->where('public_price', '!=', 1)
             ->whereNotNull('sale_price')
             ->whereColumn('sale_price', '<', 'public_price')
             ->orderByRaw('(public_price - sale_price) DESC')
@@ -26,13 +27,16 @@ class StoreController extends Controller
         // 2. New Arrivals (Latest 3)
         $new_arrivals = Product::hardware()
             ->where('stock', '>', 0)
+            ->where('public_price', '!=', 1)
             ->latest()
             ->take(3)
             ->get();
 
         // 3. Category Highlight (Random category with products)
         $category_highlight = Category::whereHas('products', function ($q) {
-            $q->hardware()->where('stock', '>', 0);
+            $q->hardware()
+              ->where('stock', '>', 0)
+              ->where('public_price', '!=', 1);
         })->inRandomOrder()->first();
 
         // 4. Custom Banners (from admin - take priority if any active)

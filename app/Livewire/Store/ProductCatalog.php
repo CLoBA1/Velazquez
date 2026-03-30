@@ -61,7 +61,7 @@ class ProductCatalog extends Component
 
     public function render()
     {
-        $query = Product::with('category');
+        $query = Product::with('category')->where('public_price', '!=', 1);
 
         // Filter by Business Line
         if ($this->businessLine) {
